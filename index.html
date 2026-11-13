@@ -197,6 +197,35 @@
       .widget-grid, .menu-grid { grid-template-columns: 1fr; }
       .cal-cell { min-height: 70px; padding: 4px; }
     }
+
+        /* 1탭 상단: 담당 목사님 & 디렉터님 리더십 카드 */
+    .leadership-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .leader-card {
+      background: var(--primary-light);
+      border: 1px solid rgba(43, 76, 126, 0.25);
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .leader-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #2B4C7E;
+      color: #fff;
+      margin-right: 6px;
+    }
+
   </style>
 </head>
 <body>
@@ -309,6 +338,7 @@
             <button id="btnAddMember" class="btn btn-primary btn-sm" style="display:none;" onclick="openMemberModal()">+ 목원/새가족 등록</button>
           </div>
         </div>
+        <div id="leadershipGrid" class="leadership-grid"></div>
         <div class="filter-pills" id="groupFilterPills"></div>
         <div class="group-grid" id="groupGrid"></div>
       </div>
@@ -643,8 +673,42 @@
         : "현재 진행 중인 새가족이 없습니다.";
     }
 
-    // 1탭: 목장 편성표 렌더링
+        // 1탭: 리더십(목사님/디렉터님) + 목장 편성표 렌더링
     function renderGroupTab() {
+      const curMonth = new Date().getMonth() + 1;
+
+      // 1) 상단 리더십 영역 (목장이 '리더십'이거나 직분이 '담당목사', '디렉터'인 인원)
+      const leaders = APP_STATE.members.filter(m =>
+        m.목장 === "리더십" || m.직분 === "담당목사" || m.직분 === "디렉터"
+      );
+      const leaderGrid = document.getElementById("leadershipGrid");
+      if (leaders.length) {
+        leaderGrid.style.display = "grid";
+        leaderGrid.innerHTML = leaders.map(l => {
+          const isBdayMonth = l.생일 && Number(l.생일.split("-")[1]) === curMonth;
+          const canEdit = APP_STATE.auth.tab1 >= 3 && APP_STATE.auth.group === "전체";
+          const privateInfo = (l.연락처 || l.주소_동)
+            ? `<div class="member-meta">📞 ${l.연락처 || "-"} · 📍 ${l.주소_시구 || ""} ${l.주소_동 || ""}</div>`
+            : "";
+          return `
+            <div class="leader-card">
+              <div>
+                <div>
+                  <span class="leader-badge">${l.직분}</span>
+                  <strong style="font-size:15px;">${l.이름}</strong>
+                  ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
+                </div>
+                <div class="member-meta">생일: ${l.생일 ? l.생일.slice(5) : "미등록"}</div>
+                ${privateInfo}
+              </div>
+              ${canEdit ? `<button class="btn btn-sm" onclick='openEditMember(${JSON.stringify(l)})'>수정</button>` : ""}
+            </div>`;
+        }).join("");
+      } else {
+        leaderGrid.style.display = "none";
+      }
+
+      // 2) 하단 1~7목장 필터 및 편성표
       const groups = ["전체", "1목장", "2목장", "3목장", "4목장", "5목장", "6목장", "7목장"];
       const pills = document.getElementById("groupFilterPills");
       pills.innerHTML = groups.map(g =>
@@ -652,7 +716,6 @@
       ).join("");
 
       const targetGroups = APP_STATE.selectedGroup === "전체" ? groups.slice(1) : [APP_STATE.selectedGroup];
-      const curMonth = new Date().getMonth() + 1;
       const roleOrder = { "목자": 1, "준목자": 2, "목원": 3, "새가족": 4 };
 
       document.getElementById("groupGrid").innerHTML = targetGroups.map(gName => {
