@@ -267,9 +267,9 @@
         <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')">1. 목장 편성표</button>
         <button class="tab-btn" data-tab="tab2" onclick="switchTab('tab2')">2. 일정 관리</button>
         <button class="tab-btn" data-tab="tab3" onclick="switchTab('tab3')">3. 새가족 관리</button>
-        <button class="tab-btn" data-tab="tab4" onclick="switchTab('tab4')">4. 기능 준비중 <span class="badge-soon">예정</span></button>
-        <button class="tab-btn" data-tab="tab5" onclick="switchTab('tab5')">5. 기능 준비중 <span class="badge-soon">예정</span></button>
-        <button class="tab-btn" data-tab="tab6" onclick="switchTab('tab6')">6. 기능 준비중 <span class="badge-soon">예정</span></button>
+        <button class="tab-btn" data-tab="tab4" onclick="switchTab('tab4')">4. 기도제목</button>
+        <button class="tab-btn" data-tab="tab5" onclick="switchTab('tab5')">5. 번개모임</button>
+        <button class="tab-btn coming-soon" data-tab="tab6" onclick="switchTab('tab6')">6. 놀이터 <span class="badge-soon">예정</span></button>
       </div>
     </nav>
   </header>
@@ -335,9 +335,9 @@
         <div class="menu-tile" onclick="switchTab('tab1')"><div class="tile-icon">👥</div><div class="tile-info"><h4>1. 목장 편성표</h4><span>1~7목장 목자·준목자·목원 현황</span></div></div>
         <div class="menu-tile" onclick="switchTab('tab2')"><div class="tile-icon">🗓️</div><div class="tile-info"><h4>2. 일정 관리</h4><span>교회·청년부 행사 및 생일 달력</span></div></div>
         <div class="menu-tile" onclick="switchTab('tab3')"><div class="tile-icon">🌱</div><div class="tile-info"><h4>3. 새가족 관리</h4><span>새가족 프로필 및 MD 5회차 보고서</span></div></div>
-        <div class="menu-tile disabled" onclick="switchTab('tab4')"><div class="tile-icon">🚧</div><div class="tile-info"><h4>4. 기능 업데이트 예정</h4><span>추후 새로운 기능이 추가됩니다</span></div></div>
-        <div class="menu-tile disabled" onclick="switchTab('tab5')"><div class="tile-icon">🚧</div><div class="tile-info"><h4>5. 기능 업데이트 예정</h4><span>추후 새로운 기능이 추가됩니다</span></div></div>
-        <div class="menu-tile disabled" onclick="switchTab('tab6')"><div class="tile-icon">🚧</div><div class="tile-info"><h4>6. 기능 업데이트 예정</h4><span>추후 새로운 기능이 추가됩니다</span></div></div>
+        <div class="menu-tile" onclick="switchTab('tab4')"><div class="tile-icon">🙏</div><div class="tile-info"><h4>4. 기도제목</h4><span>실명·익명 기도 나눔 및 중보기도</span></div></div>
+        <div class="menu-tile disabled" onclick="switchTab('tab5')"><div class="tile-icon">⚡</div><div class="tile-info"><h4>5. 번개모임</h4><span>집회·추가 모임 모집 (업데이트 예정)</span></div></div>
+        <div class="menu-tile disabled" onclick="switchTab('tab6')"><div class="tile-icon">🎮</div><div class="tile-info"><h4>6. 놀이터</h4><span>청년부 미니게임 공간 (업데이트 예정)</span></div></div>
       </div>
     </section>
 
@@ -408,10 +408,41 @@
       </div>
     </section>
 
-    <!-- [4~6탭] 업데이트 예정 -->
-    <section id="view-tab4" class="view-section"><div class="tab-shell"><div class="empty-state"><h3>✨ 기능 업데이트 예정 (4번째 탭)</h3><p>비전마을 공동체를 위한 새로운 기능이 준비될 예정입니다.</p></div></div></section>
-    <section id="view-tab5" class="view-section"><div class="tab-shell"><div class="empty-state"><h3>✨ 기능 업데이트 예정 (5번째 탭)</h3><p>비전마을 공동체를 위한 새로운 기능이 준비될 예정입니다.</p></div></div></section>
-    <section id="view-tab6" class="view-section"><div class="tab-shell"><div class="empty-state"><h3>✨ 기능 업데이트 예정 (6번째 탭)</h3><p>비전마을 공동체를 위한 새로운 기능이 준비될 예정입니다.</p></div></div></section>
+    <!-- [4탭] 기도제목 -->
+    <section id="view-tab4" class="view-section">
+      <div class="tab-shell">
+        <div class="tab-shell-header">
+          <div>
+            <h2>🙏 비전마을 기도제목 나눔</h2>
+            <p style="font-size:12px; color:var(--text-sub); margin-top:2px;">모든 기도제목은 등록 후 7일이 지나면 자동으로 삭제됩니다.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openPrayerModal()">+ 기도제목 올리기</button>
+        </div>
+        <div id="prayerListGrid" class="group-grid"></div>
+      </div>
+    </section>
+
+    <!-- [5탭] 번개모임 -->
+    <section id="view-tab5" class="view-section">
+      <div class="tab-shell">
+        <div class="empty-state">
+          <div style="font-size:36px; margin-bottom:10px;">⚡</div>
+          <h3>번개모임 (다음 단계 구현 예정)</h3>
+          <p>집회 인원 모집 및 추가 번개모임 공고 기능이 곧 추가됩니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- [6탭] 놀이터 -->
+    <section id="view-tab6" class="view-section">
+      <div class="tab-shell">
+        <div class="empty-state">
+          <div style="font-size:36px; margin-bottom:10px;">🎮</div>
+          <h3>비전마을 놀이터 (추후 오픈 예정)</h3>
+          <p>청년들이 함께 즐길 수 있는 미니게임 공간이 준비될 예정입니다.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>예수마을교회 청년부 '비전마을' 커뮤니티 포털</footer>
@@ -578,6 +609,37 @@
     </div>
   </div>
 
+  <!-- [모달 5] 기도제목 등록 -->
+  <div id="prayerModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'prayerModal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🙏 기도제목 나누기</h3>
+        <button class="close-btn" onclick="closeModal('prayerModal')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text-main); font-size:13px;">
+          <input type="checkbox" id="p_anon" onchange="togglePrayerAnon()" />
+          <span>익명으로 올리기</span>
+        </label>
+      </div>
+      <div class="form-group" id="p_authorBox">
+        <label>작성자 이름 (실명)</label>
+        <input type="text" id="p_author" class="form-control" placeholder="예: 홍길동" />
+      </div>
+      <div class="form-group" style="background:var(--badge-bday-bg); padding:10px 12px; border-radius:10px;">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--badge-bday-text); font-size:13px; margin:0;">
+          <input type="checkbox" id="p_intercessory" />
+          <span>🔥 중보기도 요청 (목록 최상단에 고정 표시됩니다)</span>
+        </label>
+      </div>
+      <div class="form-group">
+        <label>기도제목 내용 *</label>
+        <textarea id="p_content" class="form-control" rows="4" placeholder="함께 기도할 제목을 자유롭게 나눠주세요. (등록 후 7일간 유지됩니다)"></textarea>
+      </div>
+      <button class="btn-full" onclick="submitPrayer()">기도제목 올리기</button>
+    </div>
+  </div>
+
   <script>
     // ★ 1단계에서 배포한 Google Apps Script 웹 앱 URL을 아래 따옴표 안에 붙여넣으세요!
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwTxyn39zCE35hM2yaZpN8udZ3RrIiMXQXht66cMlsPRVbhOz8RyF5gGimCUR8YCZej/exec";
@@ -588,6 +650,7 @@
       members: [],
       schedules: [],
       reports: [],
+      prayers: [],
       selectedGroup: "전체",
       calYear: new Date().getFullYear(),
       calMonth: new Date().getMonth() + 1
@@ -636,6 +699,7 @@
           APP_STATE.members = json.data.members || [];
           APP_STATE.schedules = json.data.schedules || [];
           APP_STATE.reports = json.data.reports || [];
+          APP_STATE.prayers = json.data.prayers || [];
           if (!json.auth.authenticated) sessionStorage.removeItem("vision_pin");
           renderAll();
         }
@@ -663,6 +727,7 @@
             APP_STATE.members = json.data.members || [];
             APP_STATE.schedules = json.data.schedules || [];
             APP_STATE.reports = json.data.reports || [];
+            APP_STATE.prayers = json.data.prayers || [];
           }
           renderAll();
           return json;
@@ -685,6 +750,7 @@
       renderGroupTab();
       renderCalendarTab();
       renderNewFamilyTab();
+      renderPrayerTab();
     }
 
     // 권한 UI 반영
@@ -1263,6 +1329,97 @@
       if (!payload.나눔내용) return alert("만남 내용을 입력해 주세요.");
       const res = await postToGas({ action: "addMdReport", payload });
       if (res) closeModal("mdModal");
+    }
+
+    // 4탭: 기도제목 렌더링 (중보기도 상단 고정 + 최신순 + 7일 만료 카운트)
+    function renderPrayerTab() {
+      const grid = document.getElementById("prayerListGrid");
+      if (!grid) return;
+
+      const list = [...(APP_STATE.prayers || [])].sort((a, b) => {
+        // 1순위: 중보기도(Y) 최상단 고정
+        const interDiff = (b.중보기도 === "Y" ? 1 : 0) - (a.중보기도 === "Y" ? 1 : 0);
+        if (interDiff !== 0) return interDiff;
+        // 2순위: 최신 작성순
+        return String(b.작성일시 || "").localeCompare(String(a.작성일시 || ""));
+      });
+
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><p>현재 등록된 기도제목이 없습니다. 첫 기도제목을 나눠보세요!</p></div>`;
+        return;
+      }
+
+      const now = new Date();
+      grid.innerHTML = list.map(p => {
+        const isInter = p.중보기도 === "Y";
+        const expDate = p.만료일시 ? new Date(String(p.만료일시).replace(" ", "T") + "+09:00") : null;
+        const daysLeft = expDate ? Math.max(1, Math.ceil((expDate - now) / (1000 * 60 * 60 * 24))) : 7;
+        const canDelete = APP_STATE.auth.authenticated && (APP_STATE.auth.group === "전체" || APP_STATE.auth.tab1 >= 3);
+
+        return `
+          <div class="group-box" style="${isInter ? "border: 2px solid #F59E0B; background: var(--card-bg);" : "background: var(--card-bg);"}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                ${isInter ? `<span class="widget-badge badge-bday" style="font-size:11px; padding:2px 8px;">🔥 중보기도</span>` : ""}
+                <strong style="font-size:14px;">${p.익명여부 === "Y" ? "익명" : p.작성자}</strong>
+              </div>
+              <span style="font-size:11px; color:var(--text-sub);">${daysLeft}일 후 자동삭제</span>
+            </div>
+            <p style="font-size:14px; white-space:pre-line; line-height:1.6; margin-bottom:12px;">${p.기도제목내용}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--border); font-size:11px; color:var(--text-sub);">
+              <span>작성: ${p.작성일시 || "-"}</span>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-sm" onclick='copyPrayerText(${JSON.stringify(p)})'>📋 복사</button>
+                ${canDelete ? `<button class="btn btn-sm btn-danger" onclick="deletePrayer('${p.기도ID}')">삭제</button>` : ""}
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    function openPrayerModal() {
+      document.getElementById("p_anon").checked = false;
+      document.getElementById("p_intercessory").checked = false;
+      document.getElementById("p_authorBox").style.display = "block";
+      document.getElementById("p_author").value = APP_STATE.auth.name || "";
+      document.getElementById("p_content").value = "";
+      openModal("prayerModal");
+    }
+
+    function togglePrayerAnon() {
+      const isAnon = document.getElementById("p_anon").checked;
+      document.getElementById("p_authorBox").style.display = isAnon ? "none" : "block";
+    }
+
+    async function submitPrayer() {
+      const isAnon = document.getElementById("p_anon").checked;
+      const author = document.getElementById("p_author").value.trim();
+      const content = document.getElementById("p_content").value.trim();
+
+      if (!isAnon && !author) return alert("실명 작성 시 이름을 입력해 주세요.");
+      if (!content) return alert("기도제목 내용을 입력해 주세요.");
+
+      const payload = {
+        익명여부: isAnon ? "Y" : "N",
+        작성자: isAnon ? "익명" : author,
+        중보기도: document.getElementById("p_intercessory").checked ? "Y" : "N",
+        기도제목내용: content
+      };
+
+      const res = await postToGas({ action: "addPrayer", payload });
+      if (res) closeModal("prayerModal");
+    }
+
+    async function deletePrayer(prayerId) {
+      if (!confirm("이 기도제목을 삭제하시겠습니까?")) return;
+      await postToGas({ action: "deletePrayer", prayerId });
+    }
+
+    function copyPrayerText(p) {
+      const tag = p.중보기도 === "Y" ? "[🔥 중보기도 요청]" : "[🙏 비전마을 기도제목]";
+      const name = p.익명여부 === "Y" ? "익명" : p.작성자;
+      const text = `${tag}\n작성자: ${name}\n내용: ${p.기도제목내용}`;
+      navigator.clipboard.writeText(text).then(() => alert("기도제목이 복사되었습니다!"));
     }
     
   </script>
