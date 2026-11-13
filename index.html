@@ -482,7 +482,11 @@
       <div class="form-group"><label>교회 등록일 (새가족)</label><input type="date" id="m_regDate" class="form-control" /></div>
       <div class="form-group"><label>친해지기 정보 (취미, 좋아하는 음식, MBTI 등)</label><input type="text" id="m_ice" class="form-control" placeholder="예: 보드게임, 아메리카노, ENFP" /></div>
       <div class="form-group"><label>담당 MD 청년 (새가족인 경우)</label><input type="text" id="m_md" class="form-control" placeholder="담당 MD 이름" /></div>
-      <div class="form-group"><label>프로필 사진 URL (선택)</label><input type="text" id="m_photo" class="form-control" placeholder="https://..." /></div>
+      <div class="form-group">
+        <label>프로필 사진 첨부 (구글 드라이브 자동 보관)</label>
+        <input type="file" id="m_photoFile" class="form-control" accept="image/*" />
+        <input type="hidden" id="m_photo" />
+      </div>
       <button class="btn-full" onclick="saveMember()">저장하기</button>
     </div>
   </div>
@@ -510,19 +514,29 @@
   <div id="mdModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'mdModal')">
     <div class="modal-box">
       <div class="modal-header">
-        <h3 id="mdModalTitle">📝 MD 보고서</h3>
+        <h3 id="mdModalTitle">📝 새가족 만남보고서</h3>
         <button class="close-btn" onclick="closeModal('mdModal')">&times;</button>
       </div>
       <div id="mdHistoryList" style="margin-bottom:14px;"></div>
       <div id="mdWriteBox">
         <hr style="border:none; border-top:1px dashed var(--border); margin:12px 0;" />
-        <p style="font-size:12px; color:var(--mint); font-weight:700; margin-bottom:8px;">* 보고서를 제출하면 잔여 횟수가 자동으로 1회 차감됩니다.</p>
+        <p style="font-size:12px; color:var(--mint); font-weight:700; margin-bottom:10px;">
+          * 보고서를 제출하면 잔여 횟수가 자동으로 1회 차감됩니다.
+        </p>
         <input type="hidden" id="md_nf_id" />
-        <div class="form-group"><label>만남 날짜</label><input type="date" id="md_date" class="form-control" /></div>
-        <div class="form-group"><label>진행 MD 이름</label><input type="text" id="md_writer" class="form-control" /></div>
-        <div class="form-group"><label>만남 장소</label><input type="text" id="md_place" class="form-control" placeholder="예: 교회 인근 카페" /></div>
-        <div class="form-group"><label>나눔 내용</label><textarea id="md_content" class="form-control" rows="3" placeholder="오늘 나눈 이야기와 정착 근황"></textarea></div>
-        <div class="form-group"><label>기도 제목</label><input type="text" id="md_prayer" class="form-control" placeholder="함께 기도할 제목" /></div>
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;"><label>이름 (새가족)</label><input type="text" id="md_nf_name" class="form-control" readonly /></div>
+          <div class="form-group" style="flex:1;"><label>MD</label><input type="text" id="md_writer" class="form-control" /></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;"><label>만난 날짜</label><input type="date" id="md_date" class="form-control" /></div>
+          <div class="form-group" style="width:110px;"><label>횟수 (회차)</label><input type="number" id="md_round" class="form-control" min="1" max="5" /></div>
+        </div>
+        <div class="form-group"><label>장소</label><input type="text" id="md_place" class="form-control" placeholder="예: 교회 인근 카페" /></div>
+        <div class="form-group"><label>내용</label><textarea id="md_content" class="form-control" rows="3" placeholder="만남에서 나눈 이야기와 근황을 적어주세요"></textarea></div>
+        <div class="form-group"><label>기도제목</label><textarea id="md_prayer" class="form-control" rows="2" placeholder="함께 기도할 제목을 적어주세요"></textarea></div>
+        <div class="form-group"><label>소개한 사람 (2명 이상)</label><input type="text" id="md_intro" class="form-control" placeholder="예: 김OO 목자, 이OO 청년 (2명 이상 기재)" /></div>
+        <div class="form-group"><label>만남 인증사진 첨부 (선택 · 드라이브 자동 보관)</label><input type="file" id="md_photoFile" class="form-control" accept="image/*" /></div>
         <button class="btn-full" onclick="submitMdReport()">보고서 제출 및 횟수 차감(-1)</button>
       </div>
     </div>
@@ -1023,6 +1037,9 @@
     async function saveMember() {
       const id = document.getElementById("m_id").value;
       const role = document.getElementById("m_role").value;
+      const fileInput = document.getElementById("m_photoFile");
+      const photoBase64 = fileInput && fileInput.files[0] ? await compressImageFile(fileInput.files[0]) : "";
+
       const payload = {
         ID: id,
         목장: document.getElementById("m_group").value,
@@ -1037,12 +1054,16 @@
         친해지기정보: document.getElementById("m_ice").value.trim(),
         담당MD: document.getElementById("m_md").value.trim(),
         사진URL: document.getElementById("m_photo").value.trim(),
+        photoBase64: photoBase64,
         MD잔여횟수: role === "새가족" ? 5 : 0,
         상태: document.getElementById("m_status").value
       };
       if (!payload.이름) return alert("이름을 입력해 주세요.");
       const res = await postToGas({ action: id ? "updateMember" : "addMember", payload });
-      if (res) closeModal("memberModal");
+      if (res) {
+        if (fileInput) fileInput.value = "";
+        closeModal("memberModal");
+      }
     }
 
     function openScheduleModal() {
@@ -1066,23 +1087,36 @@
     }
 
     function openMdModal(nf) {
-      document.getElementById("mdModalTitle").textContent = `📝 ${nf.이름} 새가족 MD 보고서`;
+      document.getElementById("mdModalTitle").textContent = `📝 ${nf.이름} 새가족 만남보고서`;
       document.getElementById("md_nf_id").value = nf.ID;
-      document.getElementById("md_date").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("md_nf_name").value = nf.이름;
       document.getElementById("md_writer").value = nf.담당MD || APP_STATE.auth.name || "";
-      ["md_place", "md_content", "md_prayer"].forEach(id => document.getElementById(id).value = "");
+      document.getElementById("md_date").value = new Date().toISOString().slice(0, 10);
+
+      const rem = Number(nf.MD잔여횟수 || 0);
+      document.getElementById("md_round").value = Math.min(5, Math.max(1, 6 - rem));
+
+      ["md_place", "md_content", "md_prayer", "md_intro"].forEach(id => document.getElementById(id).value = "");
+      const photoInput = document.getElementById("md_photoFile");
+      if (photoInput) photoInput.value = "";
 
       const logs = APP_STATE.reports.filter(r => String(r.새가족ID) === String(nf.ID));
       document.getElementById("mdHistoryList").innerHTML = logs.length
         ? logs.map(l => `
-            <div style="background:var(--sub-bg); padding:10px; border-radius:10px; border:1px solid var(--border); margin-bottom:8px; font-size:13px;">
-              <strong>[${l.회차}회차 · ${l.만남날짜}]</strong> (MD: ${l.담당MD} / ${l.만남장소 || "-"})
-              <p style="margin-top:4px;">${l.나눔내용}</p>
-              ${l.기도제목 ? `<p style="color:var(--primary); font-size:12px; margin-top:2px;">🙏 ${l.기도제목}</p>` : ""}
+            <div style="background:var(--sub-bg); padding:12px; border-radius:12px; border:1px solid var(--border); margin-bottom:10px; font-size:13px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <strong>[${l.회차}회차 · ${l.만난날짜}]</strong>
+                <button class="btn btn-sm" onclick='copyMdReportText(${JSON.stringify(l)})'>📋 양식 복사</button>
+              </div>
+              <div><strong>MD:</strong> ${l.담당MD} · <strong>장소:</strong> ${l.만남장소 || "-"}</div>
+              <p style="margin-top:6px; white-space:pre-line;"><strong>내용:</strong> ${l.나눔내용}</p>
+              ${l.기도제목 ? `<p style="color:var(--primary); margin-top:4px;"><strong>기도제목:</strong> ${l.기도제목}</p>` : ""}
+              ${l.소개한사람 ? `<p style="color:var(--mint); margin-top:4px;"><strong>소개한 사람:</strong> ${l.소개한사람}</p>` : ""}
+              ${l.인증사진URL ? `<img src="${l.인증사진URL}" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-top:8px;" alt="인증사진" />` : ""}
             </div>`).join("")
-        : `<p style="font-size:13px; color:var(--text-sub);">아직 작성된 MD 보고서가 없습니다.</p>`;
+        : `<p style="font-size:13px; color:var(--text-sub);">아직 작성된 만남보고서가 없습니다.</p>`;
 
-      const canWrite = APP_STATE.auth.tab3 >= 2 && Number(nf.MD잔여횟수) > 0;
+      const canWrite = APP_STATE.auth.tab3 >= 2 && rem > 0;
       document.getElementById("mdWriteBox").style.display = canWrite ? "block" : "none";
       openModal("mdModal");
     }
@@ -1100,6 +1134,57 @@
       const res = await postToGas({ action: "addMdReport", payload });
       if (res) closeModal("mdModal");
     }
+
+    // 이미지 파일 자동 압축(리사이징) 헬퍼 (가로 최대 800px)
+    function compressImageFile(file) {
+      return new Promise((resolve) => {
+        if (!file) return resolve("");
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const maxW = 800;
+            const scale = img.width > maxW ? maxW / img.width : 1;
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", 0.78));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 보고서 양식 그대로 카카오톡 복사
+    function copyMdReportText(l) {
+      const text = `*새가족 만남보고서 *\n이름 : ${l.새가족이름}\nMD : ${l.담당MD}\n만난 날짜 : ${l.만난날짜}\n장소 : ${l.만남장소 || ""}\n횟수 : ${l.회차}회\n내용 : ${l.나눔내용}\n기도제목 : ${l.기도제목 || ""}\n소개한 사람(2명 이상) : ${l.소개한사람 || ""}`;
+      navigator.clipboard.writeText(text).then(() => alert("새가족 만남보고서 양식이 클립보드에 복사되었습니다!"));
+    }
+
+    // MD 보고서 제출
+    async function submitMdReport() {
+      const photoInput = document.getElementById("md_photoFile");
+      const photoBase64 = photoInput && photoInput.files[0] ? await compressImageFile(photoInput.files[0]) : "";
+
+      const payload = {
+        새가족ID: document.getElementById("md_nf_id").value,
+        담당MD: document.getElementById("md_writer").value.trim(),
+        만난날짜: document.getElementById("md_date").value,
+        회차: Number(document.getElementById("md_round").value),
+        만남장소: document.getElementById("md_place").value.trim(),
+        나눔내용: document.getElementById("md_content").value.trim(),
+        기도제목: document.getElementById("md_prayer").value.trim(),
+        소개한사람: document.getElementById("md_intro").value.trim(),
+        photoBase64: photoBase64
+      };
+      if (!payload.나눔내용) return alert("만남 내용을 입력해 주세요.");
+      const res = await postToGas({ action: "addMdReport", payload });
+      if (res) closeModal("mdModal");
+    }
+    
   </script>
 </body>
 </html>
