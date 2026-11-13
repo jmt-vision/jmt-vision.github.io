@@ -226,6 +226,19 @@
       margin-right: 6px;
     }
 
+    /* S1~S4 출석/관리 단계 뱃지 */
+    .stage-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 5px;
+      margin-left: 4px;
+    }
+    .stage-S1 { background: #DCFCE7; color: #15803D; } /* 꾸준히 참여 (초록) */
+    .stage-S2 { background: #E0F2FE; color: #0369A1; } /* 2~3달에 1회 (파랑) */
+    .stage-S3 { background: #FEF3C7; color: #B45309; } /* 6달에 1회 (노랑) */
+    .stage-S4 { background: #FEE2E2; color: #B91C1C; } /* 제적 대상 (빨강) */
+
   </style>
 </head>
 <body>
@@ -444,6 +457,14 @@
         </select>
       </div>
       <div class="form-group"><label>직분</label>
+        <div class="form-group"><label>출석/관리 단계 (상태)</label>
+        <select id="m_status" class="form-control">
+          <option value="S1">S1 - 예배에 꾸준히 참여</option>
+          <option value="S2">S2 - 2~3달에 한 번씩 참여</option>
+          <option value="S3">S3 - 6달에 한 번씩 참여</option>
+          <option value="S4">S4 - 연락두절 등의 제적 대상</option>
+        </select>
+      </div>
         <select id="m_role" class="form-control">
           <option value="새가족">새가족 (MD 5회 진행)</option>
           <option value="목원">목원</option>
@@ -673,7 +694,7 @@
         : "현재 진행 중인 새가족이 없습니다.";
     }
 
-// 1탭: 리더십(목사님/디렉터님) + 목장 편성표 렌더링
+// 1탭: 리더십 + 목장 편성표 렌더링 (S1~S4 단계 및 가나다순 정렬 적용)
     function renderGroupTab() {
       const curMonth = new Date().getMonth() + 1;
       const isAllView = APP_STATE.selectedGroup === "전체";
@@ -718,11 +739,25 @@
 
       const targetGroups = isAllView ? groups.slice(1) : [APP_STATE.selectedGroup];
       const roleOrder = { "목자": 1, "준목자": 2, "목원": 3, "새가족": 4 };
+      const stageOrder = { "S1": 1, "S2": 2, "S3": 3, "S4": 4 };
 
       document.getElementById("groupGrid").innerHTML = targetGroups.map(gName => {
         const fullList = APP_STATE.members
           .filter(m => m.목장 === gName)
-          .sort((a, b) => (roleOrder[a.직분] || 9) - (roleOrder[b.직분] || 9));
+          .sort((a, b) => {
+            // 1순위: 직분 (목자 -> 준목자 -> 목원 -> 새가족)
+            const rDiff = (roleOrder[a.직분] || 9) - (roleOrder[b.직분] || 9);
+            if (rDiff !== 0) return rDiff;
+
+            // 2순위: 일반 목원/새가족일 경우 S1 -> S2 -> S3 -> S4 단계 순
+            const stA = String(a.상태 || "").trim().toUpperCase();
+            const stB = String(b.상태 || "").trim().toUpperCase();
+            const sDiff = (stageOrder[stA] || 9) - (stageOrder[stB] || 9);
+            if (sDiff !== 0) return sDiff;
+
+            // 3순위: 동일 단계 내 이름 가나다순
+            return String(a.이름 || "").localeCompare(String(b.이름 || ""), "ko");
+          });
 
         // '전체' 보기일 때는 목자/준목자만 필터링, 개별 목장 탭에서는 전원 표시
         const visibleList = isAllView
@@ -734,6 +769,11 @@
         const rowsHtml = visibleList.length ? visibleList.map(m => {
           const isBdayMonth = m.생일 && Number(m.생일.split("-")[1]) === curMonth;
           const canEdit = APP_STATE.auth.tab1 >= 3 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
+          const stCode = String(m.상태 || "").trim().toUpperCase();
+          const canViewStage = APP_STATE.auth.tab1 >= 2 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
+          const stageBadge = (canViewStage && ["S1", "S2", "S3", "S4"].includes(stCode))
+            ? `<span class="stage-badge stage-${stCode}">${stCode}</span>`
+            : "";
           const privateInfo = (m.연락처 || m.주소_동)
             ? `<div class="member-meta">📞 ${m.연락처 || "-"} · 📍 ${m.주소_시구 || ""} ${m.주소_동 || ""}</div>`
             : "";
@@ -744,6 +784,7 @@
                 <div>
                   <span class="role-tag role-${m.직분}">${m.직분}</span>
                   <strong>${m.이름}</strong>
+                  ${stageBadge}
                   ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
                   ${m.새가족여부 === "Y" ? `<span class="widget-badge badge-new" style="font-size:10px; padding:1px 6px;">New</span>` : ""}
                 </div>
@@ -754,7 +795,6 @@
             </div>`;
         }).join("") : `<p style="font-size:13px; color:var(--text-sub); padding:8px 0;">${isAllView ? "배정된 목자·준목자가 없습니다." : "등록된 목원이 없습니다."}</p>`;
 
-        // '전체' 보기일 때 하단에 (+ 일반 목원 N명) 요약 버튼 표시
         const summaryFooterHtml = (isAllView && hiddenCount > 0)
           ? `<div onclick="selectGroupFilter('${gName}')" style="margin-top:8px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px dashed var(--border); text-align:center; font-size:13px; font-weight:700; color:var(--primary); cursor:pointer;">
                + 일반 목원 ${hiddenCount}명 <span style="font-weight:500; color:var(--text-sub); font-size:12px;">(클릭하여 전체 보기 →)</span>
@@ -951,20 +991,23 @@
       fetchInitialData("");
     }
 
+    // 등록/수정 모달에서 상태(S1~S4) 값 연동
     function openMemberModal(isNewFamily = false) {
       document.getElementById("memberModalTitle").textContent = isNewFamily ? "🌱 새가족 등록" : "👥 목원/새가족 등록";
       document.getElementById("m_id").value = "";
       document.getElementById("m_role").value = isNewFamily ? "새가족" : "목원";
+      document.getElementById("m_status").value = "S1";
       ["m_name", "m_bday", "m_phone", "m_city", "m_dong", "m_ice", "m_md", "m_photo"].forEach(id => document.getElementById(id).value = "");
       document.getElementById("m_regDate").value = new Date().toISOString().slice(0, 10);
       openModal("memberModal");
     }
-
+    
     function openEditMember(m) {
       document.getElementById("memberModalTitle").textContent = "✏️ 구성원 정보 수정";
       document.getElementById("m_id").value = m.ID;
       document.getElementById("m_group").value = m.목장;
       document.getElementById("m_role").value = m.직분;
+      document.getElementById("m_status").value = ["S1", "S2", "S3", "S4"].includes(m.상태) ? m.상태 : "S1";
       document.getElementById("m_name").value = m.이름;
       document.getElementById("m_bday").value = m.생일 || "";
       document.getElementById("m_phone").value = m.연락처 || "";
@@ -995,7 +1038,7 @@
         담당MD: document.getElementById("m_md").value.trim(),
         사진URL: document.getElementById("m_photo").value.trim(),
         MD잔여횟수: role === "새가족" ? 5 : 0,
-        상태: "활동"
+        상태: document.getElementById("m_status").value
       };
       if (!payload.이름) return alert("이름을 입력해 주세요.");
       const res = await postToGas({ action: id ? "updateMember" : "addMember", payload });
