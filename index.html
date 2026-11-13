@@ -400,7 +400,8 @@
           <h2>🌱 새가족 관리 & MD 트래킹</h2>
           <div style="display:flex; gap:8px; align-items:center;">
             <span class="perm-pill" id="badge-tab3">1단계 (기본 열람)</span>
-            <button id="btnAddNf" class="btn btn-primary btn-sm" style="display:none;" onclick="openMemberModal(true)">+ 새가족 등록</button>
+            <!-- ▼ openMemberModal(true) 대신 openNewFamilyModal() 호출 -->
+            <button id="btnAddNf" class="btn btn-primary btn-sm" style="display:none;" onclick="openNewFamilyModal()">+ 새가족 등록</button>
           </div>
         </div>
         <div class="nf-grid" id="newFamilyGrid"></div>
@@ -488,6 +489,41 @@
         <input type="hidden" id="m_photo" />
       </div>
       <button class="btn-full" onclick="saveMember()">저장하기</button>
+    </div>
+  </div>
+
+  <!-- [모달 2-1] 새가족 등록 전용 모달 (직분='새가족', 상태='S1' 자동 고정) -->
+  <div id="newFamilyModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'newFamilyModal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🌱 새가족 등록</h3>
+        <button class="close-btn" onclick="closeModal('newFamilyModal')">&times;</button>
+      </div>
+      <p style="font-size:12px; color:var(--mint); font-weight:700; margin-bottom:12px;">
+        * 등록 시 직분은 '새가족', 출석 단계는 'S1', MD 잔여 횟수는 5회로 자동 지정됩니다.
+      </p>
+      <div class="form-group"><label>배정 목장</label>
+        <select id="nf_group" class="form-control">
+          <option>1목장</option><option>2목장</option><option>3목장</option><option>4목장</option><option>5목장</option><option>6목장</option><option>7목장</option>
+        </select>
+      </div>
+      <div class="form-group"><label>이름 *</label><input type="text" id="nf_name" class="form-control" placeholder="예: 김새가족" /></div>
+      <div style="display:flex; gap:8px;">
+        <div class="form-group" style="flex:1;"><label>생일</label><input type="date" id="nf_bday" class="form-control" /></div>
+        <div class="form-group" style="flex:1;"><label>교회 등록일</label><input type="date" id="nf_regDate" class="form-control" /></div>
+      </div>
+      <div class="form-group"><label>연락처</label><input type="text" id="nf_phone" class="form-control" placeholder="010-0000-0000" /></div>
+      <div class="form-group" style="display:flex; gap:8px;">
+        <div style="flex:1;"><label>주소 (시/구)</label><input type="text" id="nf_city" class="form-control" placeholder="예: 서울 중구" /></div>
+        <div style="flex:1;"><label>주소 (동 단위까지만)</label><input type="text" id="nf_dong" class="form-control" placeholder="예: 신당동" /></div>
+      </div>
+      <div class="form-group"><label>담당 MD 청년</label><input type="text" id="nf_md" class="form-control" placeholder="담당 MD 이름" /></div>
+      <div class="form-group"><label>친해지기 정보 (취미, 좋아하는 음식, MBTI 등)</label><input type="text" id="nf_ice" class="form-control" placeholder="예: 보드게임, 아메리카노, ENFP" /></div>
+      <div class="form-group">
+        <label>프로필 사진 첨부 (선택 · 구글 드라이브 자동 보관)</label>
+        <input type="file" id="nf_photoFile" class="form-control" accept="image/*" />
+      </div>
+      <button class="btn-full" onclick="saveNewFamily()">새가족 등록하기</button>
     </div>
   </div>
 
@@ -1063,6 +1099,50 @@
       if (res) {
         if (fileInput) fileInput.value = "";
         closeModal("memberModal");
+      }
+    }
+
+    // 새가족 등록 전용 모달 열기
+    function openNewFamilyModal() {
+      ["nf_name", "nf_bday", "nf_phone", "nf_city", "nf_dong", "nf_md", "nf_ice"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      document.getElementById("nf_regDate").value = new Date().toISOString().slice(0, 10);
+      const photoInput = document.getElementById("nf_photoFile");
+      if (photoInput) photoInput.value = "";
+      openModal("newFamilyModal");
+    }
+
+    // 새가족 전용 저장 (직분='새가족', 상태='S1' 자동 고정)
+    async function saveNewFamily() {
+      const name = document.getElementById("nf_name").value.trim();
+      if (!name) return alert("새가족 이름을 입력해 주세요.");
+
+      const fileInput = document.getElementById("nf_photoFile");
+      const photoBase64 = fileInput && fileInput.files[0] ? await compressImageFile(fileInput.files[0]) : "";
+
+      const payload = {
+        목장: document.getElementById("nf_group").value,
+        직분: "새가족",
+        이름: name,
+        생일: document.getElementById("nf_bday").value,
+        연락처: document.getElementById("nf_phone").value.trim(),
+        주소_시구: document.getElementById("nf_city").value.trim(),
+        주소_동: document.getElementById("nf_dong").value.trim(),
+        새가족여부: "Y",
+        등록일: document.getElementById("nf_regDate").value,
+        친해지기정보: document.getElementById("nf_ice").value.trim(),
+        담당MD: document.getElementById("nf_md").value.trim(),
+        사진URL: "",
+        photoBase64: photoBase64,
+        MD잔여횟수: 5,
+        상태: "S1"
+      };
+
+      const res = await postToGas({ action: "addMember", payload });
+      if (res) {
+        if (fileInput) fileInput.value = "";
+        closeModal("newFamilyModal");
       }
     }
 
