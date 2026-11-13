@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>예수마을교회 청년부 | 비전마을</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root {
+      --primary: #2B4C7E;
+      --primary-dark: #1D3557;
+      --primary-light: #EBF2FA;
+      --accent: #F4A261;
+      --mint: #2A9D8F;
+      --bg: #F6F8FB;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-sub: #64748B;
+      --border: #E2E8F0;
+      --radius: 16px;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 상단 헤더 */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    }
+
+    .header-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .brand-text span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.3px;
+    }
+
+    .settings-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .settings-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .settings-btn.authenticated {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* 6개 탭 내비게이션 바 */
+    nav.tab-bar {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-bar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 16px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tab-bar-inner::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      padding: 13px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 700;
+    }
+
+    .tab-btn.coming-soon {
+      color: #94A3B8;
+    }
+
+    .badge-soon {
+      font-size: 10px;
+      background: #F1F5F9;
+      color: #64748B;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* 메인 컨테이너 */
+    main {
+      max-width: 1120px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+      flex: 1;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 메인화면: 히어로 배너 */
+    .hero-card {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px rgba(43, 76, 126, 0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.16);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero-card h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.4px;
+    }
+
+    .hero-card p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 560px;
+      margin-bottom: 20px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-hero {
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .btn-hero:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .btn-hero-primary {
+      background: #fff;
+      color: var(--primary-dark);
+    }
+
+    .btn-hero-secondary {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+
+    /* 메인화면: 3단 요약 위젯 */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .widget-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .widget-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .widget-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .widget-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .badge-bday { background: #FEF3C7; color: #B45309; }
+    .badge-event { background: #E0F2FE; color: #0369A1; }
+    .badge-new { background: #CCFBF1; color: #0F766E; }
+
+    .widget-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .widget-card p {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    .widget-footer {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* 메인화면: 6개 메뉴 바로가기 그리드 */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .menu-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .menu-tile:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .menu-tile.disabled {
+      opacity: 0.65;
+      background: #F8FAFC;
+    }
+
+    .menu-tile.disabled:hover {
+      border-color: var(--border);
+      background: #F1F5F9;
+    }
+
+    .tile-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .menu-tile.disabled .tile-icon {
+      background: #E2E8F0;
+      color: #64748B;
+    }
+
+    .tile-info h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .tile-info span {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    /* 각 탭 기본 틀 플레이스홀더 */
+    .tab-shell {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-shell-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .tab-shell-header h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .perm-pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-sub);
+    }
+
+    .empty-state .icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+      font-size: 17px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    /* 모달(설정창 / PIN 입력) */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+
+    .pin-input {
+      width: 100%;
+      padding: 14px;
+      font-size: 20px;
+      letter-spacing: 8px;
+      text-align: center;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      margin: 12px 0;
+      font-weight: 700;
+    }
+
+    .pin-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn-full {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn-full.danger {
+      background: #EF4444;
+    }
+
+    .perm-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 13px;
+    }
+
+    .perm-table th, .perm-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .perm-table td:last-child {
+      text-align: right;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--text-sub);
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .widget-grid, .menu-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-card h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 헤더 -->
+  <header>
+    <div class="header-inner">
+      <a class="brand" onclick="switchTab('home')">
+        <div class="brand-icon">✝</div>
+        <div class="brand-text">
+          <span>예수마을교회 청년부</span>
+          <h1>비전마을</h1>
+        </div>
+      </a>
+      <button id="settingsBtn" class="settings-btn" onclick="openSettingsModal()">
+        <span id="settingsIcon">⚙️</span>
+        <span id="settingsLabel">설정 / 권한인증</span>
+      </button>
+    </div>
+
+    <!-- 6개 탭 내비게이션 -->
+    <nav class="tab-bar">
+      <div class="tab-bar-inner">
+        <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">🏠 홈</button>
+        <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')">1. 목장 편성표</button>
+        <button class="tab-btn" data-tab="tab2" onclick="switchTab('tab2')">2. 일정 관리</button>
+        <button class="tab-btn" data-tab="tab3" onclick="switchTab('tab3')">3. 새가족 관리</button>
+        <button class="tab-btn coming-soon" data-tab="tab4" onclick="switchTab('tab4')">4. 기능 준비중 <span class="badge-soon">예정</span></button>
+        <button class="tab-btn coming-soon" data-tab="tab5" onclick="switchTab('tab5')">5. 기능 준비중 <span class="badge-soon">예정</span></button>
+        <button class="tab-btn coming-soon" data-tab="tab6" onclick="switchTab('tab6')">6. 기능 준비중 <span class="badge-soon">예정</span></button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <main>
+    <!-- [홈] 메인화면 -->
+    <section id="view-home" class="view-section active">
+      <div class="hero-card">
+        <span class="hero-tag">예수마을교회 청년부 공동체</span>
+        <h2>함께 자라가는 비전마을에 오신 것을 환영합니다</h2>
+        <p>1~7목장 편성 현황부터 교회·청년부 일정, 새가족 정착 이야기까지 한곳에서 확인하고 함께 마음을 모아주세요.</p>
+        <div class="hero-actions">
+          <button class="btn-hero btn-hero-primary" onclick="switchTab('tab1')">📋 우리 목장 편성표 보기</button>
+          <button class="btn-hero btn-hero-secondary" onclick="switchTab('tab2')">📅 이번 달 일정 확인</button>
+        </div>
+      </div>
+
+      <!-- 핵심 브리핑 위젯 -->
+      <div class="section-title">
+        <span>📌 비전마을 한눈에 보기</span>
+      </div>
+      <div class="widget-grid">
+        <div class="widget-card" onclick="switchTab('tab2')">
+          <div>
+            <div class="widget-header">
+              <span class="widget-badge badge-bday">🎂 이달의 생일자</span>
+              <span style="font-size:12px; color:var(--text-sub);">매월 1일 자동 갱신</span>
+            </div>
+            <h3>이번 달 생일 축하 명단</h3>
+            <p>구글 시트 연동 후 이번 달 생일을 맞이한 청년들의 이름이 이곳에 표시됩니다.</p>
+          </div>
+          <div class="widget-footer">일정 관리 탭에서 전체 보기 →</div>
+        </div>
+
+        <div class="widget-card" onclick="switchTab('tab2')">
+          <div>
+            <div class="widget-header">
+              <span class="widget-badge badge-event">📅 다가오는 일정</span>
+              <span style="font-size:12px; color:var(--text-sub);">교회 · 청년부</span>
+            </div>
+            <h3>주요 행사 및 모임</h3>
+            <p>다가오는 교회 전체 행사와 비전마을 청년부 일정이 자동으로 요약됩니다.</p>
+          </div>
+          <div class="widget-footer">캘린더 자세히 보기 →</div>
+        </div>
+
+        <div class="widget-card" onclick="switchTab('tab3')">
+          <div>
+            <div class="widget-header">
+              <span class="widget-badge badge-new">🌱 새가족 & MD</span>
+              <span style="font-size:12px; color:var(--text-sub);">정착 진행 현황</span>
+            </div>
+            <h3>함께 환영할 새가족</h3>
+            <p>새롭게 등록한 청년들과 5회차 MD 만남을 진행 중인 현황을 확인할 수 있습니다.</p>
+          </div>
+          <div class="widget-footer">새가족 관리 탭 이동 →</div>
+        </div>
+      </div>
+
+      <!-- 6개 메뉴 빠른 이동 -->
+      <div class="section-title">
+        <span>🧭 전체 메뉴 바로가기 (6개 탭)</span>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-tile" onclick="switchTab('tab1')">
+          <div class="tile-icon">👥</div>
+          <div class="tile-info">
+            <h4>1. 목장 편성표</h4>
+            <span>1~7목장 목자·준목자·목원 현황</span>
+          </div>
+        </div>
+        <div class="menu-tile" onclick="switchTab('tab2')">
+          <div class="tile-icon">🗓️</div>
+          <div class="tile-info">
+            <h4>2. 일정 관리</h4>
+            <span>교회·청년부 행사 및 생일 달력</span>
+          </div>
+        </div>
+        <div class="menu-tile" onclick="switchTab('tab3')">
+          <div class="tile-icon">🌱</div>
+          <div class="tile-info">
+            <h4>3. 새가족 관리</h4>
+            <span>새가족 프로필 및 MD 5회차 보고서</span>
+          </div>
+        </div>
+        <div class="menu-tile disabled" onclick="switchTab('tab4')">
+          <div class="tile-icon">🚧</div>
+          <div class="tile-info">
+            <h4>4. 기능 업데이트 예정</h4>
+            <span>추후 새로운 기능이 추가됩니다</span>
+          </div>
+        </div>
+        <div class="menu-tile disabled" onclick="switchTab('tab5')">
+          <div class="tile-icon">🚧</div>
+          <div class="tile-info">
+            <h4>5. 기능 업데이트 예정</h4>
+            <span>추후 새로운 기능이 추가됩니다</span>
+          </div>
+        </div>
+        <div class="menu-tile disabled" onclick="switchTab('tab6')">
+          <div class="tile-icon">🚧</div>
+          <div class="tile-info">
+            <h4>6. 기능 업데이트 예정</h4>
+            <span>추후 새로운 기능이 추가됩니다</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- [1탭] 목장 편성표 -->
+    <section id="view-tab1" class="view-section">
+      <div class="tab-shell">
+        <div class="tab-shell-header">
+          <h2>📋 1~7목장 편성표</h2>
+          <span class="perm-pill" id="badge-tab1">현재 권한: 1단계 (기본 열람)</span>
+        </div>
+        <div class="empty-state">
+          <div class="icon">👥</div>
+          <h3>목장 편성표 영역 (구글 시트 연동 예정)</h3>
+          <p>일반 열람 시 이름·직분·생일이 표시되며, 2단계 이상 PIN 인증 시 연락처·동 단위 주소 열람 및 새가족 추가가 활성화됩니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- [2탭] 일정 관리 -->
+    <section id="view-tab2" class="view-section">
+      <div class="tab-shell">
+        <div class="tab-shell-header">
+          <h2>🗓️ 비전마을 일정 관리</h2>
+          <span class="perm-pill" id="badge-tab2">현재 권한: 1단계 (기본 열람)</span>
+        </div>
+        <div class="empty-state">
+          <div class="icon">📅</div>
+          <h3>자체 캘린더 & 이달의 생일자 브리핑 영역</h3>
+          <p>매월 1일 이달의 생일자 전체 알림과 교회/청년부 자체 캘린더가 이곳에 구현됩니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- [3탭] 새가족 관리 -->
+    <section id="view-tab3" class="view-section">
+      <div class="tab-shell">
+        <div class="tab-shell-header">
+          <h2>🌱 새가족 관리 & MD 트래킹</h2>
+          <span class="perm-pill" id="badge-tab3">현재 권한: 1단계 (기본 열람)</span>
+        </div>
+        <div class="empty-state">
+          <div class="icon">🌿</div>
+          <h3>새가족 카드 & MD 5회차 보고서 영역</h3>
+          <p>새가족 사진·등록일·친해지기 정보와 담당 MD 5회차 카운터(-1 자동 차감) 기능이 이곳에 구현됩니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- [4~6탭] 업데이트 예정 -->
+    <section id="view-tab4" class="view-section">
+      <div class="tab-shell">
+        <div class="empty-state">
+          <div class="icon">✨</div>
+          <h3>기능 업데이트 예정 (4번째 탭)</h3>
+          <p>비전마을 공동체를 위한 새로운 기능이 곧 준비될 예정입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-tab5" class="view-section">
+      <div class="tab-shell">
+        <div class="empty-state">
+          <div class="icon">✨</div>
+          <h3>기능 업데이트 예정 (5번째 탭)</h3>
+          <p>비전마을 공동체를 위한 새로운 기능이 곧 준비될 예정입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-tab6" class="view-section">
+      <div class="tab-shell">
+        <div class="empty-state">
+          <div class="icon">✨</div>
+          <h3>기능 업데이트 예정 (6번째 탭)</h3>
+          <p>비전마을 공동체를 위한 새로운 기능이 곧 준비될 예정입니다.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    예수마을교회 청년부 '비전마을' 커뮤니티 포털
+  </footer>
+
+  <!-- 설정 / 6자리 PIN 인증 모달 -->
+  <div id="settingsModal" class="modal-backdrop" onclick="closeModalOnOutside(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>⚙️ 권한 설정 및 인증</h3>
+        <button class="close-btn" onclick="closeSettingsModal()">&times;</button>
+      </div>
+
+      <!-- 미인증 상태 화면 -->
+      <div id="pinLoginBox">
+        <p style="font-size:13px; color:var(--text-sub);">
+          목자, 부서 담당자, 또는 MD 청년은 부여받은 <strong>6자리 PIN 번호</strong>를 입력해 주세요. 브라우저를 닫기 전까지 권한이 유지됩니다.
+        </p>
+        <input type="password" id="pinInput" class="pin-input" maxlength="6" inputmode="numeric" placeholder="••••••" />
+        <p id="pinError" style="font-size:12px; color:#EF4444; display:none; margin-bottom:6px;">PIN 번호 6자리를 정확히 입력해 주세요.</p>
+        <button class="btn-full" onclick="verifyPinDemo()">PIN 인증하기</button>
+        <p style="font-size:11px; color:#94A3B8; margin-top:10px; text-align:center;">
+          * 현재는 기본 틀 테스트용으로 아무 6자리 숫자나 입력하면 임시 인증됩니다.
+        </p>
+      </div>
+
+      <!-- 인증 완료 상태 화면 -->
+      <div id="pinStatusBox" style="display:none;">
+        <div style="background:var(--primary-light); padding:12px; border-radius:12px; margin-bottom:12px;">
+          <strong id="authUserName" style="color:var(--primary-dark); font-size:15px;">인증된 사용자</strong>
+          <span id="authUserGroup" style="display:block; font-size:12px; color:var(--text-sub);">담당 목장: 전체</span>
+        </div>
+        <table class="perm-table">
+          <tr><th>1탭 (목장 편성표)</th><td id="permTab1Text">3단계 (수정/삭제)</td></tr>
+          <tr><th>2탭 (일정 관리)</th><td id="permTab2Text">2단계 (추가 가능)</td></tr>
+          <tr><th>3탭 (새가족 관리)</th><td id="permTab3Text">3단계 (수정/삭제)</td></tr>
+        </table>
+        <button class="btn-full danger" onclick="logoutPin()">인증 해제 (로그아웃)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PERM_LABELS = {
+      1: "1단계 (기본 열람)",
+      2: "2단계 (열람 + 추가)",
+      3: "3단계 (전체 수정/삭제)"
+    };
+
+    // 페이지 로드 시 세션에 저장된 권한 복원
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedAuth = sessionStorage.getItem("vision_auth");
+      if (savedAuth) {
+        applyAuthUI(JSON.parse(savedAuth));
+      }
+    });
+
+    // 탭 전환 함수
+    function switchTab(tabId) {
+      document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+
+      const targetSection = document.getElementById("view-" + tabId);
+      if (targetSection) targetSection.classList.add("active");
+
+      const targetBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+      if (targetBtn) targetBtn.classList.add("active");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // 설정 모달 열기/닫기
+    function openSettingsModal() {
+      document.getElementById("settingsModal").classList.add("open");
+      const savedAuth = sessionStorage.getItem("vision_auth");
+      if (savedAuth) {
+        document.getElementById("pinLoginBox").style.display = "none";
+        document.getElementById("pinStatusBox").style.display = "block";
+      } else {
+        document.getElementById("pinLoginBox").style.display = "block";
+        document.getElementById("pinStatusBox").style.display = "none";
+        document.getElementById("pinInput").value = "";
+        document.getElementById("pinError").style.display = "none";
+      }
+    }
+
+    function closeSettingsModal() {
+      document.getElementById("settingsModal").classList.remove("open");
+    }
+
+    function closeModalOnOutside(e) {
+      if (e.target.id === "settingsModal") closeSettingsModal();
+    }
+
+    // 임시 PIN 인증 처리 (추후 구글 Apps Script Permissions 시트와 연동)
+    function verifyPinDemo() {
+      const pin = document.getElementById("pinInput").value.trim();
+      if (pin.length !== 6) {
+        document.getElementById("pinError").style.display = "block";
+        return;
+      }
+
+      // 기본 틀 단계의 임시 권한 객체 (구글 시트 연동 시 서버 응답으로 대체됨)
+      const mockAuth = {
+        name: "목자/관리자 테스트",
+        group: "전체",
+        tab1: 3,
+        tab2: 2,
+        tab3: 3
+      };
+
+      sessionStorage.setItem("vision_auth", JSON.stringify(mockAuth));
+      applyAuthUI(mockAuth);
+      closeSettingsModal();
+    }
+
+    // 인증 해제
+    function logoutPin() {
+      sessionStorage.removeItem("vision_auth");
+      const defaultAuth = { name: null, group: "-", tab1: 1, tab2: 1, tab3: 1 };
+      applyAuthUI(defaultAuth);
+      closeSettingsModal();
+    }
+
+    // 화면 전체 권한 상태 반영
+    function applyAuthUI(auth) {
+      const btn = document.getElementById("settingsBtn");
+      const icon = document.getElementById("settingsIcon");
+      const label = document.getElementById("settingsLabel");
+
+      if (auth.name) {
+        btn.classList.add("authenticated");
+        icon.textContent = "🔓";
+        label.textContent = `${auth.name} (권한설정)`;
+
+        document.getElementById("authUserName").textContent = `${auth.name}님 인증됨`;
+        document.getElementById("authUserGroup").textContent = `담당 범위: ${auth.group}`;
+        document.getElementById("permTab1Text").textContent = PERM_LABELS[auth.tab1];
+        document.getElementById("permTab2Text").textContent = PERM_LABELS[auth.tab2];
+        document.getElementById("permTab3Text").textContent = PERM_LABELS[auth.tab3];
+      } else {
+        btn.classList.remove("authenticated");
+        icon.textContent = "⚙️";
+        label.textContent = "설정 / 권한인증";
+      }
+
+      document.getElementById("badge-tab1").textContent = `현재 권한: ${PERM_LABELS[auth.tab1]}`;
+      document.getElementById("badge-tab2").textContent = `현재 권한: ${PERM_LABELS[auth.tab2]}`;
+      document.getElementById("badge-tab3").textContent = `현재 권한: ${PERM_LABELS[auth.tab3]}`;
+    }
+  </script>
+</body>
+</html>
