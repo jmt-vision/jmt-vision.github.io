@@ -673,11 +673,12 @@
         : "현재 진행 중인 새가족이 없습니다.";
     }
 
-        // 1탭: 리더십(목사님/디렉터님) + 목장 편성표 렌더링
+// 1탭: 리더십(목사님/디렉터님) + 목장 편성표 렌더링
     function renderGroupTab() {
       const curMonth = new Date().getMonth() + 1;
+      const isAllView = APP_STATE.selectedGroup === "전체";
 
-      // 1) 상단 리더십 영역 (목장이 '리더십'이거나 직분이 '담당목사', '디렉터'인 인원)
+      // 1) 상단 리더십 영역 (담당목사, 디렉터)
       const leaders = APP_STATE.members.filter(m =>
         m.목장 === "리더십" || m.직분 === "담당목사" || m.직분 === "디렉터"
       );
@@ -715,15 +716,22 @@
         `<button class="pill-btn ${APP_STATE.selectedGroup === g ? "active" : ""}" onclick="selectGroupFilter('${g}')">${g}</button>`
       ).join("");
 
-      const targetGroups = APP_STATE.selectedGroup === "전체" ? groups.slice(1) : [APP_STATE.selectedGroup];
+      const targetGroups = isAllView ? groups.slice(1) : [APP_STATE.selectedGroup];
       const roleOrder = { "목자": 1, "준목자": 2, "목원": 3, "새가족": 4 };
 
       document.getElementById("groupGrid").innerHTML = targetGroups.map(gName => {
-        const list = APP_STATE.members
+        const fullList = APP_STATE.members
           .filter(m => m.목장 === gName)
           .sort((a, b) => (roleOrder[a.직분] || 9) - (roleOrder[b.직분] || 9));
 
-        const rowsHtml = list.length ? list.map(m => {
+        // '전체' 보기일 때는 목자/준목자만 필터링, 개별 목장 탭에서는 전원 표시
+        const visibleList = isAllView
+          ? fullList.filter(m => m.직분 === "목자" || m.직분 === "준목자")
+          : fullList;
+
+        const hiddenCount = fullList.length - visibleList.length;
+
+        const rowsHtml = visibleList.length ? visibleList.map(m => {
           const isBdayMonth = m.생일 && Number(m.생일.split("-")[1]) === curMonth;
           const canEdit = APP_STATE.auth.tab1 >= 3 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
           const privateInfo = (m.연락처 || m.주소_동)
@@ -744,15 +752,23 @@
               </div>
               ${canEdit ? `<button class="btn btn-sm" onclick='openEditMember(${JSON.stringify(m)})'>수정</button>` : ""}
             </div>`;
-        }).join("") : `<p style="font-size:13px; color:var(--text-sub); padding:10px 0;">등록된 목원이 없습니다.</p>`;
+        }).join("") : `<p style="font-size:13px; color:var(--text-sub); padding:8px 0;">${isAllView ? "배정된 목자·준목자가 없습니다." : "등록된 목원이 없습니다."}</p>`;
+
+        // '전체' 보기일 때 하단에 (+ 일반 목원 N명) 요약 버튼 표시
+        const summaryFooterHtml = (isAllView && hiddenCount > 0)
+          ? `<div onclick="selectGroupFilter('${gName}')" style="margin-top:8px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px dashed var(--border); text-align:center; font-size:13px; font-weight:700; color:var(--primary); cursor:pointer;">
+               + 일반 목원 ${hiddenCount}명 <span style="font-weight:500; color:var(--text-sub); font-size:12px;">(클릭하여 전체 보기 →)</span>
+             </div>`
+          : "";
 
         return `
           <div class="group-box">
-            <div class="group-box-header">
+            <div class="group-box-header" style="cursor:pointer;" onclick="selectGroupFilter('${gName}')">
               <h3>${gName}</h3>
-              <span style="font-size:12px; color:var(--text-sub);">${list.length}명</span>
+              <span style="font-size:12px; color:var(--text-sub);">총 ${fullList.length}명</span>
             </div>
             ${rowsHtml}
+            ${summaryFooterHtml}
           </div>`;
       }).join("");
     }
