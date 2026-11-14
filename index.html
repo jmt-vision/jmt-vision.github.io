@@ -264,6 +264,7 @@
     .stage-S2 { background: #E0F2FE; color: #0369A1; } /* 2~3달에 1회 (파랑) */
     .stage-S3 { background: #FEF3C7; color: #B45309; } /* 6달에 1회 (노랑) */
     .stage-S4 { background: #FEE2E2; color: #B91C1C; } /* 제적 대상 (빨강) */
+    .stage-입대 { background: #E2E8F0; color: #334155; border: 1px solid #CBD5E1; } /* 군 복무 중 (국방/슬레이트 톤) */
 
     /* 공유 링크로 진입 시 해당 번개모임 카드 강조 효과 */
     .meetup-highlight {
@@ -540,12 +541,17 @@
       </div>
       <div class="form-group"><label>직분</label>
         <div class="form-group"><label>출석/관리 단계 (상태)</label>
-        <select id="m_status" class="form-control">
+        <select id="m_status" class="form-control" onchange="toggleDischargeDateField()">
           <option value="S1">S1 - 예배에 꾸준히 참여</option>
           <option value="S2">S2 - 2~3달에 한 번씩 참여</option>
+          <option value="입대">입대 - 군 복무 중 (S2와 동일 정렬)</option>
           <option value="S3">S3 - 6달에 한 번씩 참여</option>
           <option value="S4">S4 - 연락두절 등의 제적 대상</option>
         </select>
+      </div>
+      <div class="form-group" id="m_dischargeBox" style="display:none; background:var(--sub-bg); padding:10px 12px; border-radius:10px; border:1px solid var(--border);">
+        <label>🪖 전역일 (YYYY-MM-DD)</label>
+        <input type="date" id="m_dischargeDate" class="form-control" />
       </div>
         <select id="m_role" class="form-control">
           <option value="새가족">새가족 (MD 5회 진행)</option>
@@ -951,8 +957,8 @@
 
       const targetGroups = isAllView ? groups.slice(1) : [APP_STATE.selectedGroup];
       const roleOrder = { "목자": 1, "준목자": 2, "목원": 3, "새가족": 4 };
-      const stageOrder = { "S1": 1, "S2": 2, "S3": 3, "S4": 4 };
-
+      const stageOrder = { "S1": 1, "S2": 2, "입대": 2, "S3": 3, "S4": 4 };
+      
       document.getElementById("groupGrid").innerHTML = targetGroups.map(gName => {
         const fullList = APP_STATE.members
           .filter(m => m.목장 === gName)
@@ -981,8 +987,8 @@
           const isBdayMonth = m.생일 && Number(m.생일.split("-")[1]) === curMonth;
           const stCode = String(m.상태 || "").trim().toUpperCase();
           const canViewStage = APP_STATE.auth.tab1 >= 2 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
-          const stageBadge = (canViewStage && ["S1", "S2", "S3", "S4"].includes(stCode))
-            ? `<span class="stage-badge stage-${stCode}">${stCode}</span>`
+          const stageBadge = (canViewStage && ["S1", "S2", "입대", "S3", "S4"].includes(stCode))
+            ? `<span class="stage-badge stage-${stCode}">${stCode === "입대" ? "🪖 입대" : stCode}</span>`
             : "";
 
           return `
@@ -1040,9 +1046,29 @@
         ? `<img src="${m.사진URL}" referrerpolicy="no-referrer" style="width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);" alt="${m.이름}" />`
         : `<div style="width:72px; height:72px; border-radius:50%; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800;">${m.이름.slice(0, 1)}</div>`;
 
-      const stageHtml = (canViewPrivate && ["S1", "S2", "S3", "S4"].includes(stCode))
-        ? `<span class="stage-badge stage-${stCode}">${stCode}</span>`
+      const stageHtml = (canViewPrivate && ["S1", "S2", "입대", "S3", "S4"].includes(stCode))
+        ? `<span class="stage-badge stage-${stCode}">${stCode === "입대" ? "🪖 입대" : stCode}</span>`
         : "";
+
+      // 전역일 D-Day 계산
+      let dischargeRowHtml = "";
+      if (canViewPrivate && stCode === "입대") {
+        let dDayBadge = "";
+        if (m.전역일) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const target = new Date(m.전역일 + "T00:00:00");
+          const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+          if (diffDays > 0) dDayBadge = `<span style="color:var(--mint); font-size:12px; margin-left:6px;">(D-${diffDays})</span>`;
+          else if (diffDays === 0) dDayBadge = `<span style="color:var(--primary); font-size:12px; margin-left:6px;">(🎉 오늘 전역!)</span>`;
+          else dDayBadge = `<span style="color:var(--text-sub); font-size:12px; margin-left:6px;">(전역 완료)</span>`;
+        }
+        dischargeRowHtml = `
+          <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--text-sub);">🪖 전역일</span>
+            <strong>${m.전역일 || "미등록"}${dDayBadge}</strong>
+          </div>`;
+      }
 
       const privateRows = canViewPrivate ? `
         <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
@@ -1287,22 +1313,33 @@
     }
 
     // 등록/수정 모달에서 상태(S1~S4) 값 연동
+    function toggleDischargeDateField() {
+      const st = document.getElementById("m_status").value;
+      document.getElementById("m_dischargeBox").style.display = st === "입대" ? "block" : "none";
+    }
+
     function openMemberModal(isNewFamily = false) {
       document.getElementById("memberModalTitle").textContent = isNewFamily ? "🌱 새가족 등록" : "👥 목원/새가족 등록";
       document.getElementById("m_id").value = "";
       document.getElementById("m_role").value = isNewFamily ? "새가족" : "목원";
       document.getElementById("m_status").value = "S1";
+      document.getElementById("m_dischargeDate").value = "";
+      toggleDischargeDateField();
       ["m_name", "m_bday", "m_phone", "m_city", "m_dong", "m_ice", "m_md", "m_photo"].forEach(id => document.getElementById(id).value = "");
       document.getElementById("m_regDate").value = new Date().toISOString().slice(0, 10);
+      const fileInput = document.getElementById("m_photoFile");
+      if (fileInput) fileInput.value = "";
       openModal("memberModal");
     }
-    
+
     function openEditMember(m) {
       document.getElementById("memberModalTitle").textContent = "✏️ 구성원 정보 수정";
       document.getElementById("m_id").value = m.ID;
       document.getElementById("m_group").value = m.목장;
       document.getElementById("m_role").value = m.직분;
-      document.getElementById("m_status").value = ["S1", "S2", "S3", "S4"].includes(m.상태) ? m.상태 : "S1";
+      document.getElementById("m_status").value = ["S1", "S2", "입대", "S3", "S4"].includes(m.상태) ? m.상태 : "S1";
+      document.getElementById("m_dischargeDate").value = m.전역일 || "";
+      toggleDischargeDateField();
       document.getElementById("m_name").value = m.이름;
       document.getElementById("m_bday").value = m.생일 || "";
       document.getElementById("m_phone").value = m.연락처 || "";
@@ -1312,12 +1349,15 @@
       document.getElementById("m_ice").value = m.친해지기정보 || "";
       document.getElementById("m_md").value = m.담당MD || "";
       document.getElementById("m_photo").value = m.사진URL || "";
+      const fileInput = document.getElementById("m_photoFile");
+      if (fileInput) fileInput.value = "";
       openModal("memberModal");
     }
 
     async function saveMember() {
       const id = document.getElementById("m_id").value;
       const role = document.getElementById("m_role").value;
+      const status = document.getElementById("m_status").value;
       const fileInput = document.getElementById("m_photoFile");
       const photoBase64 = fileInput && fileInput.files[0] ? await compressImageFile(fileInput.files[0]) : "";
 
@@ -1337,7 +1377,8 @@
         사진URL: document.getElementById("m_photo").value.trim(),
         photoBase64: photoBase64,
         MD잔여횟수: role === "새가족" ? 5 : 0,
-        상태: document.getElementById("m_status").value
+        상태: status,
+        전역일: status === "입대" ? document.getElementById("m_dischargeDate").value : ""
       };
       if (!payload.이름) return alert("이름을 입력해 주세요.");
       const res = await postToGas({ action: id ? "updateMember" : "addMember", payload });
