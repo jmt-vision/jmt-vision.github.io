@@ -914,7 +914,7 @@
         : "현재 진행 중인 새가족이 없습니다.";
     }
 
-// 1탭: 리더십 + 목장 편성표 렌더링 (이름 & 직분 중심 초간단 리스트 + 클릭 시 상세 카드 팝업)
+// 1탭: 리더십 + 목장 편성표 렌더링 (목록 바깥 S1~S4 뱃지 노출 + 직분 -> S1~S4 -> 가나다순 정렬)
     function renderGroupTab() {
       const curMonth = new Date().getMonth() + 1;
       const isAllView = APP_STATE.selectedGroup === "전체";
@@ -946,7 +946,7 @@
       const groups = ["전체", "1목장", "2목장", "3목장", "4목장", "5목장", "6목장", "7목장"];
       const pills = document.getElementById("groupFilterPills");
       pills.innerHTML = groups.map(g =>
-        `<button class="pill-btn ${APP_STATE.selectedGroup === g ? "active" : ""}" onclick="selectGroupFilter('${g}')">${g}</button>`
+        `<button type="button" class="pill-btn ${APP_STATE.selectedGroup === g ? "active" : ""}" onclick="selectGroupFilter('${g}')">${g}</button>`
       ).join("");
 
       const targetGroups = isAllView ? groups.slice(1) : [APP_STATE.selectedGroup];
@@ -957,12 +957,17 @@
         const fullList = APP_STATE.members
           .filter(m => m.목장 === gName)
           .sort((a, b) => {
+            // 1순위: 직분 (목자 -> 준목자 -> 목원 -> 새가족)
             const rDiff = (roleOrder[a.직분] || 9) - (roleOrder[b.직분] || 9);
             if (rDiff !== 0) return rDiff;
+
+            // 2순위: S1 -> S2 -> S3 -> S4 단계 순
             const stA = String(a.상태 || "").trim().toUpperCase();
             const stB = String(b.상태 || "").trim().toUpperCase();
             const sDiff = (stageOrder[stA] || 9) - (stageOrder[stB] || 9);
             if (sDiff !== 0) return sDiff;
+
+            // 3순위: 동일 단계 내 이름 가나다순
             return String(a.이름 || "").localeCompare(String(b.이름 || ""), "ko");
           });
 
@@ -974,11 +979,18 @@
 
         const rowsHtml = visibleList.length ? visibleList.map(m => {
           const isBdayMonth = m.생일 && Number(m.생일.split("-")[1]) === curMonth;
+          const stCode = String(m.상태 || "").trim().toUpperCase();
+          const canViewStage = APP_STATE.auth.tab1 >= 2 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
+          const stageBadge = (canViewStage && ["S1", "S2", "S3", "S4"].includes(stCode))
+            ? `<span class="stage-badge stage-${stCode}">${stCode}</span>`
+            : "";
+
           return `
             <div class="member-row" style="cursor:pointer;" onclick="openMemberDetail('${m.ID}')">
-              <div style="display:flex; align-items:center; gap:6px;">
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                 <span class="role-tag role-${m.직분}">${m.직분}</span>
                 <strong style="font-size:15px;">${m.이름}</strong>
+                ${stageBadge}
                 ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
                 ${m.새가족여부 === "Y" ? `<span class="widget-badge badge-new" style="font-size:10px; padding:1px 6px;">New</span>` : ""}
               </div>
