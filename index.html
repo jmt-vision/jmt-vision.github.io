@@ -608,6 +608,17 @@
     </div>
   </div>
 
+  <!-- [모달 2-2] 구성원 상세 프로필 카드 팝업 -->
+  <div id="memberDetailModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'memberDetailModal')">
+    <div class="modal-box" style="max-width:380px;">
+      <div class="modal-header">
+        <h3>👤 청년 프로필 카드</h3>
+        <button class="close-btn" onclick="closeModal('memberDetailModal')">&times;</button>
+      </div>
+      <div id="memberDetailBody"></div>
+    </div>
+  </div>
+
   <!-- [모달 3] 일정 등록 -->
   <div id="scheduleModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'scheduleModal')">
     <div class="modal-box">
@@ -903,7 +914,7 @@
         : "현재 진행 중인 새가족이 없습니다.";
     }
 
-// 1탭: 리더십 + 목장 편성표 렌더링 (S1~S4 단계 및 가나다순 정렬 적용)
+// 1탭: 리더십 + 목장 편성표 렌더링 (이름 & 직분 중심 초간단 리스트 + 클릭 시 상세 카드 팝업)
     function renderGroupTab() {
       const curMonth = new Date().getMonth() + 1;
       const isAllView = APP_STATE.selectedGroup === "전체";
@@ -917,22 +928,14 @@
         leaderGrid.style.display = "grid";
         leaderGrid.innerHTML = leaders.map(l => {
           const isBdayMonth = l.생일 && Number(l.생일.split("-")[1]) === curMonth;
-          const canEdit = APP_STATE.auth.tab1 >= 3 && APP_STATE.auth.group === "전체";
-          const privateInfo = (l.연락처 || l.주소_동)
-            ? `<div class="member-meta">📞 ${l.연락처 || "-"} · 📍 ${l.주소_시구 || ""} ${l.주소_동 || ""}</div>`
-            : "";
           return `
-            <div class="leader-card">
-              <div>
-                <div>
-                  <span class="leader-badge">${l.직분}</span>
-                  <strong style="font-size:15px;">${l.이름}</strong>
-                  ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
-                </div>
-                <div class="member-meta">생일: ${l.생일 ? l.생일.slice(5) : "미등록"}</div>
-                ${privateInfo}
+            <div class="leader-card" style="cursor:pointer;" onclick="openMemberDetail('${l.ID}')">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="leader-badge">${l.직분}</span>
+                <strong style="font-size:15px;">${l.이름}</strong>
+                ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
               </div>
-              ${canEdit ? `<button class="btn btn-sm" onclick='openEditMember(${JSON.stringify(l)})'>수정</button>` : ""}
+              <span style="font-size:12px; color:var(--primary); font-weight:600;">상세보기 ›</span>
             </div>`;
         }).join("");
       } else {
@@ -954,21 +957,15 @@
         const fullList = APP_STATE.members
           .filter(m => m.목장 === gName)
           .sort((a, b) => {
-            // 1순위: 직분 (목자 -> 준목자 -> 목원 -> 새가족)
             const rDiff = (roleOrder[a.직분] || 9) - (roleOrder[b.직분] || 9);
             if (rDiff !== 0) return rDiff;
-
-            // 2순위: 일반 목원/새가족일 경우 S1 -> S2 -> S3 -> S4 단계 순
             const stA = String(a.상태 || "").trim().toUpperCase();
             const stB = String(b.상태 || "").trim().toUpperCase();
             const sDiff = (stageOrder[stA] || 9) - (stageOrder[stB] || 9);
             if (sDiff !== 0) return sDiff;
-
-            // 3순위: 동일 단계 내 이름 가나다순
             return String(a.이름 || "").localeCompare(String(b.이름 || ""), "ko");
           });
 
-        // '전체' 보기일 때는 목자/준목자만 필터링, 개별 목장 탭에서는 전원 표시
         const visibleList = isAllView
           ? fullList.filter(m => m.직분 === "목자" || m.직분 === "준목자")
           : fullList;
@@ -977,30 +974,15 @@
 
         const rowsHtml = visibleList.length ? visibleList.map(m => {
           const isBdayMonth = m.생일 && Number(m.생일.split("-")[1]) === curMonth;
-          const canEdit = APP_STATE.auth.tab1 >= 3 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
-          const stCode = String(m.상태 || "").trim().toUpperCase();
-          const canViewStage = APP_STATE.auth.tab1 >= 2 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
-          const stageBadge = (canViewStage && ["S1", "S2", "S3", "S4"].includes(stCode))
-            ? `<span class="stage-badge stage-${stCode}">${stCode}</span>`
-            : "";
-          const privateInfo = (m.연락처 || m.주소_동)
-            ? `<div class="member-meta">📞 ${m.연락처 || "-"} · 📍 ${m.주소_시구 || ""} ${m.주소_동 || ""}</div>`
-            : "";
-
           return `
-            <div class="member-row">
-              <div>
-                <div>
-                  <span class="role-tag role-${m.직분}">${m.직분}</span>
-                  <strong>${m.이름}</strong>
-                  ${stageBadge}
-                  ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
-                  ${m.새가족여부 === "Y" ? `<span class="widget-badge badge-new" style="font-size:10px; padding:1px 6px;">New</span>` : ""}
-                </div>
-                <div class="member-meta">생일: ${m.생일 ? m.생일.slice(5) : "미등록"}</div>
-                ${privateInfo}
+            <div class="member-row" style="cursor:pointer;" onclick="openMemberDetail('${m.ID}')">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="role-tag role-${m.직분}">${m.직분}</span>
+                <strong style="font-size:15px;">${m.이름}</strong>
+                ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
+                ${m.새가족여부 === "Y" ? `<span class="widget-badge badge-new" style="font-size:10px; padding:1px 6px;">New</span>` : ""}
               </div>
-              ${canEdit ? `<button class="btn btn-sm" onclick='openEditMember(${JSON.stringify(m)})'>수정</button>` : ""}
+              <span style="font-size:12px; color:var(--text-sub);">정보 ›</span>
             </div>`;
         }).join("") : `<p style="font-size:13px; color:var(--text-sub); padding:8px 0;">${isAllView ? "배정된 목자·준목자가 없습니다." : "등록된 목원이 없습니다."}</p>`;
 
@@ -1022,9 +1004,76 @@
       }).join("");
     }
 
-    function selectGroupFilter(g) {
-      APP_STATE.selectedGroup = g;
-      renderGroupTab();
+    // 구성원 이름 클릭 시 상세 프로필 카드 팝업 열기
+    function openMemberDetail(memberId) {
+      const m = APP_STATE.members.find(item => String(item.ID) === String(memberId));
+      if (!m) return;
+
+      const canViewPrivate = APP_STATE.auth.tab1 >= 2 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === m.목장);
+      const canEdit = APP_STATE.auth.tab1 >= 3 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === m.목장);
+      const stCode = String(m.상태 || "").trim().toUpperCase();
+
+      const avatarHtml = m.사진URL
+        ? `<img src="${m.사진URL}" referrerpolicy="no-referrer" style="width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);" alt="${m.이름}" />`
+        : `<div style="width:72px; height:72px; border-radius:50%; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800;">${m.이름.slice(0, 1)}</div>`;
+
+      const stageHtml = (canViewPrivate && ["S1", "S2", "S3", "S4"].includes(stCode))
+        ? `<span class="stage-badge stage-${stCode}">${stCode}</span>`
+        : "";
+
+      const privateRows = canViewPrivate ? `
+        <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-sub);">📞 연락처</span>
+          <strong>${m.연락처 || "미등록"}</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-sub);">📍 거주지 (동 단위)</span>
+          <strong>${(m.주소_시구 || m.주소_동) ? `${m.주소_시구 || ""} ${m.주소_동 || ""}`.trim() : "미등록"}</strong>
+        </div>
+      ` : "";
+
+      const extraInfoHtml = (m.친해지기정보 || m.담당MD) ? `
+        <div style="background:var(--sub-bg); padding:12px; border-radius:12px; border:1px solid var(--border); margin-top:12px; font-size:13px;">
+          ${m.담당MD ? `<div style="margin-bottom:4px;">🤝 <strong>담당 MD:</strong> ${m.담당MD}</div>` : ""}
+          ${m.친해지기정보 ? `<div>💬 <strong>친해지기:</strong> ${m.친해지기정보}</div>` : ""}
+        </div>
+      ` : "";
+
+      document.getElementById("memberDetailBody").innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; text-align:center; padding-bottom:16px; border-bottom:1px solid var(--border);">
+          ${avatarHtml}
+          <div style="margin-top:10px;">
+            <span class="role-tag role-${m.직분}">${m.직분}</span>
+            ${stageHtml}
+          </div>
+          <h2 style="font-size:21px; font-weight:800; margin-top:6px;">${m.이름}</h2>
+          <span style="font-size:13px; color:var(--text-sub);">${m.목장}</span>
+        </div>
+
+        <div style="font-size:13px; margin-top:8px;">
+          <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--text-sub);">🎂 생일</span>
+            <strong>${m.생일 || "미등록"}</strong>
+          </div>
+          ${privateRows}
+          ${m.새가족여부 === "Y" ? `
+          <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
+            <span style="color:var(--text-sub);">🌱 교회 등록일</span>
+            <strong>${m.등록일 || "-"}</strong>
+          </div>` : ""}
+        </div>
+
+        ${extraInfoHtml}
+
+        ${canEdit ? `<button class="btn-full" style="margin-top:16px;" onclick="closeModal('memberDetailModal'); openEditMemberById('${m.ID}')">✏️ 정보 수정하기</button>` : ""}
+      `;
+
+      openModal("memberDetailModal");
+    }
+
+    function openEditMemberById(memberId) {
+      const m = APP_STATE.members.find(item => String(item.ID) === String(memberId));
+      if (m) openEditMember(m);
     }
 
     // 2탭: 캘린더 및 매월 1일 생일 브리핑
@@ -1554,7 +1603,7 @@
       }
     }
 
-    // 5탭: 번개모임 카드 렌더링 (각 카드에 고유 id="meetup-card-모임ID" 부여)
+    // 5탭: 번개모임 카드 렌더링 (특수문자/따옴표 오류 방지를 위해 모임ID만 전달)
     function renderMeetupTab() {
       const grid = document.getElementById("meetupListGrid");
       if (!grid) return;
@@ -1601,12 +1650,35 @@
             </div>
 
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button class="btn btn-primary btn-sm" style="flex:1;" onclick="joinMeetup('${b.모임ID}', '${b.제목}')">🙋‍♂️ 참여 신청</button>
-              <button class="btn btn-sm" onclick='copyMeetupText(${JSON.stringify(b)})'>📋 카톡 복사</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteMeetup('${b.모임ID}')">삭제</button>
+              <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="joinMeetup('${b.모임ID}')">🙋‍♂️ 참여 신청</button>
+              <button type="button" class="btn btn-sm" onclick="copyMeetupById('${b.모임ID}')">📋 카톡 복사</button>
+              <button type="button" class="btn btn-sm btn-danger" onclick="deleteMeetup('${b.모임ID}')">삭제</button>
             </div>
           </div>`;
       }).join("");
+    }
+
+    async function joinMeetup(meetupId) {
+      const target = (APP_STATE.meetups || []).find(item => String(item.모임ID) === String(meetupId));
+      const title = target ? target.제목 : "번개모임";
+      const defaultName = APP_STATE.auth.name || "";
+
+      const applicant = prompt(`[${title}]\n참여 신청할 본인의 이름을 입력해 주세요:`, defaultName);
+      if (!applicant || !applicant.trim()) return;
+
+      const res = await postToGas({ action: "joinMeetup", meetupId, applicant: applicant.trim() });
+      if (res) {
+        if (res.autoClosed) {
+          alert("🎉 마지막 모집 인원이 채워져 해당 번개모임 공고가 자동으로 마감(삭제)되었습니다!");
+        } else {
+          alert("참여 신청이 완료되었습니다!");
+        }
+      }
+    }
+
+    function copyMeetupById(meetupId) {
+      const b = (APP_STATE.meetups || []).find(item => String(item.모임ID) === String(meetupId));
+      if (b) copyMeetupText(b);
     }
 
     function openMeetupModal() {
