@@ -184,7 +184,33 @@
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: var(--text-sub); }
     .form-control { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--sub-bg); color: var(--text-main); font-size: 14px; }
-    .pin-input { width: 100%; padding: 14px; font-size: 20px; letter-spacing: 8px; text-align: center; border: 2px solid var(--border); border-radius: 12px; margin: 12px 0; font-weight: 700; background: var(--sub-bg); color: var(--text-main); }
+    .pw-input {
+      width: 100%;
+      padding: 13px 14px;
+      font-size: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      margin: 12px 0 8px;
+      font-weight: 600;
+      background: var(--sub-bg);
+      color: var(--text-main);
+    }
+    .pw-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .pw-rules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      margin-bottom: 10px;
+      color: var(--text-sub);
+    }
+    .pw-rule-item.ok {
+      color: var(--mint);
+      font-weight: 700;
+    }
     .btn-full { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #2B4C7E; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
     .perm-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
     .perm-table th, .perm-table td { padding: 9px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -461,18 +487,28 @@
 
   <footer>예수마을교회 청년부 '비전마을' 커뮤니티 포털</footer>
 
-  <!-- [모달 1] 설정 및 6자리 PIN 인증 -->
+  <!-- [모달 1] 설정 및 비밀번호 인증 -->
   <div id="settingsModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'settingsModal')">
     <div class="modal-box">
       <div class="modal-header">
-        <h3>⚙️ 권한 설정 및 PIN 인증</h3>
+        <h3>⚙️ 권한 설정 및 비밀번호 인증</h3>
         <button class="close-btn" onclick="closeModal('settingsModal')">&times;</button>
       </div>
       <div id="pinLoginBox">
-        <p style="font-size:13px; color:var(--text-sub);">부여받은 <strong>6자리 PIN 번호</strong>를 입력하면 브라우저를 닫기 전까지 해당 권한이 유지됩니다.</p>
-        <input type="password" id="pinInput" class="pin-input" maxlength="6" inputmode="numeric" placeholder="••••••" />
-        <p id="pinError" style="font-size:12px; color:#EF4444; display:none;"></p>
-        <button class="btn-full" onclick="submitPinAuth()">PIN 인증하기</button>
+        <p style="font-size:13px; color:var(--text-sub);">
+          부여받은 <strong>관리자/리더 비밀번호</strong>를 입력해 주세요. 브라우저를 닫기 전까지 권한이 유지됩니다.
+        </p>
+        <div style="position:relative;">
+          <input type="password" id="pinInput" class="pw-input" placeholder="영문, 숫자, 특수기호 포함 (8자 이상)" oninput="checkPwRuleUI()" onkeyup="if(event.key==='Enter') submitPinAuth()" />
+        </div>
+        <div class="pw-rules">
+          <span id="ruleLen" class="pw-rule-item">• 8자 이상</span>
+          <span id="ruleEng" class="pw-rule-item">• 영문 포함</span>
+          <span id="ruleNum" class="pw-rule-item">• 숫자 포함</span>
+          <span id="ruleSym" class="pw-rule-item">• 특수기호 포함</span>
+        </div>
+        <p id="pinError" style="font-size:12px; color:#EF4444; display:none; margin-bottom:6px;"></p>
+        <button class="btn-full" onclick="submitPinAuth()">비밀번호 인증하기</button>
       </div>
       <div id="pinStatusBox" style="display:none;">
         <div style="background:var(--primary-light); padding:12px; border-radius:12px; margin-bottom:12px;">
@@ -1138,23 +1174,37 @@
       document.getElementById("pinStatusBox").style.display = isAuth ? "block" : "none";
       document.getElementById("pinInput").value = "";
       document.getElementById("pinError").style.display = "none";
+      checkPwRuleUI();
+    }
+
+    // 입력 중 영문/숫자/특수기호/8자 이상 실시간 체크
+    function checkPwRuleUI() {
+      const val = document.getElementById("pinInput").value;
+      document.getElementById("ruleLen").classList.toggle("ok", val.length >= 8);
+      document.getElementById("ruleEng").classList.toggle("ok", /[A-Za-z]/.test(val));
+      document.getElementById("ruleNum").classList.toggle("ok", /[0-9]/.test(val));
+      document.getElementById("ruleSym").classList.toggle("ok", /[^A-Za-z0-9\s]/.test(val));
     }
 
     async function submitPinAuth() {
-      const pin = document.getElementById("pinInput").value.trim();
-      if (pin.length !== 6) {
-        document.getElementById("pinError").textContent = "6자리 숫자를 입력해 주세요.";
-        document.getElementById("pinError").style.display = "block";
+      const pw = document.getElementById("pinInput").value.trim();
+      const errEl = document.getElementById("pinError");
+
+      const isValid = pw.length >= 8 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw) && /[^A-Za-z0-9\s]/.test(pw);
+      if (!isValid) {
+        errEl.textContent = "영문, 숫자, 특수기호가 모두 포함된 8자 이상의 비밀번호를 입력해 주세요.";
+        errEl.style.display = "block";
         return;
       }
-      sessionStorage.setItem("vision_pin", pin);
+
+      sessionStorage.setItem("vision_pin", pw);
       const res = await postToGas({ action: "verifyPin" });
       if (res && res.auth.authenticated) {
         closeModal("settingsModal");
       } else {
         sessionStorage.removeItem("vision_pin");
-        document.getElementById("pinError").textContent = "일치하는 PIN이 없거나 사용 중지된 번호입니다.";
-        document.getElementById("pinError").style.display = "block";
+        errEl.textContent = "일치하는 비밀번호가 없거나 사용 중지된 계정입니다.";
+        errEl.style.display = "block";
       }
     }
 
