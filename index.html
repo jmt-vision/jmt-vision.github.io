@@ -1004,6 +1004,17 @@
       }).join("");
     }
 
+    // 목장 필터(전체 / 1목장~7목장) 전환 함수
+    function selectGroupFilter(g) {
+      APP_STATE.selectedGroup = g;
+      renderGroupTab();
+      // 모바일에서 목장 선택 시 편성표 영역으로 부드럽게 스크롤
+      const grid = document.getElementById("groupGrid");
+      if (grid && g !== "전체") {
+        grid.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
     // 구성원 이름 클릭 시 상세 프로필 카드 팝업 열기
     function openMemberDetail(memberId) {
       const m = APP_STATE.members.find(item => String(item.ID) === String(memberId));
