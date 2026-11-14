@@ -436,9 +436,9 @@
       <div class="tab-shell">
         <div class="tab-shell-header">
           <h2>🌱 새가족 관리 & MD 트래킹</h2>
-          <div style="display:flex; gap:8px; align-items:center;">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
             <span class="perm-pill" id="badge-tab3">1단계 (기본 열람)</span>
-            <!-- ▼ openMemberModal(true) 대신 openNewFamilyModal() 호출 -->
+            <button id="btnWriteMdTop" class="btn btn-sm" style="display:none;" onclick="openMdModalDirect()">📝 MD 보고서 작성</button>
             <button id="btnAddNf" class="btn btn-primary btn-sm" style="display:none;" onclick="openNewFamilyModal()">+ 새가족 등록</button>
           </div>
         </div>
@@ -889,6 +889,7 @@
       document.getElementById("btnAddMember").style.display = a.tab1 >= 2 ? "inline-block" : "none";
       document.getElementById("btnAddSchedule").style.display = a.tab2 >= 2 ? "inline-block" : "none";
       document.getElementById("btnAddNf").style.display = a.tab3 >= 2 ? "inline-block" : "none";
+      document.getElementById("btnWriteMdTop").style.display = a.tab3 >= 2 ? "inline-block" : "none";
     }
 
     // 홈 위젯 렌더링
@@ -1215,13 +1216,17 @@
         return;
       }
 
+      const canWrite = APP_STATE.auth.tab3 >= 2;
+
       grid.innerHTML = nfList.map(nf => {
         const rem = Number(nf.MD잔여횟수 || 0);
         const doneCount = Math.max(0, 5 - rem);
         const dots = [1, 2, 3, 4, 5].map(i => `<div class="md-dot ${i <= doneCount ? "done" : ""}"></div>`).join("");
         const avatarHtml = nf.사진URL
-          ? `<img src="${nf.사진URL}" class="nf-avatar" alt="${nf.이름}" />`
+          ? `<img src="${nf.사진URL}" referrerpolicy="no-referrer" class="nf-avatar" alt="${nf.이름}" />`
           : `<div class="nf-avatar">${nf.이름.slice(0, 1)}</div>`;
+
+        const btnLabel = (canWrite && rem > 0) ? "📝 MD 보고서 보기 / 작성" : "📋 MD 보고서 기록 보기";
 
         return `
           <div class="nf-card">
@@ -1245,11 +1250,25 @@
                 <div class="md-dots">${dots}</div>
               </div>
             </div>
-            <button class="btn btn-primary" style="width:100%;" onclick='openMdModal(${JSON.stringify(nf)})'>
-              📋 MD 보고서 보기 / 작성
+            <button type="button" class="btn btn-primary" style="width:100%;" onclick="openMdModalById('${nf.ID}')">
+              ${btnLabel}
             </button>
           </div>`;
       }).join("");
+    }
+
+    function openMdModalById(memberId) {
+      const nf = APP_STATE.members.find(item => String(item.ID) === String(memberId));
+      if (nf) openMdModal(nf);
+    }
+
+    // 상단 '📝 MD 보고서 작성' 버튼 클릭 시 진행 중인 첫 번째 새가족 모달 바로 열기
+    function openMdModalDirect() {
+      const activeNf = APP_STATE.members.find(m => m.새가족여부 === "Y" && Number(m.MD잔여횟수 || 0) > 0);
+      if (!activeNf) {
+        return alert("현재 MD 만남을 진행 중인 새가족(잔여 횟수 1회 이상)이 없습니다.");
+      }
+      openMdModal(activeNf);
     }
 
     // 모달 제어 및 저장 로직
