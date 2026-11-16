@@ -1237,17 +1237,28 @@
       renderMembers();
     }
 
+    // 직분 우선순위(목자 -> 준목자 -> 목원 -> 기타) + 가나다순 정렬 헬퍼
+    function sortMembersByRoleAndName(list) {
+      const roleOrder = { '담당목사': 0, '디렉터': 1, '목자': 2, '준목자': 3, '목원': 4, '새가족': 5 };
+      return [...list].sort((a, b) => {
+        const rA = roleOrder[a['직분']] !== undefined ? roleOrder[a['직분']] : 9;
+        const rB = roleOrder[b['직분']] !== undefined ? roleOrder[b['직분']] : 9;
+        if (rA !== rB) return rA - rB;
+        return String(a['이름']).localeCompare(String(b['이름']), 'ko');
+      });
+    }
+
     function renderMembers() {
       const q = document.getElementById('memberSearchInput').value.trim().toLowerCase();
       const canSeeStatus = STATE.auth.valid && STATE.auth.level >= 2;
 
-      const filtered = STATE.members
-        .filter(m => {
+      const filtered = sortMembersByRoleAndName(
+        STATE.members.filter(m => {
           const matchGrp = STATE.selectedGroupFilter === '전체' || m['목장'] === STATE.selectedGroupFilter;
           const matchQ = !q || m['이름'].toLowerCase().includes(q) || (m['친해지기정보'] || '').toLowerCase().includes(q);
           return matchGrp && matchQ;
         })
-        .sort((a, b) => String(a['이름']).localeCompare(String(b['이름']), 'ko'));
+      );
 
       document.getElementById('membersGrid').innerHTML = filtered.map(m => {
         let roleStatusText = m['직분'];
@@ -1276,6 +1287,7 @@
         `;
       }).join('') || '<div style="color:var(--text-muted); font-size:13px;">조건에 맞는 청년이 없습니다.</div>';
     }
+    
     function openMemberModal(m = null) {
       document.getElementById('editMemberId').value = m ? m['ID'] : '';
       document.getElementById('memName').value = m ? m['이름'] : '';
@@ -1366,12 +1378,14 @@
     }
 
     function renderAttendanceChecklist(checkedNames) {
-      const list = STATE.attendanceCandidates || [];
+      const list = sortMembersByRoleAndName(STATE.attendanceCandidates || []);
+
       document.getElementById('attendanceChecklist').innerHTML = list.map(m => `
         <label class="att-row">
           <div>
             <strong>${m['이름']}</strong>
             <span class="badge b-blue" style="margin-left:4px;">${m['목장']}</span>
+            <span style="font-size:12px; color:var(--text-muted); margin-left:4px;">${m['직분']}</span>
             ${m['상태'] === 'S3' ? '<span class="badge b-amber">S3 복귀</span>' : ''}
           </div>
           <input type="checkbox" class="att-chk" value="${m['이름']}" ${checkedNames.includes(m['이름']) ? 'checked' : ''} onchange="updateAttCount()" />
