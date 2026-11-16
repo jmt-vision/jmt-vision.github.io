@@ -1239,31 +1239,43 @@
 
     function renderMembers() {
       const q = document.getElementById('memberSearchInput').value.trim().toLowerCase();
-      const filtered = STATE.members.filter(m => {
-        const matchGrp = STATE.selectedGroupFilter === '전체' || m['목장'] === STATE.selectedGroupFilter;
-        const matchQ = !q || m['이름'].toLowerCase().includes(q) || (m['친해지기정보'] || '').toLowerCase().includes(q);
-        return matchGrp && matchQ;
-      });
+      const canSeeStatus = STATE.auth.valid && STATE.auth.level >= 2;
 
-      document.getElementById('membersGrid').innerHTML = filtered.map(m => `
-        <div class="member-card">
-          <div class="avatar">${m['사진URL'] ? `<img src="${m['사진URL']}">` : m['이름'].slice(0,1)}</div>
-          <div style="flex:1; min-width:0;">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <strong>${m['이름']}</strong>
-              <span class="badge b-blue">${m['목장']}</span>
-              <span class="badge ${m['상태']==='입대' ? 'b-amber' : 'b-green'}">${m['직분']} · ${m['상태']}</span>
+      const filtered = STATE.members
+        .filter(m => {
+          const matchGrp = STATE.selectedGroupFilter === '전체' || m['목장'] === STATE.selectedGroupFilter;
+          const matchQ = !q || m['이름'].toLowerCase().includes(q) || (m['친해지기정보'] || '').toLowerCase().includes(q);
+          return matchGrp && matchQ;
+        })
+        .sort((a, b) => String(a['이름']).localeCompare(String(b['이름']), 'ko'));
+
+      document.getElementById('membersGrid').innerHTML = filtered.map(m => {
+        let roleStatusText = m['직분'];
+        if (m['상태'] === '입대') {
+          roleStatusText = `${m['직분']} · 🪖 입대`;
+        } else if (canSeeStatus) {
+          roleStatusText = `${m['직분']} · ${m['상태']}`;
+        }
+
+        return `
+          <div class="member-card">
+            <div class="avatar">${m['사진URL'] ? `<img src="${m['사진URL']}">` : m['이름'].slice(0,1)}</div>
+            <div style="flex:1; min-width:0;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <strong>${m['이름']}</strong>
+                <span class="badge b-blue">${m['목장']}</span>
+                <span class="badge ${m['상태']==='입대' ? 'b-amber' : 'b-green'}">${roleStatusText}</span>
+              </div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
+                ${m['친해지기정보'] || '함께 알아가는 중입니다 ✨'}
+              </div>
+              ${m['연락처'] ? `<div style="font-size:12px; color:var(--primary); margin-top:2px;">📞 ${m['연락처']}</div>` : ''}
             </div>
-            <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
-              ${m['친해지기정보'] || '함께 알아가는 중입니다 ✨'}
-            </div>
-            ${m['연락처'] ? `<div style="font-size:12px; color:var(--primary); margin-top:2px;">📞 ${m['연락처']}</div>` : ''}
+            ${canSeeStatus ? `<button class="btn btn-outline btn-sm" onclick='openMemberModal(${JSON.stringify(m)})'>수정</button>` : ''}
           </div>
-          ${(STATE.auth.valid && STATE.auth.level >= 2) ? `<button class="btn btn-outline btn-sm" onclick='openMemberModal(${JSON.stringify(m)})'>수정</button>` : ''}
-        </div>
-      `).join('') || '<div style="color:var(--text-muted); font-size:13px;">조건에 맞는 청년이 없습니다.</div>';
+        `;
+      }).join('') || '<div style="color:var(--text-muted); font-size:13px;">조건에 맞는 청년이 없습니다.</div>';
     }
-
     function openMemberModal(m = null) {
       document.getElementById('editMemberId').value = m ? m['ID'] : '';
       document.getElementById('memName').value = m ? m['이름'] : '';
