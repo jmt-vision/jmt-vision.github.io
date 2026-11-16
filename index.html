@@ -1804,17 +1804,23 @@
         try { parts = JSON.parse(f['참여자목록'] || '[]'); } catch (e) {}
         const isUnlim = String(f['최대인원']) === '무제한';
         const capText = isUnlim ? `참여 ${parts.length}명 / ∞ 인원 무제한` : `참여 ${parts.length} / ${f['최대인원']}명`;
+        const flashKey = f['ID'] || f['_docId'];
+
         return `
-          <div class="card" style="margin-bottom:0;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <div class="card" id="flash-card-${flashKey}" style="margin-bottom:0; transition: box-shadow 0.3s, border-color 0.3s;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:6px;">
               <strong>⚡ ${f['제목']}</strong>
               <span class="badge ${isUnlim ? 'b-green' : 'b-blue'}">${capText}</span>
             </div>
-            <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:6px;">
+            <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">
               🕒 ${f['일시']} · 📍 ${f['장소']}<br>
               개설: ${f['개설자']} | 참여자: ${parts.join(', ')}
+              ${f['설명'] ? `<div style="margin-top:4px; color:var(--text);">💬 ${f['설명']}</div>` : ''}
             </div>
-            <button class="btn btn-primary btn-sm" style="width:100%;" onclick="handleJoinFlash('${f['_docId']}')">🙋‍♂️ 참여 신청하기</button>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-primary btn-sm" style="flex:1;" onclick="handleJoinFlash('${f['_docId']}')">🙋‍♂️ 참여 신청</button>
+              <button class="btn btn-outline btn-sm" onclick="copyFlashInvite('${f['_docId']}')">📋 복사</button>
+            </div>
           </div>
         `;
       }).join('') || '<div style="color:var(--text-muted); font-size:13px;">진행 중인 번개모임이 없습니다.</div>';
@@ -1829,6 +1835,38 @@
         </div>
       `).join('') || '<div style="color:var(--text-muted); font-size:13px;">이번 주 나눈 기도제목이 없습니다.</div>';
     }
+
+    window.copyFlashInvite = async function (docId) {
+      const f = STATE.flashMeetings.find(item => item['_docId'] === docId);
+      if (!f) return;
+
+      let parts = [];
+      try { parts = JSON.parse(f['참여자목록'] || '[]'); } catch (e) {}
+      const isUnlim = String(f['최대인원']) === '무제한';
+      const capText = isUnlim ? `${parts.length}명 참여 중 (인원 무제한)` : `${parts.length}/${f['최대인원']}명`;
+
+      const baseUrl = window.location.origin + window.location.pathname;
+      const flashKey = encodeURIComponent(f['ID'] || f['_docId']);
+      const directLink = `${baseUrl}?tab=prayer&flash=${flashKey}`;
+
+      const copyText = [
+        `⚡ [비전마을 번개모임 초대]`,
+        `📌 ${f['제목']}`,
+        `🕒 일시: ${f['일시']}`,
+        `📍 장소: ${f['장소']}`,
+        `👥 현황: ${capText} (${parts.join(', ')})`,
+        f['설명'] ? `💬 안내: ${f['설명']}` : '',
+        ``,
+        `👉 바로 참여하기: ${directLink}`
+      ].filter(line => line !== null).join('\n').replace(/\n{3,}/g, '\n\n');
+
+      try {
+        await navigator.clipboard.writeText(copyText);
+        alert('📋 번개모임 초대 문구와 바로가기 링크가 복사되었습니다!\n카톡방에 그대로 붙여넣어 주세요.');
+      } catch (err) {
+        prompt('아래 내용을 복사해서 공유해 주세요:', copyText);
+      }
+    };
 
     window.openFlashCreateModal = function () {
       document.getElementById('flHost').value = localStorage.getItem('vv_pref_name') || '';
@@ -2273,6 +2311,23 @@
     document.getElementById('prefStartTab').value = localStorage.getItem('vv_pref_tab') || 'home';
 
     loadAllData().then(() => {
+      const params = new URLSearchParams(window.location.search);
+      const targetTab = params.get('tab');
+      const targetFlash = params.get('flash');
+
+      if (targetTab && document.getElementById('tab-' + targetTab)) {
+        switchTab(targetTab);
+        if (targetTab === 'prayer' && targetFlash) {
+          const cardEl = document.getElementById('flash-card-' + targetFlash);
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardEl.style.borderColor = 'var(--primary)';
+            cardEl.style.boxShadow = '0 0 0 3px var(--primary-soft)';
+          }
+        }
+        return;
+      }
+
       const startTab = localStorage.getItem('vv_pref_tab');
       if (startTab && document.getElementById('tab-' + startTab)) switchTab(startTab);
     });
