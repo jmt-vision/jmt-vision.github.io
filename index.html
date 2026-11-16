@@ -2,1828 +2,2169 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>예수마을교회 청년부 | 비전마을</title>
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>비전마을 청년부 포털</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #2B4C7E;
-      --primary-dark: #1D3557;
-      --primary-light: #EBF2FA;
-      --accent: #F4A261;
-      --mint: #2A9D8F;
-      --bg: #F6F8FB;
-      --card-bg: #FFFFFF;
-      --sub-bg: #F8FAFC;
-      --text-main: #1E293B;
-      --text-sub: #64748B;
-      --border: #E2E8F0;
-      --radius: 16px;
-      --shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-      --badge-bday-bg: #FEF3C7;
-      --badge-bday-text: #B45309;
-      --badge-event-bg: #E0F2FE;
-      --badge-event-text: #0369A1;
-      --badge-new-bg: #CCFBF1;
-      --badge-new-text: #0F766E;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-sub: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --accent: #0d9488;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --leader: #7c3aed;
+      --leader-soft: #f5f3ff;
+      --radius: 14px;
+      --shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+      --font-scale: 1;
     }
 
-    /* 다크모드 변수 */
-    [data-theme="dark"] {
-      --primary: #60A5FA;
-      --primary-dark: #93C5FD;
-      --primary-light: rgba(96, 165, 250, 0.15);
-      --bg: #0F172A;
-      --card-bg: #1E293B;
-      --sub-bg: #0F172A;
-      --text-main: #F1F5F9;
-      --text-sub: #94A3B8;
+    body.dark {
+      --bg: #0b1120;
+      --surface: #1e293b;
+      --surface-sub: #0f172a;
       --border: #334155;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-      --badge-bday-bg: rgba(245, 158, 11, 0.2);
-      --badge-bday-text: #FCD34D;
-      --badge-event-bg: rgba(14, 165, 233, 0.2);
-      --badge-event-text: #7DD3FC;
-      --badge-new-bg: rgba(20, 184, 166, 0.2);
-      --badge-new-text: #5EEAD4;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-soft: rgba(59, 130, 246, 0.15);
+      --leader: #a78bfa;
+      --leader-soft: rgba(139, 92, 246, 0.15);
+      --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
-    body { background-color: var(--bg); color: var(--text-main); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.25s, color 0.25s; }
+    body.font-large { --font-scale: 1.14; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: calc(15px * var(--font-scale));
+      line-height: 1.55;
+      padding-bottom: 84px;
+      transition: background 0.2s, color 0.2s;
+    }
 
     /* 상단 헤더 */
-    header { background: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-    .header-inner { max-width: 1120px; margin: 0 auto; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; color: inherit; }
-    .brand-icon { width: 38px; height: 38px; background: #2B4C7E; color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; }
-    .brand-text span { display: block; font-size: 11px; color: var(--text-sub); font-weight: 600; }
-    .brand-text h1 { font-size: 18px; font-weight: 800; color: var(--primary-dark); letter-spacing: -0.3px; }
-
-    .header-controls { display: flex; align-items: center; gap: 8px; }
-    .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; }
-    .icon-btn:hover { border-color: var(--primary); background: var(--primary-light); }
-
-    .settings-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-    .settings-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
-    .settings-btn.authenticated { background: #2B4C7E; color: #fff; border-color: #2B4C7E; }
-
-    /* 탭 내비게이션 */
-    nav.tab-bar { background: var(--card-bg); border-bottom: 1px solid var(--border); }
-    .tab-bar-inner { max-width: 1120px; margin: 0 auto; padding: 0 16px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
-    .tab-bar-inner::-webkit-scrollbar { display: none; }
-    .tab-btn { padding: 13px 16px; border: none; background: transparent; color: var(--text-sub); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; display: flex; align-items: center; gap: 6px; }
-    .tab-btn:hover { color: var(--primary); }
-    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
-    .badge-soon { font-size: 10px; background: var(--sub-bg); color: var(--text-sub); border: 1px solid var(--border); padding: 1px 6px; border-radius: 6px; }
-
-    /* 메인 */
-    main { max-width: 1120px; width: 100%; margin: 0 auto; padding: 24px 20px 60px; flex: 1; }
-    .view-section { display: none; animation: fadeIn 0.25s ease; }
-    .view-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* 로딩 오버레이 */
-    .loading-bar { background: var(--primary-light); color: var(--primary); padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 16px; display: none; align-items: center; justify-content: space-between; }
-    .loading-bar.show { display: flex; }
-
-    /* 히어로 */
-    .hero-card { background: linear-gradient(135deg, #1D3557 0%, #2B4C7E 100%); color: #fff; border-radius: var(--radius); padding: 30px 26px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(29, 53, 87, 0.25); }
-    .hero-tag { display: inline-block; background: rgba(255, 255, 255, 0.16); padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
-    .hero-card h2 { font-size: 23px; font-weight: 800; margin-bottom: 8px; }
-    .hero-card p { font-size: 14px; color: rgba(255, 255, 255, 0.85); max-width: 560px; margin-bottom: 20px; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-    .btn-hero { padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; }
-    .btn-hero-primary { background: #fff; color: #1D3557; }
-    .btn-hero-secondary { background: rgba(255, 255, 255, 0.18); color: #fff; }
-
-    /* 공통 버튼 및 배지 */
-    .btn { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-    .btn:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-primary { background: #2B4C7E; color: #fff; border-color: #2B4C7E; }
-    .btn-primary:hover { opacity: 0.92; color: #fff; }
-    .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 8px; }
-    .btn-danger { background: #EF4444; color: #fff; border-color: #EF4444; }
-
-    /* 홈 위젯 & 메뉴 */
-    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
-    .widget-grid, .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
-    .widget-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
-    .widget-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-    .widget-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .widget-badge { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px; }
-    .badge-bday { background: var(--badge-bday-bg); color: var(--badge-bday-text); }
-    .badge-event { background: var(--badge-event-bg); color: var(--badge-event-text); }
-    .badge-new { background: var(--badge-new-bg); color: var(--badge-new-text); }
-    .widget-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-    .widget-card p { font-size: 13px; color: var(--text-sub); }
-    .widget-footer { margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 12px; color: var(--primary); font-weight: 600; text-align: right; }
-
-    .menu-tile { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
-    .menu-tile:hover { border-color: var(--primary); background: var(--primary-light); }
-    .menu-tile.disabled { opacity: 0.6; }
-    .tile-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-    .tile-info h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-    .tile-info span { font-size: 12px; color: var(--text-sub); }
-
-    /* 탭 공통 카드 껍데기 */
-    .tab-shell { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
-    .tab-shell-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-    .tab-shell-header h2 { font-size: 20px; font-weight: 800; color: var(--primary-dark); }
-    .perm-pill { font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; background: var(--primary-light); color: var(--primary); }
-
-    /* 1탭: 목장 편성표 */
-    .filter-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
-    .pill-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--sub-bg); color: var(--text-sub); font-size: 13px; font-weight: 600; cursor: pointer; }
-    .pill-btn.active { background: #2B4C7E; color: #fff; border-color: #2B4C7E; }
-
-    .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
-    .group-box { border: 1px solid var(--border); border-radius: 14px; background: var(--sub-bg); padding: 16px; }
-    .group-box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .group-box-header h3 { font-size: 16px; font-weight: 800; color: var(--primary-dark); }
-    .member-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .role-tag { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; margin-right: 6px; }
-    .role-목자 { background: #2B4C7E; color: #fff; }
-    .role-준목자 { background: var(--primary-light); color: var(--primary); }
-    .role-목원 { background: var(--sub-bg); color: var(--text-sub); border: 1px solid var(--border); }
-    .role-새가족 { background: var(--badge-new-bg); color: var(--badge-new-text); }
-    .member-meta { font-size: 12px; color: var(--text-sub); margin-top: 3px; }
-
-    /* 2탭: 캘린더 & 이달의 생일자 */
-    .bday-banner { background: var(--badge-bday-bg); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 14px; padding: 16px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-    .bday-banner h4 { color: var(--badge-bday-text); font-size: 15px; margin-bottom: 4px; }
-    .bday-banner p { font-size: 13px; color: var(--text-main); font-weight: 600; }
-
-    .cal-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid var(--border); border-left: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .cal-head { background: var(--sub-bg); padding: 10px 4px; text-align: center; font-size: 12px; font-weight: 700; color: var(--text-sub); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .cal-cell { min-height: 92px; padding: 6px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--card-bg); font-size: 12px; }
-    .cal-cell.other-month { background: var(--sub-bg); opacity: 0.5; }
-    .cal-date { font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .cal-date.today span { background: #2B4C7E; color: #fff; padding: 1px 6px; border-radius: 999px; }
-    .ev-chip { display: block; font-size: 11px; padding: 2px 5px; border-radius: 4px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; font-weight: 600; }
-    .ev-교회행사 { background: #EDE9FE; color: #5B21B6; }
-    .ev-청년부행사 { background: var(--badge-event-bg); color: var(--badge-event-text); }
-    .ev-생일 { background: var(--badge-bday-bg); color: var(--badge-bday-text); }
-
-    /* 3탭: 새가족 관리 */
-    .nf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-    .nf-card { border: 1px solid var(--border); border-radius: 14px; background: var(--sub-bg); padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
-    .nf-top { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
-    .nf-avatar { width: 54px; height: 54px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; object-fit: cover; flex-shrink: 0; }
-    .md-meter { margin: 12px 0; background: var(--card-bg); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); }
-    .md-dots { display: flex; gap: 6px; margin-top: 6px; }
-    .md-dot { flex: 1; height: 8px; border-radius: 999px; background: var(--border); }
-    .md-dot.done { background: #2A9D8F; }
-
-    /* 모달 및 폼 */
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(2px); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
-    .modal-backdrop.open { display: flex; }
-    .modal-box { background: var(--card-bg); color: var(--text-main); width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; border-radius: 20px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .close-btn { background: none; border: none; font-size: 22px; color: var(--text-sub); cursor: pointer; }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: var(--text-sub); }
-    .form-control { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--sub-bg); color: var(--text-main); font-size: 14px; }
-    .pw-input {
-      width: 100%;
-      padding: 13px 14px;
-      font-size: 16px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      margin: 12px 0 8px;
-      font-weight: 600;
-      background: var(--sub-bg);
-      color: var(--text-main);
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow);
     }
-    .pw-input:focus {
-      outline: none;
-      border-color: var(--primary);
+    .brand { display: flex; align-items: center; gap: 8px; }
+    .brand h1 { font-size: calc(18px * var(--font-scale)); font-weight: 800; letter-spacing: -0.4px; }
+    .ver-badge {
+      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 99px;
+      background: var(--primary-soft); color: var(--primary);
     }
-    .pw-rules {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 11px;
+    .role-chip {
+      font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 99px;
+      background: var(--leader-soft); color: var(--leader);
+    }
+    .header-actions { display: flex; align-items: center; gap: 6px; }
+    .icon-btn {
+      border: 1px solid var(--border); background: var(--surface-sub); color: var(--text);
+      border-radius: 10px; padding: 7px 10px; font-size: 13px; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .icon-btn:active { transform: scale(0.96); }
+
+    /* 네비게이션 탭 */
+    nav.tabs {
+      position: sticky; top: 57px; z-index: 45;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; overflow-x: auto; scrollbar-width: none;
+      padding: 0 8px;
+    }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex: 0 0 auto; padding: 12px 13px; border: none; background: transparent;
+      color: var(--text-muted); font-size: calc(13.5px * var(--font-scale)); font-weight: 700;
+      cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap;
+    }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-btn.leader-tab { color: var(--leader); }
+    .tab-btn.leader-tab.active { border-bottom-color: var(--leader); }
+
+    /* 메인 컨테이너 & 카드 */
+    main { max-width: 960px; margin: 0 auto; padding: 16px; }
+    .tab-panel { display: none; animation: fadeIn 0.2s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px; gap: 8px; flex-wrap: wrap;
+    }
+    .card-title { font-size: calc(16px * var(--font-scale)); font-weight: 800; display: flex; align-items: center; gap: 6px; }
+
+    /* 버튼 & 폼 */
+    .btn {
+      border: none; border-radius: 10px; padding: 9px 14px;
+      font-size: calc(13.5px * var(--font-scale)); font-weight: 700;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-leader { background: var(--leader); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-outline { background: var(--surface-sub); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--surface-sub); color: var(--text);
+      font-family: inherit; font-size: calc(14px * var(--font-scale));
       margin-bottom: 10px;
-      color: var(--text-sub);
     }
-    .pw-rule-item.ok {
-      color: var(--mint);
-      font-weight: 700;
-    }
-    .btn-full { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #2B4C7E; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-    .perm-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
-    .perm-table th, .perm-table td { padding: 9px; border-bottom: 1px solid var(--border); text-align: left; }
-    .perm-table td:last-child { text-align: right; font-weight: 700; color: var(--primary); }
+    label.field-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
 
-    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-sub); }
-    footer { text-align: center; padding: 20px; font-size: 12px; color: var(--text-sub); border-top: 1px solid var(--border); background: var(--card-bg); }
+    /* 그리드 & 배지 */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .stat-box {
+      background: var(--surface-sub); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 8px; text-align: center;
+    }
+    .stat-box .num { font-size: 20px; font-weight: 800; color: var(--primary); }
+    .stat-box .lbl { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+
+    .badge {
+      display: inline-block; padding: 3px 8px; border-radius: 6px;
+      font-size: 11.5px; font-weight: 700;
+    }
+    .b-blue { background: var(--primary-soft); color: var(--primary); }
+    .b-green { background: rgba(16, 185, 129, 0.14); color: #059669; }
+    .b-amber { background: rgba(245, 158, 11, 0.16); color: #d97706; }
+    .b-red { background: rgba(239, 68, 68, 0.14); color: #dc2626; }
+    .b-purple { background: var(--leader-soft); color: var(--leader); }
+
+    /* 1탭 명단 & 출결 체크 */
+    .filter-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; }
+    .pill {
+      padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-muted); font-size: 12.5px; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+    }
+    .pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .member-card {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px; border: 1px solid var(--border); border-radius: 12px;
+      background: var(--surface);
+    }
+    .avatar {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--primary-soft);
+      color: var(--primary); font-weight: 800; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .att-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-bottom: 1px solid var(--border);
+    }
+    .att-row input[type="checkbox"] { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); }
+
+    /* 2탭 달력 (PC 텍스트 칩 + 모바일 고정 높이 컬러 도트) */
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-head { text-align: center; font-size: 12px; font-weight: 700; color: var(--text-muted); padding: 6px 0; }
+    .cal-cell {
+      min-height: 86px; border: 1px solid var(--border); border-radius: 10px;
+      padding: 6px; background: var(--surface); cursor: pointer;
+      display: flex; flex-direction: column; gap: 3px; overflow: hidden;
+    }
+    .cal-cell.today { border: 2px solid var(--primary); }
+    .cal-cell.selected { background: var(--primary-soft); }
+    .cal-day-num { font-size: 12px; font-weight: 700; }
+    .cal-sun { color: var(--danger); }
+    .cal-sat { color: var(--primary); }
+    .cal-chip {
+      font-size: 11px; padding: 2px 5px; border-radius: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;
+    }
+    .chip-bday { background: #fef3c7; color: #b45309; }
+    .chip-event { background: #dbeafe; color: #1d4ed8; }
+    .chip-leader { background: #ede9fe; color: #6d28d9; }
+    .chip-bul { background: #ffe4e6; color: #be123c; }
+    .cal-dots { display: none; gap: 3px; flex-wrap: wrap; margin-top: auto; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; }
 
     @media (max-width: 768px) {
-      .widget-grid, .menu-grid { grid-template-columns: 1fr; }
-      .cal-cell { min-height: 70px; padding: 4px; }
+      .cal-cell { height: 60px; min-height: 60px; max-height: 60px; padding: 5px; }
+      .cal-chip { display: none; }
+      .cal-dots { display: flex; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
     }
 
-        /* 1탭 상단: 담당 목사님 & 디렉터님 리더십 카드 */
-    .leadership-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
+    /* 모달 */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
+      display: none; align-items: center; justify-content: center;
+      z-index: 100; padding: 16px;
     }
-    .leader-card {
-      background: var(--primary-light);
-      border: 1px solid rgba(43, 76, 126, 0.25);
-      border-radius: 14px;
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: var(--surface); border-radius: 18px; width: 100%; max-width: 500px;
+      max-height: 88vh; overflow-y: auto; padding: 20px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
     }
-    .leader-badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: #2B4C7E;
-      color: #fff;
-      margin-right: 6px;
-    }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .modal-head h3 { font-size: 17px; font-weight: 800; }
 
-    /* S1~S4 출석/관리 단계 뱃지 */
-    .stage-badge {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 5px;
-      margin-left: 4px;
+    /* 놀이터 (룰렛, 제비뽑기, 워들, 스톱워치, 폭탄) */
+    .roulette-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 12px 0; }
+    .pointer { font-size: 24px; color: var(--danger); line-height: 1; }
+    .lot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 8px; margin-top: 10px; }
+    .lot-card {
+      height: 76px; border-radius: 12px; border: 2px solid var(--border);
+      background: var(--primary-soft); color: var(--primary);
+      font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; text-align: center; padding: 4px;
     }
-    .stage-S1 { background: #DCFCE7; color: #15803D; } /* 꾸준히 참여 (초록) */
-    .stage-S2 { background: #E0F2FE; color: #0369A1; } /* 2~3달에 1회 (파랑) */
-    .stage-S3 { background: #FEF3C7; color: #B45309; } /* 6달에 1회 (노랑) */
-    .stage-S4 { background: #FEE2E2; color: #B91C1C; } /* 제적 대상 (빨강) */
-    .stage-입대 { background: #E2E8F0; color: #334155; border: 1px solid #CBD5E1; } /* 군 복무 중 (국방/슬레이트 톤) */
+    .lot-card.revealed.win { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .lot-card.revealed.safe { background: var(--surface-sub); color: var(--text-muted); }
 
-    /* 공유 링크로 진입 시 해당 번개모임 카드 강조 효과 */
-    .meetup-highlight {
-      border: 2px solid var(--primary) !important;
-      box-shadow: 0 0 0 4px var(--primary-light), var(--shadow) !important;
-      animation: pulseCard 1.2s ease-in-out 2;
+    .wordle-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 6px; }
+    .w-tile {
+      padding: 10px 4px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 12.5px;
+      border: 1px solid var(--border); background: var(--surface-sub);
     }
-    @keyframes pulseCard {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.015); }
-    }
+    .w-green { background: #10b981; color: #fff; border-color: #10b981; }
+    .w-yellow { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+    .w-gray { background: #64748b; color: #fff; border-color: #64748b; }
 
+    .big-game-pad {
+      border-radius: 16px; padding: 32px 16px; text-align: center;
+      background: var(--surface-sub); border: 2px dashed var(--border);
+      cursor: pointer; user-select: none; margin: 10px 0;
+    }
+    .big-result { font-size: 34px; font-weight: 800; color: var(--primary); margin: 8px 0; }
+
+    .bomb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+    .bomb-btn {
+      aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface-sub); font-size: 18px; font-weight: 800; cursor: pointer;
+    }
+    .bomb-btn.safe { background: #dcfce7; color: #166534; }
+    .bomb-btn.boom { background: #ef4444; color: #fff; animation: shake 0.4s; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+    footer {
+      text-align: center; padding: 20px 16px; color: var(--text-muted); font-size: 12px;
+      border-top: 1px solid var(--border); margin-top: 24px;
+    }
+    .loading-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      z-index: 200; display: none;
+    }
+    .loading-bar.active { display: block; }
   </style>
 </head>
 <body>
+  <div id="loadingBar" class="loading-bar"></div>
 
   <header>
-    <div class="header-inner">
-      <a class="brand" onclick="switchTab('home')">
-        <div class="brand-icon">✝</div>
-        <div class="brand-text">
-          <span>예수마을교회 청년부</span>
-          <h1>비전마을</h1>
-        </div>
-      </a>
-      <div class="header-controls">
-        <button id="themeBtn" class="icon-btn" onclick="toggleTheme()" title="다크모드 전환">🌙</button>
-        <button id="settingsBtn" class="settings-btn" onclick="openSettingsModal()">
-          <span id="settingsIcon">⚙️</span>
-          <span id="settingsLabel">설정 / 권한인증</span>
-        </button>
-      </div>
+    <div class="brand">
+      <h1>⛪ 비전마을</h1>
+      <span id="headerVersion" class="ver-badge">v2.0.0</span>
+      <span id="headerRoleBadge" class="role-chip" style="display:none;"></span>
     </div>
-
-    <nav class="tab-bar">
-      <div class="tab-bar-inner">
-        <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">🏠 홈</button>
-        <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')">1. 목장 편성표</button>
-        <button class="tab-btn" data-tab="tab2" onclick="switchTab('tab2')">2. 일정 관리</button>
-        <button class="tab-btn" data-tab="tab3" onclick="switchTab('tab3')">3. 새가족 관리</button>
-        <button class="tab-btn" data-tab="tab4" onclick="switchTab('tab4')">4. 기도제목</button>
-        <button class="tab-btn" data-tab="tab5" onclick="switchTab('tab5')">5. 번개모임</button>
-        <button class="tab-btn coming-soon" data-tab="tab6" onclick="switchTab('tab6')">6. 놀이터 <span class="badge-soon">예정</span></button>
-      </div>
-    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openModal('guideModal')">❓ 이용안내</button>
+      <button class="icon-btn" onclick="openModal('settingsModal')">⚙️ 설정</button>
+    </div>
   </header>
 
+  <nav class="tabs" id="mainNav">
+    <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">🏠 홈</button>
+    <button class="tab-btn" data-tab="members" onclick="switchTab('members')">👥 명단·출결</button>
+    <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">📅 일정·달력</button>
+    <button class="tab-btn" data-tab="newcomers" onclick="switchTab('newcomers')">🌱 새가족</button>
+    <button class="tab-btn" data-tab="news" onclick="switchTab('news')">📰 소식·주보</button>
+    <button class="tab-btn" data-tab="prayer" onclick="switchTab('prayer')">🙏 기도·번개</button>
+    <button class="tab-btn" data-tab="playground" onclick="switchTab('playground')">🎮 놀이터</button>
+    <button class="tab-btn leader-tab" id="leaderTabBtn" data-tab="leader" style="display:none;" onclick="switchTab('leader')">🔒 리더십노트</button>
+  </nav>
+
   <main>
-    <div id="loadingBar" class="loading-bar">
-      <span id="loadingMsg">⏳ 구글 스프레드시트 데이터를 불러오는 중입니다...</span>
-    </div>
-
-    <!-- [홈] 메인화면 -->
-    <section id="view-home" class="view-section active">
-      <div class="hero-card">
-        <span class="hero-tag">예수마을교회 청년부 공동체</span>
-        <h2>함께 자라가는 비전마을에 오신 것을 환영합니다</h2>
-        <p>1~7목장 편성 현황부터 교회·청년부 일정, 새가족 정착 이야기까지 한곳에서 확인하고 함께 마음을 모아주세요.</p>
-        <div class="hero-actions">
-          <button class="btn-hero btn-hero-primary" onclick="switchTab('tab1')">📋 우리 목장 편성표 보기</button>
-          <button class="btn-hero btn-hero-secondary" onclick="switchTab('tab2')">📅 이번 달 일정 확인</button>
+    <!-- 0. 홈 대시보드 -->
+    <section id="tab-home" class="tab-panel active">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">✨ 오늘의 비전마을 한눈에 보기</div>
+          <button class="btn btn-outline btn-sm" onclick="loadAllData()">🔄 새로고침</button>
+        </div>
+        <div class="grid-4" id="homeStats">
+          <div class="stat-box"><div class="num" id="statActiveMembers">-</div><div class="lbl">활동 청년</div></div>
+          <div class="stat-box"><div class="num" id="statNewcomers">-</div><div class="lbl">정착 중인 새가족</div></div>
+          <div class="stat-box"><div class="num" id="statFlash">-</div><div class="lbl">모집 중 번개</div></div>
+          <div class="stat-box"><div class="num" id="statPrayers">-</div><div class="lbl">주간 기도제목</div></div>
         </div>
       </div>
 
-      <div class="section-title"><span>📌 비전마을 한눈에 보기</span></div>
-      <div class="widget-grid">
-        <div class="widget-card" onclick="switchTab('tab2')">
-          <div>
-            <div class="widget-header">
-              <span class="widget-badge badge-bday" id="homeBdayTitle">🎂 이달의 생일자</span>
-              <span style="font-size:12px; color:var(--text-sub);">자동 연동</span>
-            </div>
-            <h3 id="homeBdayCount">불러오는 중...</h3>
-            <p id="homeBdayList">이번 달 생일을 맞이한 청년 명단</p>
-          </div>
-          <div class="widget-footer">일정 관리 탭에서 전체 보기 →</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎂 이번 달 생일 축하 지체</div>
         </div>
-
-        <div class="widget-card" onclick="switchTab('tab2')">
-          <div>
-            <div class="widget-header">
-              <span class="widget-badge badge-event">📅 다가오는 일정</span>
-              <span style="font-size:12px; color:var(--text-sub);">교회 · 청년부</span>
-            </div>
-            <h3 id="homeNextEventTitle">불러오는 중...</h3>
-            <p id="homeNextEventDesc">예정된 행사 및 모임 안내</p>
-          </div>
-          <div class="widget-footer">캘린더 자세히 보기 →</div>
-        </div>
-
-        <div class="widget-card" onclick="switchTab('tab3')">
-          <div>
-            <div class="widget-header">
-              <span class="widget-badge badge-new">🌱 새가족 & MD</span>
-              <span style="font-size:12px; color:var(--text-sub);">정착 진행 현황</span>
-            </div>
-            <h3 id="homeNfCount">불러오는 중...</h3>
-            <p id="homeNfList">현재 MD 만남을 진행 중인 새가족</p>
-          </div>
-          <div class="widget-footer">새가족 관리 탭 이동 →</div>
-        </div>
+        <div id="homeBirthdays" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
       </div>
 
-      <div class="section-title"><span>🧭 전체 메뉴 바로가기</span></div>
-      <div class="menu-grid">
-        <div class="menu-tile" onclick="switchTab('tab1')"><div class="tile-icon">👥</div><div class="tile-info"><h4>1. 목장 편성표</h4><span>1~7목장 목자·준목자·목원 현황</span></div></div>
-        <div class="menu-tile" onclick="switchTab('tab2')"><div class="tile-icon">🗓️</div><div class="tile-info"><h4>2. 일정 관리</h4><span>교회·청년부 행사 및 생일 달력</span></div></div>
-        <div class="menu-tile" onclick="switchTab('tab3')"><div class="tile-icon">🌱</div><div class="tile-info"><h4>3. 새가족 관리</h4><span>새가족 프로필 및 MD 5회차 보고서</span></div></div>
-        <div class="menu-tile" onclick="switchTab('tab4')"><div class="tile-icon">🙏</div><div class="tile-info"><h4>4. 기도제목</h4><span>실명·익명 기도 나눔 및 중보기도</span></div></div>
-        <div class="menu-tile" onclick="switchTab('tab5')"><div class="tile-icon">⚡</div><div class="tile-info"><h4>5. 번개모임</h4><span>집회·추가 모임 모집 공고</span></div></div>
-        <div class="menu-tile disabled" onclick="switchTab('tab6')"><div class="tile-icon">🎮</div><div class="tile-info"><h4>6. 놀이터</h4><span>청년부 미니게임 공간 (업데이트 예정)</span></div></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📰 최신 주간 주보 & 청년부 광고</div>
+          <button class="btn btn-outline btn-sm" onclick="switchTab('news')">전체보기 →</button>
+        </div>
+        <div id="homeNewsPreview"></div>
       </div>
     </section>
 
-    <!-- [1탭] 목장 편성표 -->
-    <section id="view-tab1" class="view-section">
-      <div class="tab-shell">
-        <div class="tab-shell-header">
-          <h2>📋 1~7목장 편성표</h2>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <span class="perm-pill" id="badge-tab1">1단계 (기본 열람)</span>
-            <button id="btnAddMember" class="btn btn-primary btn-sm" style="display:none;" onclick="openMemberModal()">+ 목원/새가족 등록</button>
+    <!-- 1. 명단 및 주일 출결 체크 (S1, S2, 입대까지만 노출 / 3단계 이상 출결 체크) -->
+    <section id="tab-members" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">👥 목장 편성표 (활동 인원)</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button id="btnToggleAttMode" class="btn btn-outline btn-sm" style="display:none;" onclick="toggleAttendanceMode()">✅ 주일 출결 체크</button>
+            <button id="btnAddMember" class="btn btn-primary btn-sm" style="display:none;" onclick="openMemberModal()">+ 인원 추가</button>
           </div>
         </div>
-        <div id="leadershipGrid" class="leadership-grid"></div>
-        <div class="filter-pills" id="groupFilterPills"></div>
-        <div class="group-grid" id="groupGrid"></div>
+
+        <!-- 일반 명단 뷰 -->
+        <div id="memberListView">
+          <div class="filter-pills" id="groupFilterPills"></div>
+          <input type="text" id="memberSearchInput" placeholder="이름 또는 친해지기 키워드 검색..." oninput="renderMembers()" />
+          <div class="grid-2" id="membersGrid"></div>
+        </div>
+
+        <!-- 주일 예배 출결 체크 뷰 (3단계 권한 전용) -->
+        <div id="attendanceCheckView" style="display:none;">
+          <div style="background:var(--primary-soft); padding:12px; border-radius:12px; margin-bottom:12px;">
+            <div style="font-weight:800; color:var(--primary); margin-bottom:4px;">📋 주일 예배 출결 체크 (S1 · S2 · S3 대상)</div>
+            <div id="attDeadlineNotice" style="font-size:12.5px; color:var(--text-muted);"></div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+            <input type="date" id="attDateInput" style="margin-bottom:0; max-width:180px;" onchange="loadExistingAttendanceForDate()" />
+            <span id="attCheckedCount" class="badge b-blue">선택: 0명</span>
+          </div>
+          <div id="attendanceChecklist" style="max-height:420px; overflow-y:auto; border:1px solid var(--border); border-radius:12px;"></div>
+          <div style="margin-top:12px; display:flex; gap:8px;">
+            <button id="btnSaveAttendance" class="btn btn-primary" style="flex:1;" onclick="submitSundayAttendance()">💾 출결 저장하기</button>
+            <button class="btn btn-outline" onclick="toggleAttendanceMode(false)">돌아가기</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- [2탭] 일정 관리 -->
-    <section id="view-tab2" class="view-section">
-      <div class="tab-shell">
-        <div class="tab-shell-header">
-          <h2>🗓️ 비전마을 일정 관리</h2>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <span class="perm-pill" id="badge-tab2">1단계 (기본 열람)</span>
-            <button id="btnAddSchedule" class="btn btn-primary btn-sm" style="display:none;" onclick="openScheduleModal()">+ 일정 추가</button>
+    <!-- 2. 일정 및 모바일 최적화 달력 -->
+    <section id="tab-calendar" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="btn btn-outline btn-sm" onclick="changeMonth(-1)">◀</button>
+            <span class="card-title" id="calMonthLabel">2026년 11월</span>
+            <button class="btn btn-outline btn-sm" onclick="changeMonth(1)">▶</button>
           </div>
+          <button id="btnAddSchedule" class="btn btn-primary btn-sm" style="display:none;" onclick="openModal('scheduleModal')">+ 일정 등록</button>
         </div>
 
-        <!-- 매월 1일 / 이달의 생일자 브리핑 배너 -->
-        <div class="bday-banner">
-          <div>
-            <h4 id="calBdayBannerTitle">🎂 이달의 생일자 명단</h4>
-            <p id="calBdayBannerNames">데이터를 불러오는 중입니다...</p>
-          </div>
-          <button class="btn btn-sm" onclick="copyBirthdayNotice()">📋 생일 공지 복사</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:11.5px; margin-bottom:10px; color:var(--text-muted);">
+          <span>🟡 생일</span>
+          <span>🔵 교회·청년부</span>
+          <span>🔴 주일주보</span>
+          <span id="legendLeader" style="display:none;">🟣 리더십전용</span>
         </div>
 
-        <div class="cal-controls">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <button class="btn btn-sm" onclick="moveMonth(-1)">◀ 이전 달</button>
-            <strong id="calMonthLabel" style="font-size:17px;">2026년 11월</strong>
-            <button class="btn btn-sm" onclick="moveMonth(1)">다음 달 ▶</button>
-          </div>
-          <div style="font-size:12px; color:var(--text-sub); display:flex; gap:10px;">
-            <span>🟣 교회행사</span>
-            <span>🔵 청년부행사</span>
-            <span>🟡 청년생일</span>
-          </div>
+        <div class="cal-grid" style="margin-bottom:4px;">
+          <div class="cal-head cal-sun">일</div><div class="cal-head">월</div><div class="cal-head">화</div>
+          <div class="cal-head">수</div><div class="cal-head">목</div><div class="cal-head">금</div><div class="cal-head cal-sat">토</div>
         </div>
         <div class="cal-grid" id="calendarGrid"></div>
       </div>
-    </section>
 
-    <!-- [3탭] 새가족 관리 -->
-    <section id="view-tab3" class="view-section">
-      <div class="tab-shell">
-        <div class="tab-shell-header">
-          <h2>🌱 새가족 관리 & MD 트래킹</h2>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <span class="perm-pill" id="badge-tab3">1단계 (기본 열람)</span>
-            <button id="btnWriteMdTop" class="btn btn-sm" style="display:none;" onclick="openMdModalDirect()">📝 MD 보고서 작성</button>
-            <button id="btnAddNf" class="btn btn-primary btn-sm" style="display:none;" onclick="openNewFamilyModal()">+ 새가족 등록</button>
-          </div>
-        </div>
-        <div class="nf-grid" id="newFamilyGrid"></div>
+      <!-- 날짜 터치 시 노출되는 하단 상세 카드 -->
+      <div class="card" id="calDayDetailCard">
+        <div class="card-title" id="calSelectedDateTitle" style="margin-bottom:8px;">날짜를 선택해 주세요</div>
+        <div id="calSelectedDateList" style="color:var(--text-muted); font-size:13.5px;">달력의 날짜를 누르면 생일·일정·주보가 이곳에 표시됩니다.</div>
       </div>
     </section>
 
-    <!-- [4탭] 기도제목 -->
-    <section id="view-tab4" class="view-section">
-      <div class="tab-shell">
-        <div class="tab-shell-header">
-          <div>
-            <h2>🙏 비전마을 기도제목 나눔</h2>
-            <p style="font-size:12px; color:var(--text-sub); margin-top:2px;">모든 기도제목은 등록 후 7일이 지나면 자동으로 삭제됩니다.</p>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="openPrayerModal()">+ 기도제목 올리기</button>
+    <!-- 3. 새가족 초경량 관리 (이름 · 담당 MD · 남은 횟수만 표시) -->
+    <section id="tab-newcomers" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🌱 환영합니다! 비전마을 새가족</div>
+          <button id="btnAddNewcomer" class="btn btn-primary btn-sm" style="display:none;" onclick="openModal('newcomerModal')">+ 새가족 등록</button>
         </div>
-        <div id="prayerListGrid" class="group-grid"></div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+          새가족 지체와 담당 MD, 정착 완료까지 남은 만남 횟수를 한눈에 확인하고 함께 축복해 주세요!
+        </p>
+        <div class="grid-2" id="newcomersGrid"></div>
       </div>
     </section>
 
-    <!-- [5탭] 번개모임 -->
-    <section id="view-tab5" class="view-section">
-      <div class="tab-shell">
-        <div class="tab-shell-header">
-          <div>
-            <h2>⚡ 비전마을 번개모임</h2>
-            <p style="font-size:12px; color:var(--text-sub); margin-top:2px;">모집 기간이 지나거나 모집 인원이 모두 차면 공고가 자동으로 종료(삭제)됩니다.</p>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="openMeetupModal()">+ 번개모임 올리기</button>
+    <!-- 4. 소식 · 주보 · 청년부 광고 · 업데이트 노트 -->
+    <section id="tab-news" class="tab-panel">
+      <!-- 주간 주보 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📖 주간 주보</div>
+          <button id="btnAddBulletin" class="btn btn-leader btn-sm" style="display:none;" onclick="openModal('bulletinModal')">+ 주보 업로드</button>
         </div>
-        <div id="meetupListGrid" class="group-grid"></div>
+        <div id="bulletinsList"></div>
+      </div>
+
+      <!-- 청년부 자유 광고 (누구나 등록 / 작성자 비번 또는 목사·관리자 삭제) -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📢 청년부 자유 광고</div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('adModal')">+ 광고 올리기</button>
+        </div>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">
+          공연·전시 초대, 단기 알바·청소 스태프 모집, 나눔 소식 등 청년 누구나 자유롭게 올릴 수 있습니다.
+        </p>
+        <div class="grid-2" id="adsGrid"></div>
+      </div>
+
+      <!-- 업데이트 노트 (최신 1건 전체 노출 + 과거 아코디언) -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔄 포털 업데이트 노트</div>
+          <button id="btnAddUpdate" class="btn btn-outline btn-sm" style="display:none;" onclick="openModal('updateModal')">+ 업데이트 작성</button>
+        </div>
+        <div id="updatesContainer"></div>
       </div>
     </section>
 
-    <!-- [6탭] 놀이터 -->
-    <section id="view-tab6" class="view-section">
-      <div class="tab-shell">
-        <div class="empty-state">
-          <div style="font-size:36px; margin-bottom:10px;">🎮</div>
-          <h3>비전마을 놀이터 (추후 오픈 예정)</h3>
-          <p>청년들이 함께 즐길 수 있는 미니게임 공간이 준비될 예정입니다.</p>
+    <!-- 5. 기도제목 & 번개모임 (인원 무제한 & 명단 검증 적용) -->
+    <section id="tab-prayer" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚡ 소소한 번개모임</div>
+          <button class="btn btn-primary btn-sm" onclick="openFlashCreateModal()">+ 번개 열기</button>
         </div>
+        <div class="grid-2" id="flashGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🙏 주간 중보기도 나눔</div>
+          <button class="btn btn-outline btn-sm" onclick="openPrayerCreateModal()">+ 기도제목 나누기</button>
+        </div>
+        <div id="prayersList"></div>
+      </div>
+    </section>
+
+    <!-- 6. 놀이터 (목장별 룰렛·제비뽑기 & 전체 장난감 상자 + 청년 워들) -->
+    <section id="tab-playground" class="tab-panel">
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <button class="btn btn-primary" id="pgTabGroupBtn" style="flex:1;" onclick="switchPlaygroundMode('group')">🏠 목장별 게임</button>
+        <button class="btn btn-outline" id="pgTabAllBtn" style="flex:1;" onclick="switchPlaygroundMode('all')">🧸 전체 게임 (장난감 상자)</button>
+      </div>
+
+      <!-- 목장별 게임 -->
+      <div id="pg-group" class="card">
+        <div class="card-title" style="margin-bottom:10px;">🎲 우리 목장 순서 · 벌칙 · 대표기도 정하기</div>
+        <label class="field-label">목장 선택 (활동 인원 자동 연동)</label>
+        <select id="pgGroupSelect" onchange="loadPlaygroundGroupMembers()"></select>
+
+        <label class="field-label">참여 인원 체크 (불참자는 터치해서 제외)</label>
+        <div id="pgMemberCheckboxes" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;"></div>
+
+        <div style="display:flex; gap:6px; margin-bottom:12px;">
+          <button class="btn btn-primary btn-sm" onclick="runGroupRoulette()">🎡 원판 룰렛</button>
+          <button class="btn btn-outline btn-sm" onclick="setupGroupLots()">🎫 제비뽑기</button>
+          <button class="btn btn-outline btn-sm" onclick="shuffleGroupOrder()">🔀 발표순서 섞기</button>
+        </div>
+
+        <div id="pgGroupGameArea"></div>
+      </div>
+
+      <!-- 전체 게임: 포켓 장난감 상자 -->
+      <div id="pg-all" style="display:none;">
+        <div class="filter-pills">
+          <button class="pill active" onclick="selectToyGame('wordle', this)">🧩 청년 워들</button>
+          <button class="pill" onclick="selectToyGame('stopwatch', this)">⏱️ 블라인드 스톱워치</button>
+          <button class="pill" onclick="selectToyGame('reaction', this)">⚡ 번개 반응속도</button>
+          <button class="pill" onclick="selectToyGame('bomb', this)">💣 시한폭탄 돌리기</button>
+        </div>
+
+        <!-- 게임 A: 비전마을 청년 워들 (목장 · 직분 · 생일 월 · 초성 4칸) -->
+        <div id="toy-wordle" class="card">
+          <div class="card-header">
+            <div class="card-title">🧩 비전마을 청년 워들</div>
+            <button class="btn btn-outline btn-sm" onclick="initYouthWordle()">🔄 새 문제</button>
+          </div>
+          <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">
+            청년부 지체 한 명을 추리해 보세요! <strong>목장 · 직분 · 생일 월 · 이름 초성</strong> 4칸 힌트가 열립니다.
+          </p>
+          <div style="display:flex; gap:6px; margin-bottom:10px;">
+            <select id="wordleModeSelect" style="margin-bottom:0;" onchange="initYouthWordle()">
+              <option value="ALL">전체 청년부 대상</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:6px; margin-bottom:12px;">
+            <input type="text" id="wordleGuessInput" list="wordleMemberDatalist" placeholder="지체 이름 입력..." style="margin-bottom:0;" />
+            <datalist id="wordleMemberDatalist"></datalist>
+            <button class="btn btn-primary" onclick="submitWordleGuess()">추측</button>
+          </div>
+          <div class="wordle-row" style="font-size:11px; color:var(--text-muted); text-align:center; font-weight:700;">
+            <div>목장</div><div>직분</div><div>생일 월</div><div>이름 초성</div>
+          </div>
+          <div id="wordleBoard"></div>
+          <div id="wordleResultMsg" style="margin-top:10px; font-weight:800;"></div>
+        </div>
+
+        <!-- 게임 B: 눈감고 목표 시간 맞추기 (7.77초 또는 1.00~10.00초 랜덤) -->
+        <div id="toy-stopwatch" class="card" style="display:none;">
+          <div class="card-title" style="margin-bottom:8px;">⏱️ 눈감고 목표 시간 맞추기</div>
+          <div style="display:flex; gap:6px; margin-bottom:10px;">
+            <button class="btn btn-primary btn-sm" id="swModeFixed" onclick="setStopwatchMode('fixed')">🎯 7.77초 고정</button>
+            <button class="btn btn-outline btn-sm" id="swModeRandom" onclick="setStopwatchMode('random')">🎲 랜덤 초 (1.00~10.00초)</button>
+          </div>
+          <div id="swTargetDisplay" style="font-size:15px; font-weight:800; color:var(--accent);">목표 시간: 7.77초</div>
+          <div class="big-game-pad" id="swPad" onclick="toggleStopwatch()">
+            <div id="swTimerText" class="big-result">0.00초</div>
+            <div id="swHintText" style="font-size:13px; color:var(--text-muted);">터치하면 시작합니다! (초반 이후 숫자가 가려집니다)</div>
+          </div>
+        </div>
+
+        <!-- 게임 C: 번개 반응속도 테스트 -->
+        <div id="toy-reaction" class="card" style="display:none;">
+          <div class="card-title" style="margin-bottom:8px;">⚡ 번개 반응속도 테스트</div>
+          <div class="big-game-pad" id="rxPad" onclick="handleReactionClick()" style="background:#fee2e2; border-color:#ef4444;">
+            <div id="rxMainText" class="big-result" style="color:#dc2626;">터치해서 시작</div>
+            <div id="rxSubText" style="font-size:13px;">화면이 초록색으로 바뀌는 순간 즉시 터치하세요!</div>
+          </div>
+        </div>
+
+        <!-- 게임 D: 한 폰으로 시한폭탄 돌리기 -->
+        <div id="toy-bomb" class="card" style="display:none;">
+          <div class="card-header">
+            <div class="card-title">💣 시한폭탄 돌리기 (한 폰 공용)</div>
+            <button class="btn btn-outline btn-sm" onclick="initBombGame()">🔄 폭탄 재배치</button>
+          </div>
+          <p style="font-size:12.5px; color:var(--text-muted);">한 사람씩 돌아가며 안전한 칸을 터치하세요. 폭탄이 숨겨진 칸을 누르면 펑!</p>
+          <div class="bomb-grid" id="bombGrid"></div>
+          <div id="bombStatus" style="margin-top:10px; font-weight:800; text-align:center;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. 🔒 담당 목사님의 노트 (리더십 전용 탭: 담당목사 · 디렉터 · 목자 전용) -->
+    <section id="tab-leader" class="tab-panel">
+      <!-- ① 주일 예배 출결 브리핑 보고서 -->
+      <div class="card" style="border-left:4px solid var(--primary);">
+        <div class="card-header">
+          <div class="card-title">📊 주일 예배 출결 브리핑</div>
+          <select id="attReportDateSelect" style="width:auto; margin-bottom:0; padding:6px 10px;" onchange="renderAttendanceReport()"></select>
+        </div>
+        <div id="attReportSummary"></div>
+        <div id="attReportNamesBox" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);"></div>
+      </div>
+
+      <!-- ② 목양 현황 & S3·S4 관심 필요 통계 위젯 -->
+      <div class="card" style="border-left:4px solid var(--leader);">
+        <div class="card-header">
+          <div class="card-title">🧭 목양 현황 & 관심 필요(S3·S4) 통계</div>
+        </div>
+        <div class="grid-4" id="pastoralStatsGrid" style="margin-bottom:12px;"></div>
+        <div id="pastoralAlertBox"></div>
+        <div style="margin-top:10px;">
+          <button class="btn btn-outline btn-sm" onclick="toggleS3S4List()">📂 S3 · S4 대상자 및 제적 사유 명단 보기 ▾</button>
+          <div id="s3s4DetailList" style="display:none; margin-top:10px;"></div>
+        </div>
+      </div>
+
+      <!-- ③ 상담 및 심방 요청 트래킹 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🙏 상담 · 심방 요청 및 진행 현황</div>
+          <button class="btn btn-leader btn-sm" onclick="openModal('visitationModal')">+ 심방 요청 등록</button>
+        </div>
+        <div id="visitationsList"></div>
+      </div>
+
+      <!-- ④ 담당 목사님의 노트 & 목양 아이디어 저장소 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📝 담당 목사님의 노트 · 사역 공지</div>
+          <button class="btn btn-leader btn-sm" onclick="openModal('leaderNoteModal')">+ 노트 작성</button>
+        </div>
+        <div id="leaderNotesList"></div>
       </div>
     </section>
   </main>
 
-  <footer>예수마을교회 청년부 '비전마을' 커뮤니티 포털</footer>
+  <footer>
+    비전마을 청년부 통합 포털 · <span id="footerVersion">v2.0.0</span><br>
+    함께 세워가는 믿음의 공동체
+  </footer>
 
-  <!-- [모달 1] 설정 및 비밀번호 인증 -->
-  <div id="settingsModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'settingsModal')">
+  <!-- ==================== 모달 영역 ==================== -->
+
+  <!-- 종합 설정창 (권한 인증 + 비밀번호 변경 + 화면 맞춤 설정 + 관리자 시스템 정리) -->
+  <div id="settingsModal" class="modal-backdrop">
     <div class="modal-box">
-      <div class="modal-header">
-        <h3>⚙️ 권한 설정 및 비밀번호 인증</h3>
-        <button class="close-btn" onclick="closeModal('settingsModal')">&times;</button>
+      <div class="modal-head">
+        <h3>⚙️ 비전마을 종합 설정</h3>
+        <button class="icon-btn" onclick="closeModal('settingsModal')">✕</button>
       </div>
-      <div id="pinLoginBox">
-        <p style="font-size:13px; color:var(--text-sub);">
-          부여받은 <strong>관리자/리더 비밀번호</strong>를 입력해 주세요. 브라우저를 닫기 전까지 권한이 유지됩니다.
-        </p>
-        <div style="position:relative;">
-          <input type="password" id="pinInput" class="pw-input" placeholder="영문, 숫자, 특수기호 포함 (8자 이상)" oninput="checkPwRuleUI()" onkeyup="if(event.key==='Enter') submitPinAuth()" />
+
+      <!-- 1. 권한 및 계정 -->
+      <div style="margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+        <div style="font-weight:800; margin-bottom:8px;">🔐 권한 인증 및 비밀번호 관리</div>
+        <div id="authLoggedOutBox">
+          <input type="password" id="loginPwInput" placeholder="권한 비밀번호 입력 (영문·숫자·기호)" />
+          <button class="btn btn-primary" style="width:100%;" onclick="handleLogin()">권한 인증하기</button>
         </div>
-        <div class="pw-rules">
-          <span id="ruleLen" class="pw-rule-item">• 8자 이상</span>
-          <span id="ruleEng" class="pw-rule-item">• 영문 포함</span>
-          <span id="ruleNum" class="pw-rule-item">• 숫자 포함</span>
-          <span id="ruleSym" class="pw-rule-item">• 특수기호 포함</span>
+        <div id="authLoggedInBox" style="display:none;">
+          <div style="background:var(--leader-soft); padding:10px 12px; border-radius:10px; margin-bottom:10px; font-size:13px;">
+            인증됨: <strong id="authInfoText"></strong>
+          </div>
+          <div style="display:flex; gap:6px; margin-bottom:10px;">
+            <button class="btn btn-outline btn-sm" style="flex:1;" onclick="togglePwChangeForm()">🔑 비밀번호 변경</button>
+            <button class="btn btn-danger btn-sm" onclick="handleLogout()">로그아웃</button>
+          </div>
+          <div id="pwChangeForm" style="display:none; background:var(--surface-sub); padding:12px; border-radius:10px;">
+            <label class="field-label">등록된 본인 이름 확인</label>
+            <input type="text" id="chgPwName" placeholder="예: 홍길동" />
+            <label class="field-label">새 비밀번호 (영문·숫자·특수기호 포함 8자 이상)</label>
+            <input type="password" id="chgPwNew" placeholder="새 비밀번호 입력" />
+            <button class="btn btn-primary btn-sm" style="width:100%;" onclick="submitPasswordChange()">비밀번호 변경 저장</button>
+            <div id="pwChangeMsg" style="font-size:12px; margin-top:6px; font-weight:700;"></div>
+          </div>
         </div>
-        <p id="pinError" style="font-size:12px; color:#EF4444; display:none; margin-bottom:6px;"></p>
-        <button class="btn-full" onclick="submitPinAuth()">비밀번호 인증하기</button>
       </div>
-      <div id="pinStatusBox" style="display:none;">
-        <div style="background:var(--primary-light); padding:12px; border-radius:12px; margin-bottom:12px;">
-          <strong id="authUserName" style="color:var(--primary-dark); font-size:15px;">인증 완료</strong>
-          <span id="authUserGroup" style="display:block; font-size:12px; color:var(--text-sub);">담당 범위: -</span>
+
+      <!-- 2. 내 화면 맞춤 설정 -->
+      <div style="margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+        <div style="font-weight:800; margin-bottom:8px;">🎨 내 화면 맞춤 설정 (기기 저장)</div>
+        <label class="field-label">내 소속 목장 즐겨찾기 (명단·게임 자동 선택)</label>
+        <select id="prefGroup" onchange="savePreferences()">
+          <option value="전체">전체 목장 보기</option>
+        </select>
+
+        <label class="field-label">기본 작성자 이름 (번개·기도·광고 자동 입력)</label>
+        <input type="text" id="prefName" placeholder="본인 이름 입력" oninput="savePreferences()" />
+
+        <label class="field-label">접속 시 시작 화면(초기 탭)</label>
+        <select id="prefStartTab" onchange="savePreferences()">
+          <option value="home">🏠 홈 대시보드</option>
+          <option value="members">👥 명단·출결</option>
+          <option value="calendar">📅 일정·달력</option>
+          <option value="news">📰 소식·주보</option>
+          <option value="prayer">🙏 기도·번개</option>
+          <option value="playground">🎮 놀이터</option>
+        </select>
+
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleDarkMode()">🌓 다크모드 전환</button>
+          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleFontSize()">🔠 글자크기 전환</button>
         </div>
-        <table class="perm-table">
-          <tr><th>1탭 (목장 편성표)</th><td id="permTab1Text">-</td></tr>
-          <tr><th>2탭 (일정 관리)</th><td id="permTab2Text">-</td></tr>
-          <tr><th>3탭 (새가족 관리)</th><td id="permTab3Text">-</td></tr>
-        </table>
-        <button class="btn-full btn-danger" onclick="logoutPin()">인증 해제 (로그아웃)</button>
+      </div>
+
+      <!-- 3. 도움말 및 시스템 관리 -->
+      <div>
+        <div style="font-weight:800; margin-bottom:8px;">📖 도움말 및 시스템 정보</div>
+        <button class="btn btn-outline btn-sm" style="width:100%; margin-bottom:8px;" onclick="closeModal('settingsModal'); openModal('guideModal');">❓ 사이트 이용 안내 & 권한 표 보기</button>
+        <div id="adminCleanupBox" style="display:none; margin-top:8px;">
+          <button class="btn btn-outline btn-sm" style="width:100%; border-color:var(--warning); color:#d97706;" onclick="runAdminCleanup()">🧹 기간 만료 데이터 일괄 정리 실행</button>
+        </div>
+        <div style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;">
+          현재 시스템 버전: <strong id="settingsVersionText">v2.0.0</strong>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- [모달 2] 목원 / 새가족 등록 및 수정 -->
-  <div id="memberModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'memberModal')">
+  <!-- 이용 안내 및 권한 표 모달 -->
+  <div id="guideModal" class="modal-backdrop">
     <div class="modal-box">
-      <div class="modal-header">
-        <h3 id="memberModalTitle">구성원 등록</h3>
-        <button class="close-btn" onclick="closeModal('memberModal')">&times;</button>
+      <div class="modal-head">
+        <h3>❓ 비전마을 포털 이용 및 권한 안내</h3>
+        <button class="icon-btn" onclick="closeModal('guideModal')">✕</button>
       </div>
-      <input type="hidden" id="m_id" />
-      <div class="form-group"><label>소속 목장</label>
-        <select id="m_group" class="form-control">
-          <option>1목장</option><option>2목장</option><option>3목장</option><option>4목장</option><option>5목장</option><option>6목장</option><option>7목장</option>
-        </select>
+      <div style="font-size:13.5px; line-height:1.6;">
+        <p style="margin-bottom:10px;">비전마을 포털은 개인정보를 안전하게 보호하기 위해 <strong>역할별 3단계 권한 체계</strong>로 운영됩니다.</p>
+        <div style="background:var(--surface-sub); padding:12px; border-radius:12px; margin-bottom:10px;">
+          <strong>1️⃣ 일반 청년 (로그인 불필요)</strong><br>
+          • 활동 목원 편성표, 달력(생일·일정·주보), 새가족 진행 현황 열람<br>
+          • 번개모임 개설/참여(명단 등록자), 기도제목 나눔, 청년부 자유 광고 등록, 놀이터 게임
+        </div>
+        <div style="background:var(--surface-sub); padding:12px; border-radius:12px; margin-bottom:10px;">
+          <strong>2️⃣ 준목자 · MD (2단계 인증)</strong><br>
+          • 청년 연락처 열람, 명단 추가/수정, 새가족 만남 횟수 체크 및 수료 처리, 일반 일정 등록
+        </div>
+        <div style="background:var(--leader-soft); padding:12px; border-radius:12px;">
+          <strong>3️⃣ 목자 · 디렉터 · 담당목사 (3단계 및 리더십 인증)</strong><br>
+          • 주일 예배 출결 체크(일요일 18:00 자동 마감)<br>
+          • <strong>🔒 리더십노트 탭</strong> 개방: 주일 출결 브리핑, S3·S4 목양 통계, 상담·심방 요청 및 비밀 일정 관리
+        </div>
       </div>
-      <div class="form-group"><label>직분</label>
-        <div class="form-group"><label>출석/관리 단계 (상태)</label>
-        <select id="m_status" class="form-control" onchange="toggleDischargeDateField()">
-          <option value="S1">S1 - 예배에 꾸준히 참여</option>
-          <option value="S2">S2 - 2~3달에 한 번씩 참여</option>
-          <option value="입대">입대 - 군 복무 중 (S2와 동일 정렬)</option>
-          <option value="S3">S3 - 6달에 한 번씩 참여</option>
-          <option value="S4">S4 - 연락두절 등의 제적 대상</option>
-        </select>
-      </div>
-      <div class="form-group" id="m_dischargeBox" style="display:none; background:var(--sub-bg); padding:10px 12px; border-radius:10px; border:1px solid var(--border);">
-        <label>🪖 전역일 (YYYY-MM-DD)</label>
-        <input type="date" id="m_dischargeDate" class="form-control" />
-      </div>
-        <select id="m_role" class="form-control">
-          <option value="새가족">새가족 (MD 5회 진행)</option>
-          <option value="목원">목원</option>
-          <option value="준목자">준목자</option>
-          <option value="목자">목자</option>
-        </select>
-      </div>
-      <div class="form-group"><label>이름</label><input type="text" id="m_name" class="form-control" placeholder="예: 홍길동" /></div>
-      <div class="form-group"><label>생일 (YYYY-MM-DD)</label><input type="date" id="m_bday" class="form-control" /></div>
-      <div class="form-group"><label>연락처</label><input type="text" id="m_phone" class="form-control" placeholder="010-0000-0000" /></div>
-      <div class="form-group" style="display:flex; gap:8px;">
-        <div style="flex:1;"><label>주소 (시/구)</label><input type="text" id="m_city" class="form-control" placeholder="예: 서울 중구" /></div>
-        <div style="flex:1;"><label>주소 (동 단위까지만)</label><input type="text" id="m_dong" class="form-control" placeholder="예: 신당동" /></div>
-      </div>
-      <div class="form-group"><label>교회 등록일 (새가족)</label><input type="date" id="m_regDate" class="form-control" /></div>
-      <div class="form-group"><label>친해지기 정보 (취미, 좋아하는 음식, MBTI 등)</label><input type="text" id="m_ice" class="form-control" placeholder="예: 보드게임, 아메리카노, ENFP" /></div>
-      <div class="form-group"><label>담당 MD 청년 (새가족인 경우)</label><input type="text" id="m_md" class="form-control" placeholder="담당 MD 이름" /></div>
-      <div class="form-group">
-        <label>프로필 사진 첨부 (구글 드라이브 자동 보관)</label>
-        <input type="file" id="m_photoFile" class="form-control" accept="image/*" />
-        <input type="hidden" id="m_photo" />
-      </div>
-      <button class="btn-full" onclick="saveMember()">저장하기</button>
     </div>
   </div>
 
-  <!-- [모달 2-1] 새가족 등록 전용 모달 (직분='새가족', 상태='S1' 자동 고정) -->
-  <div id="newFamilyModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'newFamilyModal')">
+  <!-- 명단 추가/수정 모달 (S4 선택 시 제적사유 노출) -->
+  <div id="memberModal" class="modal-backdrop">
     <div class="modal-box">
-      <div class="modal-header">
-        <h3>🌱 새가족 등록</h3>
-        <button class="close-btn" onclick="closeModal('newFamilyModal')">&times;</button>
+      <div class="modal-head">
+        <h3 id="memberModalTitle">👥 청년 정보 등록/수정</h3>
+        <button class="icon-btn" onclick="closeModal('memberModal')">✕</button>
       </div>
-      <p style="font-size:12px; color:var(--mint); font-weight:700; margin-bottom:12px;">
-        * 등록 시 직분은 '새가족', 출석 단계는 'S1', MD 잔여 횟수는 5회로 자동 지정됩니다.
-      </p>
-      <div class="form-group"><label>배정 목장</label>
-        <select id="nf_group" class="form-control">
-          <option>1목장</option><option>2목장</option><option>3목장</option><option>4목장</option><option>5목장</option><option>6목장</option><option>7목장</option>
+      <input type="hidden" id="editMemberId" />
+      <label class="field-label">이름 *</label>
+      <input type="text" id="memName" placeholder="본명 입력" />
+      <label class="field-label">소속 목장 *</label>
+      <input type="text" id="memGroup" placeholder="예: 1목장" />
+      <label class="field-label">직분</label>
+      <select id="memRole">
+        <option value="목원">목원</option>
+        <option value="준목자">준목자</option>
+        <option value="목자">목자</option>
+        <option value="새가족">새가족</option>
+        <option value="디렉터">디렉터</option>
+        <option value="담당목사">담당목사</option>
+      </select>
+      <label class="field-label">목양 상태 *</label>
+      <select id="memStatus" onchange="toggleS4ReasonField()">
+        <option value="S1">S1 (안정 출석)</option>
+        <option value="S2">S2 (간헐 출석)</option>
+        <option value="입대">입대 (군복무)</option>
+        <option value="S3">S3 (6개월 주기 - 목양통계 전용)</option>
+        <option value="S4">S4 (제적대상 - 목양통계 전용)</option>
+      </select>
+      <div id="s4ReasonWrap" style="display:none; background:rgba(239,68,68,0.08); padding:10px; border-radius:10px; margin-bottom:10px;">
+        <label class="field-label" style="color:var(--danger);">제적대상 사유 선택 *</label>
+        <select id="memS4Reason" style="margin-bottom:6px;">
+          <option value="교회 변경">교회 변경</option>
+          <option value="연락두절">연락두절</option>
+          <option value="개인사정">개인사정</option>
+          <option value="해외체류">해외체류</option>
+          <option value="기타">기타</option>
         </select>
+        <input type="text" id="memS4Detail" placeholder="세부 메모 (선택사항)" style="margin-bottom:0;" />
       </div>
-      <div class="form-group"><label>이름 *</label><input type="text" id="nf_name" class="form-control" placeholder="예: 김새가족" /></div>
-      <div style="display:flex; gap:8px;">
-        <div class="form-group" style="flex:1;"><label>생일</label><input type="date" id="nf_bday" class="form-control" /></div>
-        <div class="form-group" style="flex:1;"><label>교회 등록일</label><input type="date" id="nf_regDate" class="form-control" /></div>
-      </div>
-      <div class="form-group"><label>연락처</label><input type="text" id="nf_phone" class="form-control" placeholder="010-0000-0000" /></div>
-      <div class="form-group" style="display:flex; gap:8px;">
-        <div style="flex:1;"><label>주소 (시/구)</label><input type="text" id="nf_city" class="form-control" placeholder="예: 서울 중구" /></div>
-        <div style="flex:1;"><label>주소 (동 단위까지만)</label><input type="text" id="nf_dong" class="form-control" placeholder="예: 신당동" /></div>
-      </div>
-      <div class="form-group"><label>담당 MD 청년</label><input type="text" id="nf_md" class="form-control" placeholder="담당 MD 이름" /></div>
-      <div class="form-group"><label>친해지기 정보 (취미, 좋아하는 음식, MBTI 등)</label><input type="text" id="nf_ice" class="form-control" placeholder="예: 보드게임, 아메리카노, ENFP" /></div>
-      <div class="form-group">
-        <label>프로필 사진 첨부 (선택 · 구글 드라이브 자동 보관)</label>
-        <input type="file" id="nf_photoFile" class="form-control" accept="image/*" />
-      </div>
-      <button class="btn-full" onclick="saveNewFamily()">새가족 등록하기</button>
+      <label class="field-label">생년월일 (YYYY-MM-DD)</label>
+      <input type="date" id="memBirth" />
+      <label class="field-label">연락처</label>
+      <input type="text" id="memPhone" placeholder="010-0000-0000" />
+      <label class="field-label">친해지기 키워드 (취미·MBTI·관심사)</label>
+      <input type="text" id="memBio" placeholder="예: 보드게임, 러닝, ENFP" />
+      <button class="btn btn-primary" style="width:100%;" onclick="submitMemberSave()">저장하기</button>
     </div>
   </div>
 
-  <!-- [모달 2-2] 구성원 상세 프로필 카드 팝업 -->
-  <div id="memberDetailModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'memberDetailModal')">
-    <div class="modal-box" style="max-width:380px;">
-      <div class="modal-header">
-        <h3>👤 청년 프로필 카드</h3>
-        <button class="close-btn" onclick="closeModal('memberDetailModal')">&times;</button>
-      </div>
-      <div id="memberDetailBody"></div>
-    </div>
-  </div>
-
-  <!-- [모달 3] 일정 등록 -->
-  <div id="scheduleModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'scheduleModal')">
+  <!-- 일정 등록 모달 (리더십 전용 공개범위 선택 포함) -->
+  <div id="scheduleModal" class="modal-backdrop">
     <div class="modal-box">
-      <div class="modal-header">
+      <div class="modal-head">
         <h3>📅 새 일정 등록</h3>
-        <button class="close-btn" onclick="closeModal('scheduleModal')">&times;</button>
+        <button class="icon-btn" onclick="closeModal('scheduleModal')">✕</button>
       </div>
-      <div class="form-group"><label>카테고리</label>
-        <select id="s_cat" class="form-control"><option value="청년부행사">청년부행사</option><option value="교회행사">교회행사</option></select>
-      </div>
-      <div class="form-group"><label>일정 제목</label><input type="text" id="s_title" class="form-control" placeholder="예: 비전마을 연합 목장모임" /></div>
-      <div class="form-group"><label>날짜</label><input type="date" id="s_date" class="form-control" /></div>
-      <div class="form-group"><label>시간</label><input type="text" id="s_time" class="form-control" placeholder="예: 오후 2:00" /></div>
-      <div class="form-group"><label>장소</label><input type="text" id="s_place" class="form-control" placeholder="예: 비전홀" /></div>
-      <div class="form-group"><label>상세 메모</label><input type="text" id="s_memo" class="form-control" placeholder="준비물이나 안내사항" /></div>
-      <button class="btn-full" onclick="saveSchedule()">일정 등록하기</button>
+      <label class="field-label">날짜 *</label>
+      <input type="date" id="schDate" />
+      <label class="field-label">일정 제목 *</label>
+      <input type="text" id="schTitle" placeholder="예: 청년부 겨울수련회 / 목자회의" />
+      <label class="field-label">시간 및 장소</label>
+      <input type="text" id="schTime" placeholder="예: 주일 오후 2시 / 비전홀" />
+      <label class="field-label">공개 범위 *</label>
+      <select id="schScope">
+        <option value="전체공개">🌐 전체 공개 (모든 청년 열람)</option>
+        <option value="리더십전용" id="optLeaderSchedule" style="display:none;">🔒 리더십 전용 (목사·디렉터·목자만 열람)</option>
+      </select>
+      <button class="btn btn-primary" style="width:100%;" onclick="submitSchedule()">일정 등록</button>
     </div>
   </div>
 
-  <!-- [모달 4] MD 보고서 작성 & 기록 보기 -->
-  <div id="mdModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'mdModal')">
+  <!-- 새가족 등록 모달 -->
+  <div id="newcomerModal" class="modal-backdrop">
     <div class="modal-box">
-      <div class="modal-header">
-        <h3 id="mdModalTitle">📝 새가족 만남보고서</h3>
-        <button class="close-btn" onclick="closeModal('mdModal')">&times;</button>
+      <div class="modal-head">
+        <h3>🌱 새가족 등록</h3>
+        <button class="icon-btn" onclick="closeModal('newcomerModal')">✕</button>
       </div>
-      <div id="mdHistoryList" style="margin-bottom:14px;"></div>
-      <div id="mdWriteBox">
-        <hr style="border:none; border-top:1px dashed var(--border); margin:12px 0;" />
-        <p style="font-size:12px; color:var(--mint); font-weight:700; margin-bottom:10px;">
-          * 보고서를 제출하면 잔여 횟수가 자동으로 1회 차감됩니다.
-        </p>
-        <input type="hidden" id="md_nf_id" />
-        <div style="display:flex; gap:8px;">
-          <div class="form-group" style="flex:1;"><label>이름 (새가족)</label><input type="text" id="md_nf_name" class="form-control" readonly /></div>
-          <div class="form-group" style="flex:1;"><label>MD</label><input type="text" id="md_writer" class="form-control" /></div>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <div class="form-group" style="flex:1;"><label>만난 날짜</label><input type="date" id="md_date" class="form-control" /></div>
-          <div class="form-group" style="width:110px;"><label>횟수 (회차)</label><input type="number" id="md_round" class="form-control" min="1" max="5" /></div>
-        </div>
-        <div class="form-group"><label>장소</label><input type="text" id="md_place" class="form-control" placeholder="예: 교회 인근 카페" /></div>
-        <div class="form-group"><label>내용</label><textarea id="md_content" class="form-control" rows="3" placeholder="만남에서 나눈 이야기와 근황을 적어주세요"></textarea></div>
-        <div class="form-group"><label>기도제목</label><textarea id="md_prayer" class="form-control" rows="2" placeholder="함께 기도할 제목을 적어주세요"></textarea></div>
-        <div class="form-group"><label>소개한 사람 (2명 이상)</label><input type="text" id="md_intro" class="form-control" placeholder="예: 김OO 목자, 이OO 청년 (2명 이상 기재)" /></div>
-        <div class="form-group"><label>만남 인증사진 첨부 (선택 · 드라이브 자동 보관)</label><input type="file" id="md_photoFile" class="form-control" accept="image/*" /></div>
-        <button class="btn-full" onclick="submitMdReport()">보고서 제출 및 횟수 차감(-1)</button>
-      </div>
+      <label class="field-label">새가족 이름 *</label>
+      <input type="text" id="ncName" placeholder="새가족 성함" />
+      <label class="field-label">담당 MD 이름 *</label>
+      <input type="text" id="ncMd" placeholder="담당 MD 성함" />
+      <label class="field-label">총 정착 과정 횟수</label>
+      <input type="number" id="ncTotal" value="4" min="1" max="10" />
+      <button class="btn btn-primary" style="width:100%;" onclick="submitNewcomer()">등록하기</button>
     </div>
   </div>
 
-  <!-- [모달 5] 기도제목 등록 -->
-  <div id="prayerModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'prayerModal')">
+  <!-- 주보 업로드 모달 -->
+  <div id="bulletinModal" class="modal-backdrop">
     <div class="modal-box">
-      <div class="modal-header">
-        <h3>🙏 기도제목 나누기</h3>
-        <button class="close-btn" onclick="closeModal('prayerModal')">&times;</button>
+      <div class="modal-head">
+        <h3>📖 주간 주보 업로드</h3>
+        <button class="icon-btn" onclick="closeModal('bulletinModal')">✕</button>
       </div>
-      <div class="form-group">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text-main); font-size:13px;">
-          <input type="checkbox" id="p_anon" onchange="togglePrayerAnon()" />
-          <span>익명으로 올리기</span>
-        </label>
-      </div>
-      <div class="form-group" id="p_authorBox">
-        <label>작성자 이름 (실명)</label>
-        <input type="text" id="p_author" class="form-control" placeholder="예: 홍길동" />
-      </div>
-      <div class="form-group" style="background:var(--badge-bday-bg); padding:10px 12px; border-radius:10px;">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--badge-bday-text); font-size:13px; margin:0;">
-          <input type="checkbox" id="p_intercessory" />
-          <span>🔥 중보기도 요청 (목록 최상단에 고정 표시됩니다)</span>
-        </label>
-      </div>
-      <div class="form-group">
-        <label>기도제목 내용 *</label>
-        <textarea id="p_content" class="form-control" rows="4" placeholder="함께 기도할 제목을 자유롭게 나눠주세요. (등록 후 7일간 유지됩니다)"></textarea>
-      </div>
-      <button class="btn-full" onclick="submitPrayer()">기도제목 올리기</button>
+      <label class="field-label">예배 날짜 (일요일) *</label>
+      <input type="date" id="bulDate" />
+      <label class="field-label">주보 제목 *</label>
+      <input type="text" id="bulTitle" placeholder="예: 2026년 11월 셋째 주 청년부 주보" />
+      <label class="field-label">주보 이미지 파일 *</label>
+      <input type="file" id="bulFile" accept="image/*" />
+      <button class="btn btn-leader" style="width:100%;" onclick="submitBulletin()">주보 게시하기</button>
     </div>
   </div>
 
-  <!-- [모달 6] 번개모임 공고 등록 -->
-  <div id="meetupModal" class="modal-backdrop" onclick="closeModalOnOutside(event, 'meetupModal')">
+  <!-- 청년부 자유 광고 등록 모달 -->
+  <div id="adModal" class="modal-backdrop">
     <div class="modal-box">
-      <div class="modal-header">
-        <h3>⚡ 번개모임 공고 올리기</h3>
-        <button class="close-btn" onclick="closeModal('meetupModal')">&times;</button>
+      <div class="modal-head">
+        <h3>📢 청년부 광고 올리기</h3>
+        <button class="icon-btn" onclick="closeModal('adModal')">✕</button>
       </div>
-      <div class="form-group"><label>모임 제목 *</label><input type="text" id="b_title" class="form-control" placeholder="예: 마커스 집회 인원 모여라!" /></div>
-      <div style="display:flex; gap:8px;">
-        <div class="form-group" style="flex:1;"><label>모임 날짜 *</label><input type="date" id="b_date" class="form-control" /></div>
-        <div class="form-group" style="flex:1;"><label>모임 시간 *</label><input type="text" id="b_time" class="form-control" placeholder="예: 저녁 7시" /></div>
+      <label class="field-label">말머리</label>
+      <select id="adTag">
+        <option value="🎭 공연·초대">🎭 공연·초대</option>
+        <option value="💼 알바·일손모집">💼 알바·일손모집</option>
+        <option value="📢 일반광고">📢 일반광고</option>
+      </select>
+      <label class="field-label">제목 *</label>
+      <input type="text" id="adTitle" placeholder="예: 이번 주 토요일 단기 청소 알바 구합니다!" />
+      <label class="field-label">내용 *</label>
+      <textarea id="adContent" rows="3" placeholder="일시, 장소, 연락 방법 등을 적어주세요."></textarea>
+      <label class="field-label">작성자 이름 *</label>
+      <input type="text" id="adAuthor" />
+      <label class="field-label">삭제용 비밀번호 (숫자 4자리 등) *</label>
+      <input type="password" id="adDelPw" placeholder="본인 글 삭제 시 필요" />
+      <label class="field-label">포스터/안내 이미지 (선택)</label>
+      <input type="file" id="adFile" accept="image/*" />
+      <label class="field-label">게시 마감일 (선택 - 지나면 자동 숨김)</label>
+      <input type="date" id="adDeadline" />
+      <button class="btn btn-primary" style="width:100%;" onclick="submitAd()">광고 등록하기</button>
+    </div>
+  </div>
+
+  <!-- 관리자 전용 업데이트 노트 작성 모달 -->
+  <div id="updateModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>🔄 새 업데이트 노트 작성</h3>
+        <button class="icon-btn" onclick="closeModal('updateModal')">✕</button>
       </div>
-      <div class="form-group"><label>모임 장소 *</label><input type="text" id="b_place" class="form-control" placeholder="예: 교회 앞 로비" /></div>
-      <div style="display:flex; gap:8px;">
-        <div class="form-group" style="width:120px;"><label>모집 인원(명) *</label><input type="number" id="b_max" class="form-control" min="2" value="10" /></div>
-        <div class="form-group" style="flex:1;"><label>모집 마감 일시 *</label><input type="datetime-local" id="b_deadline" class="form-control" /></div>
+      <label class="field-label">버전명 (헤더·하단에 자동 반영) *</label>
+      <input type="text" id="updVersion" placeholder="예: v2.1.0" />
+      <label class="field-label">업데이트 이름 *</label>
+      <input type="text" id="updTitle" placeholder="예: 주일 출결 브리핑 및 청년 워들 오픈" />
+      <label class="field-label">업데이트 상세 내용 *</label>
+      <textarea id="updContent" rows="4" placeholder="변경된 기능들을 작성해 주세요."></textarea>
+      <button class="btn btn-primary" style="width:100%;" onclick="submitUpdateNote()">배포 기록 저장</button>
+    </div>
+  </div>
+
+  <!-- 번개모임 개설 모달 (인원 무제한 체크 포함) -->
+  <div id="flashCreateModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>⚡ 번개모임 개설하기</h3>
+        <button class="icon-btn" onclick="closeModal('flashCreateModal')">✕</button>
       </div>
-      <div style="display:flex; gap:8px;">
-        <div class="form-group" style="flex:1;"><label>작성자 이름 *</label><input type="text" id="b_author" class="form-control" placeholder="예: 신희수" /></div>
-        <div class="form-group" style="width:130px;"><label>삭제 비밀번호 *</label><input type="password" id="b_pw" class="form-control" maxlength="4" inputmode="numeric" placeholder="숫자 4자리" /></div>
-      </div>
-      <div class="form-group">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text-main); font-size:13px;">
-          <input type="checkbox" id="b_includeAuthor" checked />
-          <span>작성자 본인도 모집 인원에 포함하기</span>
+      <label class="field-label">모임 제목 *</label>
+      <input type="text" id="flTitle" placeholder="예: 예배 후 보드게임 카페 가실 분!" />
+      <label class="field-label">일시 *</label>
+      <input type="text" id="flTime" placeholder="예: 오늘 오후 4시 30분" />
+      <label class="field-label">장소 *</label>
+      <input type="text" id="flLoc" placeholder="예: 교회 1층 로비 집합" />
+      <label class="field-label">모집 정원</label>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+        <input type="number" id="flMax" value="4" min="2" style="margin-bottom:0; max-width:110px;" />
+        <label style="display:flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; cursor:pointer;">
+          <input type="checkbox" id="flUnlimited" style="width:18px; height:18px; margin:0;" onchange="document.getElementById('flMax').disabled = this.checked;" />
+          ∞ 인원 무제한
         </label>
       </div>
-      <div class="form-group" style="background:var(--primary-light); padding:10px 12px; border-radius:10px;">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--primary-dark); font-size:13px; margin:0;">
-          <input type="checkbox" id="b_saveToCal" />
-          <span>📅 2탭(일정 관리) 달력에도 함께 저장하기</span>
-        </label>
+      <label class="field-label">개설자 이름 *</label>
+      <input type="text" id="flHost" />
+      <label class="field-label">간단 설명</label>
+      <input type="text" id="flDesc" placeholder="새가족·복귀 청년도 대환영!" />
+      <button class="btn btn-primary" style="width:100%;" onclick="submitFlashCreate()">번개 올리기</button>
+    </div>
+  </div>
+
+  <!-- 기도제목 등록 모달 -->
+  <div id="prayerModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>🙏 중보기도 나누기</h3>
+        <button class="icon-btn" onclick="closeModal('prayerModal')">✕</button>
       </div>
-      <div class="form-group"><label>추가 안내 내용 (선택)</label><textarea id="b_desc" class="form-control" rows="3" placeholder="준비물, 회비, 연락 방법 등 추가로 적을 내용을 입력해 주세요."></textarea></div>
-      <button class="btn-full" onclick="submitMeetup()">번개모임 공고 등록하기</button>
+      <label class="field-label">이름 (비우면 익명)</label>
+      <input type="text" id="pryAuthor" />
+      <label class="field-label">기도제목 *</label>
+      <textarea id="pryContent" rows="3" placeholder="함께 기도할 내용을 나눠주세요."></textarea>
+      <button class="btn btn-primary" style="width:100%;" onclick="submitPrayer()">기도제목 올리기</button>
+    </div>
+  </div>
+
+  <!-- 리더십 전용: 상담·심방 요청 등록 모달 -->
+  <div id="visitationModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>🙏 상담 · 심방 요청 등록</h3>
+        <button class="icon-btn" onclick="closeModal('visitationModal')">✕</button>
+      </div>
+      <label class="field-label">대상 청년 이름 *</label>
+      <input type="text" id="visTargetName" list="allMemberDatalist" placeholder="청년 이름 입력" />
+      <datalist id="allMemberDatalist"></datalist>
+      <label class="field-label">상담 영역 *</label>
+      <select id="visCategory">
+        <option value="✝️ 신앙·영적 고민">✝️ 신앙·영적 고민</option>
+        <option value="💼 진로·취업">💼 진로·취업</option>
+        <option value="🏠 현생·가정·관계">🏠 현생·가정·관계</option>
+        <option value="🏥 건강·기타">🏥 건강·기타</option>
+      </select>
+      <label class="field-label">상황 메모 (목사님·디렉터 공유용) *</label>
+      <textarea id="visMemo" rows="3" placeholder="예: 최근 취업 준비로 힘들어해 목사님과 심방 교제를 원합니다."></textarea>
+      <button class="btn btn-leader" style="width:100%;" onclick="submitVisitation()">심방 요청 전달하기</button>
+    </div>
+  </div>
+
+  <!-- 리더십 전용: 목사님 노트 작성 모달 -->
+  <div id="leaderNoteModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>📝 리더십 노트 작성</h3>
+        <button class="icon-btn" onclick="closeModal('leaderNoteModal')">✕</button>
+      </div>
+      <label class="field-label">분류</label>
+      <select id="lnCategory">
+        <option value="📢 목양 공지">📢 목양 공지</option>
+        <option value="💡 사역 아이디어">💡 사역 아이디어</option>
+        <option value="📋 회의·계획 메모">📋 회의·계획 메모</option>
+      </select>
+      <label class="field-label">제목 *</label>
+      <input type="text" id="lnTitle" placeholder="제목을 입력하세요" />
+      <label class="field-label">내용 *</label>
+      <textarea id="lnContent" rows="4" placeholder="목자·리더십과 나눌 내용을 작성하세요."></textarea>
+      <button class="btn btn-leader" style="width:100%;" onclick="submitLeaderNote()">노트 게시하기</button>
     </div>
   </div>
 
   <script>
-    // ★ 1단계에서 배포한 Google Apps Script 웹 앱 URL을 아래 따옴표 안에 붙여넣으세요!
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwTxyn39zCE35hM2yaZpN8udZ3RrIiMXQXht66cMlsPRVbhOz8RyF5gGimCUR8YCZej/exec";
+    // 연결된 Google Apps Script 웹 앱 엔드포인트
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwTxyn39zCE35hM2yaZpN8udZ3RrIiMXQXht66cMlsPRVbhOz8RyF5gGimCUR8YCZej/exec';
 
-    const PERM_LABELS = { 1: "1단계 (기본 열람)", 2: "2단계 (열람 + 추가)", 3: "3단계 (전체 수정/삭제)" };
-    let APP_STATE = {
-      auth: { authenticated: false, name: null, role: "일반", group: "-", tab1: 1, tab2: 1, tab3: 1 },
+    let STATE = {
+      pw: sessionStorage.getItem('vv_pw') || '',
+      auth: { valid: false },
       members: [],
       schedules: [],
-      reports: [],
+      newcomers: [],
       prayers: [],
-      meetups: [],
-      selectedGroup: "전체",
+      flashMeetings: [],
+      bulletins: [],
+      ads: [],
+      updates: [],
+      attendanceCandidates: [],
+      leadershipData: null,
       calYear: new Date().getFullYear(),
-      calMonth: new Date().getMonth() + 1
+      calMonth: new Date().getMonth(),
+      selectedDate: '',
+      selectedGroupFilter: localStorage.getItem('vv_pref_group') || '전체'
     };
 
-    // 초기화
-    window.addEventListener("DOMContentLoaded", () => {
-      initTheme();
-      const savedPin = sessionStorage.getItem("vision_pin") || "";
-      fetchInitialData(savedPin);
-    });
-
-    // 다크모드 관리
-    function initTheme() {
-      const saved = localStorage.getItem("vision_theme") || "light";
-      document.documentElement.setAttribute("data-theme", saved);
-      document.getElementById("themeBtn").textContent = saved === "dark" ? "☀️" : "🌙";
-    }
-    function toggleTheme() {
-      const cur = document.documentElement.getAttribute("data-theme");
-      const next = cur === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("vision_theme", next);
-      document.getElementById("themeBtn").textContent = next === "dark" ? "☀️" : "🌙";
-    }
-
-    // 로딩 표시
-    function setLoading(show, msg = "⏳ 구글 스프레드시트와 동기화 중...") {
-      const bar = document.getElementById("loadingBar");
-      document.getElementById("loadingMsg").textContent = msg;
-      bar.classList.toggle("show", show);
-    }
-
-    // 초기 데이터 로드
-    async function fetchInitialData(pin = "") {
-      if (!GAS_WEB_APP_URL.startsWith("http")) {
-        alert("index.html 코드 상단의 GAS_WEB_APP_URL에 구글 Apps Script 웹 앱 주소를 먼저 입력해 주세요!");
-        return;
-      }
+    // API 호출 헬퍼 (Apps Script 내부 및 GitHub Pages 외부 호스팅 모두 지원)
+    async function apiGet(pw) {
       setLoading(true);
       try {
-        const res = await fetch(`${GAS_WEB_APP_URL}?action=init&pin=${encodeURIComponent(pin)}`);
-        const json = await res.json();
-        if (json.status === "ok") {
-          APP_STATE.auth = json.auth;
-          APP_STATE.members = json.data.members || [];
-          APP_STATE.schedules = json.data.schedules || [];
-          APP_STATE.reports = json.data.reports || [];
-          APP_STATE.prayers = json.data.prayers || [];
-          APP_STATE.meetups = json.data.meetups || [];
-          if (!json.auth.authenticated) sessionStorage.removeItem("vision_pin");
-          renderAll();
-          handleDeepLink();
-        }
-      } catch (err) {
-        console.error(err);
-        alert("데이터를 불러오는 중 오류가 발생했습니다. 웹 앱 배포 권한('모든 사용자')을 확인해 주세요.");
+        const res = await fetch(`${GAS_URL}?action=getData&pw=${encodeURIComponent(pw || '')}`);
+        return await res.json();
       } finally {
         setLoading(false);
       }
     }
 
-    // POST 요청 헬퍼
-    async function postToGas(payload) {
-      setLoading(true, "⏳ 저장 중입니다...");
+    async function apiPost(payload) {
+      setLoading(true);
       try {
-        const pin = sessionStorage.getItem("vision_pin") || "";
-        const res = await fetch(GAS_WEB_APP_URL, {
-          method: "POST",
-          body: JSON.stringify({ ...payload, pin })
+        payload.pw = STATE.pw;
+        const res = await fetch(GAS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
         });
-        const json = await res.json();
-        if (json.status === "ok") {
-          if (json.auth) APP_STATE.auth = json.auth;
-          if (json.data) {
-            APP_STATE.members = json.data.members || [];
-            APP_STATE.schedules = json.data.schedules || [];
-            APP_STATE.reports = json.data.reports || [];
-            APP_STATE.prayers = json.data.prayers || [];
-            APP_STATE.meetups = json.data.meetups || [];
-          }
-          renderAll();
-          return json;
-        } else {
-          alert(json.message || "요청 처리에 실패했습니다.");
-          return null;
-        }
-      } catch (err) {
-        alert("통신 오류가 발생했습니다: " + err);
-        return null;
+        return await res.json();
       } finally {
         setLoading(false);
       }
     }
 
-    // 전체 화면 렌더링
-    function renderAll() {
-      applyAuthUI();
-      renderHomeDashboard();
-      renderGroupTab();
-      renderCalendarTab();
-      renderNewFamilyTab();
-      renderPrayerTab();
-      renderMeetupTab();
+    function setLoading(flag) {
+      document.getElementById('loadingBar').classList.toggle('active', flag);
     }
 
-    // 권한 UI 반영
-    function applyAuthUI() {
-      const a = APP_STATE.auth;
-      const btn = document.getElementById("settingsBtn");
-      if (a.authenticated) {
-        btn.classList.add("authenticated");
-        document.getElementById("settingsIcon").textContent = "🔓";
-        document.getElementById("settingsLabel").textContent = `${a.name} (${a.role})`;
-        document.getElementById("authUserName").textContent = `${a.name}님 (${a.role})`;
-        document.getElementById("authUserGroup").textContent = `담당 목장 범위: ${a.group}`;
-        document.getElementById("permTab1Text").textContent = PERM_LABELS[a.tab1];
-        document.getElementById("permTab2Text").textContent = PERM_LABELS[a.tab2];
-        document.getElementById("permTab3Text").textContent = PERM_LABELS[a.tab3];
-      } else {
-        btn.classList.remove("authenticated");
-        document.getElementById("settingsIcon").textContent = "⚙️";
-        document.getElementById("settingsLabel").textContent = "설정 / 권한인증";
+    // 초기화
+    window.addEventListener('DOMContentLoaded', async () => {
+      applySavedThemeAndFont();
+      await loadAllData();
+      const startTab = localStorage.getItem('vv_pref_tab');
+      if (startTab && document.getElementById('tab-' + startTab)) {
+        switchTab(startTab);
+      }
+    });
+
+    async function loadAllData() {
+      const data = await apiGet(STATE.pw);
+      STATE = { ...STATE, ...data };
+      if (!STATE.auth.valid && STATE.pw) {
+        STATE.pw = '';
+        sessionStorage.removeItem('vv_pw');
       }
 
-      document.getElementById("badge-tab1").textContent = PERM_LABELS[a.tab1];
-      document.getElementById("badge-tab2").textContent = PERM_LABELS[a.tab2];
-      document.getElementById("badge-tab3").textContent = PERM_LABELS[a.tab3];
+      // 버전 자동 동기화 (헤더 & 하단 & 설정창)
+      const ver = STATE.latestVersion || 'v2.0.0';
+      document.getElementById('headerVersion').textContent = ver;
+      document.getElementById('footerVersion').textContent = ver;
+      document.getElementById('settingsVersionText').textContent = ver;
 
-      document.getElementById("btnAddMember").style.display = a.tab1 >= 2 ? "inline-block" : "none";
-      document.getElementById("btnAddSchedule").style.display = a.tab2 >= 2 ? "inline-block" : "none";
-      document.getElementById("btnAddNf").style.display = a.tab3 >= 2 ? "inline-block" : "none";
-      document.getElementById("btnWriteMdTop").style.display = a.tab3 >= 2 ? "inline-block" : "none";
+      applyRoleUI();
+      populateGroupSelects();
+      renderHome();
+      renderMembers();
+      renderCalendar();
+      renderNewcomers();
+      renderNews();
+      renderPrayerAndFlash();
+      loadPlaygroundGroupMembers();
+      initYouthWordle();
+      initBombGame();
+      if (STATE.auth.valid && STATE.auth.isLeader && STATE.leadershipData) {
+        renderLeadershipTab();
+      }
     }
 
-    // 홈 위젯 렌더링
-    function renderHomeDashboard() {
-      const curMonth = new Date().getMonth() + 1;
-      const bdays = getMonthBirthdays(curMonth);
-      document.getElementById("homeBdayTitle").textContent = `🎂 ${curMonth}월 생일자`;
-      document.getElementById("homeBdayCount").textContent = bdays.length ? `총 ${bdays.length}명의 생일이 있어요!` : "이번 달 생일자가 없습니다";
-      document.getElementById("homeBdayList").textContent = bdays.length
-        ? bdays.map(b => `${b.이름}(${b.day}일)`).join(", ")
-        : "다음 달 생일자를 기다려 주세요.";
-
-      const todayStr = new Date().toISOString().slice(0, 10);
-      const upcoming = APP_STATE.schedules
-        .filter(s => s.시작일 >= todayStr)
-        .sort((a, b) => a.시작일.localeCompare(b.시작일));
-      if (upcoming.length) {
-        document.getElementById("homeNextEventTitle").textContent = upcoming[0].제목;
-        document.getElementById("homeNextEventDesc").textContent = `${upcoming[0].시작일} · ${upcoming[0].장소 || "장소 미정"}`;
+    // 권한별 UI 제어
+    function applyRoleUI() {
+      const a = STATE.auth;
+      const roleBadge = document.getElementById('headerRoleBadge');
+      if (a.valid) {
+        roleBadge.style.display = 'inline-block';
+        roleBadge.textContent = `${a.name} (${a.role})`;
+        document.getElementById('authLoggedOutBox').style.display = 'none';
+        document.getElementById('authLoggedInBox').style.display = 'block';
+        document.getElementById('authInfoText').textContent = `${a.name} · ${a.role} (${a.group}) · Lv.${a.level}`;
       } else {
-        document.getElementById("homeNextEventTitle").textContent = "예정된 행사가 없습니다";
-        document.getElementById("homeNextEventDesc").textContent = "일정 관리 탭에서 새 일정을 확인하세요.";
+        roleBadge.style.display = 'none';
+        document.getElementById('authLoggedOutBox').style.display = 'block';
+        document.getElementById('authLoggedInBox').style.display = 'none';
       }
 
-      const activeNf = APP_STATE.members.filter(m => m.새가족여부 === "Y" && Number(m.MD잔여횟수) > 0);
-      document.getElementById("homeNfCount").textContent = `MD 진행 중 ${activeNf.length}명`;
-      document.getElementById("homeNfList").textContent = activeNf.length
-        ? activeNf.map(n => `${n.이름}(잔여 ${n.MD잔여횟수}회)`).join(", ")
-        : "현재 진행 중인 새가족이 없습니다.";
+      document.getElementById('btnAddMember').style.display = (a.valid && a.level >= 2) ? 'inline-flex' : 'none';
+      document.getElementById('btnAddSchedule').style.display = (a.valid && a.level >= 2) ? 'inline-flex' : 'none';
+      document.getElementById('btnAddNewcomer').style.display = (a.valid && a.level >= 2) ? 'inline-flex' : 'none';
+      document.getElementById('btnToggleAttMode').style.display = (a.valid && a.level >= 3) ? 'inline-flex' : 'none';
+
+      const isLeader = a.valid && a.isLeader;
+      document.getElementById('leaderTabBtn').style.display = isLeader ? 'block' : 'none';
+      document.getElementById('legendLeader').style.display = isLeader ? 'inline' : 'none';
+      document.getElementById('optLeaderSchedule').style.display = isLeader ? 'block' : 'none';
+      document.getElementById('btnAddBulletin').style.display = isLeader ? 'inline-flex' : 'none';
+
+      document.getElementById('btnAddUpdate').style.display = (a.valid && a.isSuperAdmin) ? 'inline-flex' : 'none';
+      document.getElementById('adminCleanupBox').style.display = (a.valid && a.isPastorOrAdmin) ? 'block' : 'none';
     }
 
-// 1탭: 리더십 + 목장 편성표 렌더링 (목록 바깥 S1~S4 뱃지 노출 + 직분 -> S1~S4 -> 가나다순 정렬)
-    function renderGroupTab() {
-      const curMonth = new Date().getMonth() + 1;
-      const isAllView = APP_STATE.selectedGroup === "전체";
+    // 탭 전환
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+      if (btn) btn.classList.add('active');
+    }
 
-      // 1) 상단 리더십 영역 (담당목사, 디렉터)
-      const leaders = APP_STATE.members.filter(m =>
-        m.목장 === "리더십" || m.직분 === "담당목사" || m.직분 === "디렉터"
-      );
-      const leaderGrid = document.getElementById("leadershipGrid");
-      if (leaders.length) {
-        leaderGrid.style.display = "grid";
-        leaderGrid.innerHTML = leaders.map(l => {
-          const isBdayMonth = l.생일 && Number(l.생일.split("-")[1]) === curMonth;
-          return `
-            <div class="leader-card" style="cursor:pointer;" onclick="openMemberDetail('${l.ID}')">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <span class="leader-badge">${l.직분}</span>
-                <strong style="font-size:15px;">${l.이름}</strong>
-                ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
-              </div>
-              <span style="font-size:12px; color:var(--primary); font-weight:600;">상세보기 ›</span>
-            </div>`;
-        }).join("");
-      } else {
-        leaderGrid.style.display = "none";
+    // 모달 열기/닫기
+    function openModal(id) {
+      const defName = localStorage.getItem('vv_pref_name') || '';
+      if (id === 'adModal') document.getElementById('adAuthor').value = defName;
+      document.getElementById(id).classList.add('open');
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // ==================== 설정창 & 인증 & 비밀번호 변경 ====================
+    async function handleLogin() {
+      const pw = document.getElementById('loginPwInput').value.trim();
+      if (!pw) return alert('비밀번호를 입력해 주세요.');
+      const res = await apiPost({ action: 'verifyPassword', pw });
+      if (!res.valid) {
+        alert('인증에 실패했습니다. 비밀번호를 확인해 주세요.');
+        return;
+      }
+      STATE.pw = pw;
+      sessionStorage.setItem('vv_pw', pw);
+      document.getElementById('loginPwInput').value = '';
+      closeModal('settingsModal');
+      await loadAllData();
+      alert(`${res.name}(${res.role})님 환영합니다!`);
+    }
+
+    function handleLogout() {
+      STATE.pw = '';
+      sessionStorage.removeItem('vv_pw');
+      switchTab('home');
+      loadAllData();
+    }
+
+    function togglePwChangeForm() {
+      const f = document.getElementById('pwChangeForm');
+      f.style.display = f.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function submitPasswordChange() {
+      const userName = document.getElementById('chgPwName').value.trim();
+      const newPw = document.getElementById('chgPwNew').value.trim();
+      const msgEl = document.getElementById('pwChangeMsg');
+      const res = await apiPost({ action: 'changePassword', userName, newPw });
+      msgEl.style.color = res.success ? 'var(--success)' : 'var(--danger)';
+      msgEl.textContent = res.message;
+      if (res.success) {
+        STATE.pw = newPw;
+        sessionStorage.setItem('vv_pw', newPw);
+        document.getElementById('chgPwName').value = '';
+        document.getElementById('chgPwNew').value = '';
+      }
+    }
+
+    function savePreferences() {
+      const grp = document.getElementById('prefGroup').value;
+      const name = document.getElementById('prefName').value;
+      const tab = document.getElementById('prefStartTab').value;
+      localStorage.setItem('vv_pref_group', grp);
+      localStorage.setItem('vv_pref_name', name);
+      localStorage.setItem('vv_pref_tab', tab);
+      STATE.selectedGroupFilter = grp;
+      renderMembers();
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('vv_dark', document.body.classList.contains('dark') ? '1' : '0');
+    }
+
+    function toggleFontSize() {
+      document.body.classList.toggle('font-large');
+      localStorage.setItem('vv_font_lg', document.body.classList.contains('font-large') ? '1' : '0');
+    }
+
+    function applySavedThemeAndFont() {
+      if (localStorage.getItem('vv_dark') === '1') document.body.classList.add('dark');
+      if (localStorage.getItem('vv_font_lg') === '1') document.body.classList.add('font-large');
+      document.getElementById('prefName').value = localStorage.getItem('vv_pref_name') || '';
+      document.getElementById('prefStartTab').value = localStorage.getItem('vv_pref_tab') || 'home';
+    }
+
+    async function runAdminCleanup() {
+      if (!confirm('7일이 지난 기도제목과 마감일이 지난 광고를 일괄 정리할까요?')) return;
+      const res = await apiPost({ action: 'cleanup' });
+      alert(res.message);
+      await loadAllData();
+    }
+
+    // ==================== 0. 홈 대시보드 ====================
+    function renderHome() {
+      document.getElementById('statActiveMembers').textContent = STATE.members.length + '명';
+      document.getElementById('statNewcomers').textContent = STATE.newcomers.length + '명';
+      document.getElementById('statFlash').textContent = STATE.flashMeetings.length + '건';
+      document.getElementById('statPrayers').textContent = STATE.prayers.length + '건';
+
+      const curMonth = String(new Date().getMonth() + 1).padStart(2, '0');
+      const bdays = STATE.members.filter(m => m['생년월일'] && String(m['생년월일']).split('-')[1] === curMonth);
+      document.getElementById('homeBirthdays').innerHTML = bdays.length
+        ? bdays.map(b => `<span class="badge b-amber">🎂 ${b['이름']} (${b['목장']} · ${b['생년월일'].slice(5)})</span>`).join('')
+        : '<span style="color:var(--text-muted); font-size:13px;">이번 달 생일자가 없습니다.</span>';
+
+      const latestBul = STATE.bulletins[0];
+      const latestAd = STATE.ads[0];
+      let previewHtml = '';
+      if (latestBul) previewHtml += `<div style="margin-bottom:6px;">📖 <strong>최신 주보:</strong> ${latestBul['제목']} (${latestBul['예배날짜']})</div>`;
+      if (latestAd) previewHtml += `<div>📢 <strong>최신 광고:</strong> [${latestAd['말머리']}] ${latestAd['제목']}</div>`;
+      document.getElementById('homeNewsPreview').innerHTML = previewHtml || '<span style="color:var(--text-muted); font-size:13px;">등록된 최신 소식이 없습니다.</span>';
+    }
+
+    // ==================== 1. 명단 (S1, S2, 입대) & 주일 출결 체크 ====================
+    function populateGroupSelects() {
+      const groups = ['전체', ...new Set(STATE.members.map(m => m['목장']).filter(Boolean))];
+      document.getElementById('groupFilterPills').innerHTML = groups.map(g =>
+        `<button class="pill ${STATE.selectedGroupFilter === g ? 'active' : ''}" onclick="setGroupFilter('${g}')">${g}</button>`
+      ).join('');
+
+      const prefSel = document.getElementById('prefGroup');
+      prefSel.innerHTML = groups.map(g => `<option value="${g}">${g}</option>`).join('');
+      prefSel.value = STATE.selectedGroupFilter;
+
+      const pgSel = document.getElementById('pgGroupSelect');
+      const onlyGroups = groups.filter(g => g !== '전체');
+      pgSel.innerHTML = onlyGroups.map(g => `<option value="${g}">${g}</option>`).join('');
+      if (STATE.selectedGroupFilter !== '전체' && onlyGroups.includes(STATE.selectedGroupFilter)) {
+        pgSel.value = STATE.selectedGroupFilter;
       }
 
-      // 2) 하단 1~7목장 필터 및 편성표
-      const groups = ["전체", "1목장", "2목장", "3목장", "4목장", "5목장", "6목장", "7목장"];
-      const pills = document.getElementById("groupFilterPills");
-      pills.innerHTML = groups.map(g =>
-        `<button type="button" class="pill-btn ${APP_STATE.selectedGroup === g ? "active" : ""}" onclick="selectGroupFilter('${g}')">${g}</button>`
-      ).join("");
+      const wSel = document.getElementById('wordleModeSelect');
+      wSel.innerHTML = `<option value="ALL">전체 청년부 대상</option>` +
+        onlyGroups.map(g => `<option value="${g}">${g} 전용 워들</option>`).join('');
 
-      const targetGroups = isAllView ? groups.slice(1) : [APP_STATE.selectedGroup];
-      const roleOrder = { "목자": 1, "준목자": 2, "목원": 3, "새가족": 4 };
-      const stageOrder = { "S1": 1, "S2": 2, "입대": 2, "S3": 3, "S4": 4 };
-      
-      document.getElementById("groupGrid").innerHTML = targetGroups.map(gName => {
-        const fullList = APP_STATE.members
-          .filter(m => m.목장 === gName)
-          .sort((a, b) => {
-            // 1순위: 직분 (목자 -> 준목자 -> 목원 -> 새가족)
-            const rDiff = (roleOrder[a.직분] || 9) - (roleOrder[b.직분] || 9);
-            if (rDiff !== 0) return rDiff;
+      // 심방 요청용 자동완성
+      document.getElementById('allMemberDatalist').innerHTML = STATE.members.map(m => `<option value="${m['이름']}">`).join('');
+    }
 
-            // 2순위: S1 -> S2 -> S3 -> S4 단계 순
-            const stA = String(a.상태 || "").trim().toUpperCase();
-            const stB = String(b.상태 || "").trim().toUpperCase();
-            const sDiff = (stageOrder[stA] || 9) - (stageOrder[stB] || 9);
-            if (sDiff !== 0) return sDiff;
+    function setGroupFilter(g) {
+      STATE.selectedGroupFilter = g;
+      populateGroupSelects();
+      renderMembers();
+    }
 
-            // 3순위: 동일 단계 내 이름 가나다순
-            return String(a.이름 || "").localeCompare(String(b.이름 || ""), "ko");
-          });
+    function renderMembers() {
+      const q = document.getElementById('memberSearchInput').value.trim().toLowerCase();
+      const filtered = STATE.members.filter(m => {
+        const matchGrp = STATE.selectedGroupFilter === '전체' || m['목장'] === STATE.selectedGroupFilter;
+        const matchQ = !q || m['이름'].toLowerCase().includes(q) || (m['친해지기정보'] || '').toLowerCase().includes(q);
+        return matchGrp && matchQ;
+      });
 
-        const visibleList = isAllView
-          ? fullList.filter(m => m.직분 === "목자" || m.직분 === "준목자")
-          : fullList;
-
-        const hiddenCount = fullList.length - visibleList.length;
-
-        const rowsHtml = visibleList.length ? visibleList.map(m => {
-          const isBdayMonth = m.생일 && Number(m.생일.split("-")[1]) === curMonth;
-          const stCode = String(m.상태 || "").trim().toUpperCase();
-          const canViewStage = APP_STATE.auth.tab1 >= 2 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === gName);
-          const stageBadge = (canViewStage && ["S1", "S2", "입대", "S3", "S4"].includes(stCode))
-            ? `<span class="stage-badge stage-${stCode}">${stCode === "입대" ? "🪖 입대" : stCode}</span>`
-            : "";
-
-          return `
-            <div class="member-row" style="cursor:pointer;" onclick="openMemberDetail('${m.ID}')">
-              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                <span class="role-tag role-${m.직분}">${m.직분}</span>
-                <strong style="font-size:15px;">${m.이름}</strong>
-                ${stageBadge}
-                ${isBdayMonth ? `<span title="이달의 생일">🎂</span>` : ""}
-                ${m.새가족여부 === "Y" ? `<span class="widget-badge badge-new" style="font-size:10px; padding:1px 6px;">New</span>` : ""}
-              </div>
-              <span style="font-size:12px; color:var(--text-sub);">정보 ›</span>
-            </div>`;
-        }).join("") : `<p style="font-size:13px; color:var(--text-sub); padding:8px 0;">${isAllView ? "배정된 목자·준목자가 없습니다." : "등록된 목원이 없습니다."}</p>`;
-
-        const summaryFooterHtml = (isAllView && hiddenCount > 0)
-          ? `<div onclick="selectGroupFilter('${gName}')" style="margin-top:8px; padding:9px 12px; border-radius:10px; background:var(--card-bg); border:1px dashed var(--border); text-align:center; font-size:13px; font-weight:700; color:var(--primary); cursor:pointer;">
-               + 일반 목원 ${hiddenCount}명 <span style="font-weight:500; color:var(--text-sub); font-size:12px;">(클릭하여 전체 보기 →)</span>
-             </div>`
-          : "";
-
-        return `
-          <div class="group-box">
-            <div class="group-box-header" style="cursor:pointer;" onclick="selectGroupFilter('${gName}')">
-              <h3>${gName}</h3>
-              <span style="font-size:12px; color:var(--text-sub);">총 ${fullList.length}명</span>
+      document.getElementById('membersGrid').innerHTML = filtered.map(m => `
+        <div class="member-card">
+          <div class="avatar">${m['사진URL'] ? `<img src="${m['사진URL']}">` : m['이름'].slice(0,1)}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <strong>${m['이름']}</strong>
+              <span class="badge b-blue">${m['목장']}</span>
+              <span class="badge ${m['상태']==='입대' ? 'b-amber' : 'b-green'}">${m['직분']} · ${m['상태']}</span>
             </div>
-            ${rowsHtml}
-            ${summaryFooterHtml}
-          </div>`;
-      }).join("");
+            <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
+              ${m['친해지기정보'] || '함께 알아가는 중입니다 ✨'}
+            </div>
+            ${m['연락처'] ? `<div style="font-size:12px; color:var(--primary); margin-top:2px;">📞 ${m['연락처']}</div>` : ''}
+          </div>
+          ${(STATE.auth.valid && STATE.auth.level >= 2) ? `<button class="btn btn-outline btn-sm" onclick='openMemberModal(${JSON.stringify(m)})'>수정</button>` : ''}
+        </div>
+      `).join('') || '<div style="color:var(--text-muted); font-size:13px;">조건에 맞는 청년이 없습니다.</div>';
     }
 
-    // 목장 필터(전체 / 1목장~7목장) 전환 함수
-    function selectGroupFilter(g) {
-      APP_STATE.selectedGroup = g;
-      renderGroupTab();
-      // 모바일에서 목장 선택 시 편성표 영역으로 부드럽게 스크롤
-      const grid = document.getElementById("groupGrid");
-      if (grid && g !== "전체") {
-        grid.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    function openMemberModal(m = null) {
+      document.getElementById('editMemberId').value = m ? m['ID'] : '';
+      document.getElementById('memName').value = m ? m['이름'] : '';
+      document.getElementById('memGroup').value = m ? m['목장'] : '';
+      document.getElementById('memRole').value = m ? m['직분'] : '목원';
+      document.getElementById('memStatus').value = m ? m['상태'] : 'S1';
+      document.getElementById('memBirth').value = m ? m['생년월일'] : '';
+      document.getElementById('memPhone').value = m ? (m['연락처'] || '') : '';
+      document.getElementById('memBio').value = m ? (m['친해지기정보'] || '') : '';
+      toggleS4ReasonField();
+      openModal('memberModal');
+    }
+
+    function toggleS4ReasonField() {
+      const isS4 = document.getElementById('memStatus').value === 'S4';
+      document.getElementById('s4ReasonWrap').style.display = isS4 ? 'block' : 'none';
+    }
+
+    async function submitMemberSave() {
+      const status = document.getElementById('memStatus').value;
+      const reasonBase = document.getElementById('memS4Reason').value;
+      const reasonDetail = document.getElementById('memS4Detail').value.trim();
+      const memberObj = {
+        ID: document.getElementById('editMemberId').value,
+        이름: document.getElementById('memName').value.trim(),
+        목장: document.getElementById('memGroup').value.trim(),
+        직분: document.getElementById('memRole').value,
+        상태: status,
+        생년월일: document.getElementById('memBirth').value,
+        연락처: document.getElementById('memPhone').value.trim(),
+        친해지기정보: document.getElementById('memBio').value.trim(),
+        제적사유: status === 'S4' ? (reasonDetail ? `${reasonBase} (${reasonDetail})` : reasonBase) : ''
+      };
+      if (!memberObj.이름 || !memberObj.목장) return alert('이름과 목장을 입력해 주세요.');
+      const res = await apiPost({ action: 'saveMember', memberObj });
+      alert(res.message);
+      if (res.success) {
+        closeModal('memberModal');
+        await loadAllData();
       }
     }
 
-    // 구성원 이름 클릭 시 상세 프로필 카드 팝업 열기
-    function openMemberDetail(memberId) {
-      const m = APP_STATE.members.find(item => String(item.ID) === String(memberId));
-      if (!m) return;
+    // 주일 출결 체크 (3단계 권한, 일요일 18:00 자동 마감)
+    function toggleAttendanceMode(forceState) {
+      const checkView = document.getElementById('attendanceCheckView');
+      const listView = document.getElementById('memberListView');
+      const showCheck = forceState !== undefined ? forceState : checkView.style.display === 'none';
 
-      const canViewPrivate = APP_STATE.auth.tab1 >= 2 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === m.목장);
-      const canEdit = APP_STATE.auth.tab1 >= 3 && (APP_STATE.auth.group === "전체" || APP_STATE.auth.group === m.목장);
-      const stCode = String(m.상태 || "").trim().toUpperCase();
+      checkView.style.display = showCheck ? 'block' : 'none';
+      listView.style.display = showCheck ? 'none' : 'block';
 
-      const avatarHtml = m.사진URL
-        ? `<img src="${m.사진URL}" referrerpolicy="no-referrer" style="width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);" alt="${m.이름}" />`
-        : `<div style="width:72px; height:72px; border-radius:50%; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800;">${m.이름.slice(0, 1)}</div>`;
+      if (showCheck) {
+        const now = new Date();
+        const todayStr = now.toISOString().slice(0, 10);
+        document.getElementById('attDateInput').value = todayStr;
 
-      const stageHtml = (canViewPrivate && ["S1", "S2", "입대", "S3", "S4"].includes(stCode))
-        ? `<span class="stage-badge stage-${stCode}">${stCode === "입대" ? "🪖 입대" : stCode}</span>`
-        : "";
+        const isSunday = now.getDay() === 0;
+        const isClosed = !isSunday || now.getHours() >= 18;
+        const canOverride = STATE.auth.isPastorOrAdmin;
 
-      // 전역일 D-Day 계산
-      let dischargeRowHtml = "";
-      if (canViewPrivate && stCode === "입대") {
-        let dDayBadge = "";
-        if (m.전역일) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const target = new Date(m.전역일 + "T00:00:00");
-          const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-          if (diffDays > 0) dDayBadge = `<span style="color:var(--mint); font-size:12px; margin-left:6px;">(D-${diffDays})</span>`;
-          else if (diffDays === 0) dDayBadge = `<span style="color:var(--primary); font-size:12px; margin-left:6px;">(🎉 오늘 전역!)</span>`;
-          else dDayBadge = `<span style="color:var(--text-sub); font-size:12px; margin-left:6px;">(전역 완료)</span>`;
+        const notice = document.getElementById('attDeadlineNotice');
+        const saveBtn = document.getElementById('btnSaveAttendance');
+        if (isClosed && !canOverride) {
+          notice.textContent = '🔒 현재 입력 시간이 마감되었습니다. (매주 일요일 00:00 ~ 18:00 입력 가능)';
+          saveBtn.disabled = true;
+          saveBtn.style.opacity = '0.5';
+        } else {
+          notice.textContent = canOverride
+            ? '👑 관리자/교역자 권한으로 시간 제한 없이 출결 수정이 가능합니다.'
+            : '⏰ 매주 일요일 저녁 6시(18:00)에 입력이 자동 마감됩니다.';
+          saveBtn.disabled = false;
+          saveBtn.style.opacity = '1';
         }
-        dischargeRowHtml = `
-          <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
-            <span style="color:var(--text-sub);">🪖 전역일</span>
-            <strong>${m.전역일 || "미등록"}${dDayBadge}</strong>
-          </div>`;
+        renderAttendanceChecklist([]);
+        loadExistingAttendanceForDate();
       }
+    }
 
-      const privateRows = canViewPrivate ? `
-        <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
-          <span style="color:var(--text-sub);">📞 연락처</span>
-          <strong>${m.연락처 || "미등록"}</strong>
-        </div>
-        <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
-          <span style="color:var(--text-sub);">📍 거주지 (동 단위)</span>
-          <strong>${(m.주소_시구 || m.주소_동) ? `${m.주소_시구 || ""} ${m.주소_동 || ""}`.trim() : "미등록"}</strong>
-        </div>
-      ` : "";
+    function loadExistingAttendanceForDate() {
+      const dateStr = document.getElementById('attDateInput').value;
+      const recs = (STATE.leadershipData && STATE.leadershipData.attendanceRecords) || [];
+      const found = recs.find(r => String(r['날짜']) === dateStr);
+      let checkedNames = [];
+      if (found) {
+        try { checkedNames = JSON.parse(found['출석자명단JSON'] || '[]'); } catch (e) {}
+      }
+      renderAttendanceChecklist(checkedNames);
+    }
 
-      const extraInfoHtml = (m.친해지기정보 || m.담당MD) ? `
-        <div style="background:var(--sub-bg); padding:12px; border-radius:12px; border:1px solid var(--border); margin-top:12px; font-size:13px;">
-          ${m.담당MD ? `<div style="margin-bottom:4px;">🤝 <strong>담당 MD:</strong> ${m.담당MD}</div>` : ""}
-          ${m.친해지기정보 ? `<div>💬 <strong>친해지기:</strong> ${m.친해지기정보}</div>` : ""}
-        </div>
-      ` : "";
-
-      document.getElementById("memberDetailBody").innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; text-align:center; padding-bottom:16px; border-bottom:1px solid var(--border);">
-          ${avatarHtml}
-          <div style="margin-top:10px;">
-            <span class="role-tag role-${m.직분}">${m.직분}</span>
-            ${stageHtml}
+    function renderAttendanceChecklist(checkedNames) {
+      const list = STATE.attendanceCandidates || [];
+      document.getElementById('attendanceChecklist').innerHTML = list.map(m => `
+        <label class="att-row">
+          <div>
+            <strong>${m['이름']}</strong>
+            <span class="badge b-blue" style="margin-left:4px;">${m['목장']}</span>
+            ${m['상태'] === 'S3' ? '<span class="badge b-amber">S3 복귀</span>' : ''}
           </div>
-          <h2 style="font-size:21px; font-weight:800; margin-top:6px;">${m.이름}</h2>
-          <span style="font-size:13px; color:var(--text-sub);">${m.목장}</span>
-        </div>
-
-        <div style="font-size:13px; margin-top:8px;">
-          <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
-            <span style="color:var(--text-sub);">🎂 생일</span>
-            <strong>${m.생일 || "미등록"}</strong>
-          </div>
-          ${privateRows}
-          ${m.새가족여부 === "Y" ? `
-          <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
-            <span style="color:var(--text-sub);">🌱 교회 등록일</span>
-            <strong>${m.등록일 || "-"}</strong>
-          </div>` : ""}
-        </div>
-
-        ${extraInfoHtml}
-
-        ${canEdit ? `<button class="btn-full" style="margin-top:16px;" onclick="closeModal('memberDetailModal'); openEditMemberById('${m.ID}')">✏️ 정보 수정하기</button>` : ""}
-      `;
-
-      openModal("memberDetailModal");
+          <input type="checkbox" class="att-chk" value="${m['이름']}" ${checkedNames.includes(m['이름']) ? 'checked' : ''} onchange="updateAttCount()" />
+        </label>
+      `).join('');
+      updateAttCount();
     }
 
-    function openEditMemberById(memberId) {
-      const m = APP_STATE.members.find(item => String(item.ID) === String(memberId));
-      if (m) openEditMember(m);
+    function updateAttCount() {
+      const cnt = document.querySelectorAll('.att-chk:checked').length;
+      document.getElementById('attCheckedCount').textContent = `선택: ${cnt}명`;
     }
 
-    // 2탭: 캘린더 및 매월 1일 생일 브리핑
-    function getMonthBirthdays(month) {
-      return APP_STATE.members
-        .filter(m => m.생일 && Number(m.생일.split("-")[1]) === month)
-        .map(m => ({ ...m, day: Number(m.생일.split("-")[2]) }))
-        .sort((a, b) => a.day - b.day);
+    async function submitSundayAttendance() {
+      const dateStr = document.getElementById('attDateInput').value;
+      const attendedNames = Array.from(document.querySelectorAll('.att-chk:checked')).map(el => el.value);
+      const res = await apiPost({ action: 'saveAttendance', dateStr, attendedNames });
+      alert(res.message);
+      if (res.success) await loadAllData();
     }
 
-    function renderCalendarTab() {
-      const y = APP_STATE.calYear;
-      const m = APP_STATE.calMonth;
-      document.getElementById("calMonthLabel").textContent = `${y}년 ${m}월`;
+    // ==================== 2. 모바일 최적화 달력 ====================
+    function changeMonth(delta) {
+      STATE.calMonth += delta;
+      if (STATE.calMonth < 0) { STATE.calMonth = 11; STATE.calYear--; }
+      if (STATE.calMonth > 11) { STATE.calMonth = 0; STATE.calYear++; }
+      renderCalendar();
+    }
 
-      const bdays = getMonthBirthdays(m);
-      document.getElementById("calBdayBannerTitle").textContent = `🎂 ${m}월 생일자 전체 명단 (매월 1일 자동 갱신)`;
-      document.getElementById("calBdayBannerNames").textContent = bdays.length
-        ? bdays.map(b => `${b.이름}(${b.목장} · ${m}/${b.day})`).join("  |  ")
-        : `${m}월에는 등록된 생일자가 없습니다.`;
-
-      const firstDay = new Date(y, m - 1, 1).getDay();
-      const lastDate = new Date(y, m, 0).getDate();
+    function renderCalendar() {
+      const y = STATE.calYear, m = STATE.calMonth;
+      document.getElementById('calMonthLabel').textContent = `${y}년 ${m + 1}월`;
+      const firstDay = new Date(y, m, 1).getDay();
+      const lastDate = new Date(y, m + 1, 0).getDate();
       const todayStr = new Date().toISOString().slice(0, 10);
+      const mmStr = String(m + 1).padStart(2, '0');
 
-      const daysHead = ["일", "월", "화", "수", "목", "금", "토"];
-      let html = daysHead.map(d => `<div class="cal-head">${d}</div>`).join("");
-
-      for (let i = 0; i < firstDay; i++) html += `<div class="cal-cell other-month"></div>`;
+      let html = '';
+      for (let i = 0; i < firstDay; i++) html += `<div class="cal-cell" style="background:transparent; border:none;"></div>`;
 
       for (let d = 1; d <= lastDate; d++) {
-        const dateStr = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-        const isToday = dateStr === todayStr;
+        const ddStr = String(d).padStart(2, '0');
+        const dateStr = `${y}-${mmStr}-${ddStr}`;
+        const dayOfWeek = new Date(y, m, d).getDay();
 
-        // 매월 1일 특별 브리핑 뱃지
-        let itemsHtml = "";
-        if (d === 1 && bdays.length > 0) {
-          itemsHtml += `<span class="ev-chip ev-생일" title="${bdays.map(b=>b.이름).join(', ')}">📢 ${m}월 생일 ${bdays.length}명</span>`;
-        }
-        // 해당 날짜 생일
-        bdays.filter(b => b.day === d).forEach(b => {
-          itemsHtml += `<span class="ev-chip ev-생일">🎂 ${b.이름}</span>`;
+        const bdays = STATE.members.filter(mem => mem['생년월일'] && mem['생년월일'].slice(5) === `${mmStr}-${ddStr}`);
+        const events = STATE.schedules.filter(s => String(s['날짜']) === dateStr);
+        const buls = STATE.bulletins.filter(b => String(b['예배날짜']) === dateStr);
+
+        let chipsHtml = '';
+        let dotsHtml = '';
+
+        bdays.forEach(b => {
+          chipsHtml += `<div class="cal-chip chip-bday">🎂 ${b['이름']}</div>`;
+          dotsHtml += `<span class="dot" style="background:#f59e0b;"></span>`;
         });
-        // 해당 날짜 행사 일정
-        APP_STATE.schedules.filter(s => s.시작일 === dateStr).forEach(s => {
-          itemsHtml += `<span class="ev-chip ev-${s.카테고리}" onclick='showScheduleDetail(${JSON.stringify(s)})'>${s.제목}</span>`;
+        events.forEach(ev => {
+          const isL = ev['공개범위'] === '리더십전용';
+          chipsHtml += `<div class="cal-chip ${isL ? 'chip-leader' : 'chip-event'}">${isL ? '🔒' : '📅'} ${ev['제목']}</div>`;
+          dotsHtml += `<span class="dot" style="background:${isL ? '#7c3aed' : '#2563eb'};"></span>`;
+        });
+        buls.forEach(bu => {
+          chipsHtml += `<div class="cal-chip chip-bul">📖 주보</div>`;
+          dotsHtml += `<span class="dot" style="background:#ef4444;"></span>`;
         });
 
         html += `
-          <div class="cal-cell">
-            <div class="cal-date ${isToday ? "today" : ""}"><span>${d}</span></div>
-            ${itemsHtml}
-          </div>`;
+          <div class="cal-cell ${dateStr === todayStr ? 'today' : ''} ${dateStr === STATE.selectedDate ? 'selected' : ''}" onclick="selectCalDate('${dateStr}')">
+            <div class="cal-day-num ${dayOfWeek===0?'cal-sun':(dayOfWeek===6?'cal-sat':'')}">${d}</div>
+            ${chipsHtml}
+            <div class="cal-dots">${dotsHtml}</div>
+          </div>
+        `;
       }
-      document.getElementById("calendarGrid").innerHTML = html;
+      document.getElementById('calendarGrid').innerHTML = html;
     }
 
-    function moveMonth(delta) {
-      APP_STATE.calMonth += delta;
-      if (APP_STATE.calMonth > 12) { APP_STATE.calMonth = 1; APP_STATE.calYear++; }
-      if (APP_STATE.calMonth < 1) { APP_STATE.calMonth = 12; APP_STATE.calYear--; }
-      renderCalendarTab();
-    }
+    function selectCalDate(dateStr) {
+      STATE.selectedDate = dateStr;
+      renderCalendar();
+      const mmdd = dateStr.slice(5);
+      const bdays = STATE.members.filter(m => m['생년월일'] && m['생년월일'].slice(5) === mmdd);
+      const events = STATE.schedules.filter(s => String(s['날짜']) === dateStr);
+      const buls = STATE.bulletins.filter(b => String(b['예배날짜']) === dateStr);
 
-    function copyBirthdayNotice() {
-      const m = APP_STATE.calMonth;
-      const bdays = getMonthBirthdays(m);
-      if (!bdays.length) return alert("복사할 생일자 명단이 없습니다.");
-      const text = `[🎂 비전마을 ${m}월 생일자 명단]\n` + bdays.map(b => `• ${m}/${b.day} ${b.이름} (${b.목장})`).join("\n") + `\n\n모두 진심으로 축하합니다! 🎉`;
-      navigator.clipboard.writeText(text).then(() => alert("카카오톡 공지용 생일자 명단이 복사되었습니다!"));
-    }
-
-    function showScheduleDetail(s) {
-      let msg = `[${s.카테고리}] ${s.제목}\n날짜: ${s.시작일}\n시간: ${s.시간 || "-"}\n장소: ${s.장소 || "-"}\n메모: ${s.메모 || "-"}`;
-      if (APP_STATE.auth.tab2 >= 3) {
-        if (confirm(msg + "\n\n이 일정을 삭제하시겠습니까?")) {
-          postToGas({ action: "deleteSchedule", scheduleId: s.일정ID });
-        }
-      } else {
-        alert(msg);
-      }
-    }
-
-    // 3탭: 새가족 관리 렌더링
-    function renderNewFamilyTab() {
-      const nfList = APP_STATE.members.filter(m => m.새가족여부 === "Y" || m.상태 === "수료완료");
-      const grid = document.getElementById("newFamilyGrid");
-      if (!nfList.length) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><p>등록된 새가족이 없습니다.</p></div>`;
-        return;
-      }
-
-      const canWrite = APP_STATE.auth.tab3 >= 2;
-
-      grid.innerHTML = nfList.map(nf => {
-        const rem = Number(nf.MD잔여횟수 || 0);
-        const doneCount = Math.max(0, 5 - rem);
-        const dots = [1, 2, 3, 4, 5].map(i => `<div class="md-dot ${i <= doneCount ? "done" : ""}"></div>`).join("");
-        const avatarHtml = nf.사진URL
-          ? `<img src="${nf.사진URL}" referrerpolicy="no-referrer" class="nf-avatar" alt="${nf.이름}" />`
-          : `<div class="nf-avatar">${nf.이름.slice(0, 1)}</div>`;
-
-        const btnLabel = (canWrite && rem > 0) ? "📝 MD 보고서 보기 / 작성" : "📋 MD 보고서 기록 보기";
-
-        return `
-          <div class="nf-card">
-            <div>
-              <div class="nf-top">
-                ${avatarHtml}
-                <div>
-                  <span class="widget-badge ${rem === 0 ? "badge-event" : "badge-new"}">${rem === 0 ? "🎉 MD 수료 완료" : `잔여 ${rem}회`}</span>
-                  <h3 style="margin-top:4px;">${nf.이름} <small style="font-weight:500; color:var(--text-sub);">(${nf.목장})</small></h3>
-                  <div style="font-size:12px; color:var(--text-sub);">등록일: ${nf.등록일 || "-"} · 담당 MD: <strong>${nf.담당MD || "미배정"}</strong></div>
-                </div>
-              </div>
-              <p style="font-size:13px; background:var(--card-bg); padding:10px; border-radius:10px; border:1px solid var(--border);">
-                💬 <strong>친해지기:</strong> ${nf.친해지기정보 || "등록된 키워드가 없습니다."}
-              </p>
-              <div class="md-meter">
-                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
-                  <span>MD 정착 진행률 (${doneCount}/5회 완료)</span>
-                  <span style="color:var(--mint);">남은 횟수: ${rem}회</span>
-                </div>
-                <div class="md-dots">${dots}</div>
-              </div>
-            </div>
-            <button type="button" class="btn btn-primary" style="width:100%;" onclick="openMdModalById('${nf.ID}')">
-              ${btnLabel}
-            </button>
-          </div>`;
-      }).join("");
-    }
-
-    function openMdModalById(memberId) {
-      const nf = APP_STATE.members.find(item => String(item.ID) === String(memberId));
-      if (nf) openMdModal(nf);
-    }
-
-    // 상단 '📝 MD 보고서 작성' 버튼 클릭 시 진행 중인 첫 번째 새가족 모달 바로 열기
-    function openMdModalDirect() {
-      const activeNf = APP_STATE.members.find(m => m.새가족여부 === "Y" && Number(m.MD잔여횟수 || 0) > 0);
-      if (!activeNf) {
-        return alert("현재 MD 만남을 진행 중인 새가족(잔여 횟수 1회 이상)이 없습니다.");
-      }
-      openMdModal(activeNf);
-    }
-
-    // 모달 제어 및 저장 로직
-    function switchTab(tabId) {
-      document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
-      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-      document.getElementById("view-" + tabId)?.classList.add("active");
-      document.querySelector(`.tab-btn[data-tab="${tabId}"]`)?.classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function openModal(id) { document.getElementById(id).classList.add("open"); }
-    function closeModal(id) { document.getElementById(id).classList.remove("open"); }
-    function closeModalOnOutside(e, id) { if (e.target.id === id) closeModal(id); }
-
-    function openSettingsModal() {
-      openModal("settingsModal");
-      const isAuth = APP_STATE.auth.authenticated;
-      document.getElementById("pinLoginBox").style.display = isAuth ? "none" : "block";
-      document.getElementById("pinStatusBox").style.display = isAuth ? "block" : "none";
-      document.getElementById("pinInput").value = "";
-      document.getElementById("pinError").style.display = "none";
-      checkPwRuleUI();
-    }
-
-    // 입력 중 영문/숫자/특수기호/8자 이상 실시간 체크
-    function checkPwRuleUI() {
-      const val = document.getElementById("pinInput").value;
-      document.getElementById("ruleLen").classList.toggle("ok", val.length >= 8);
-      document.getElementById("ruleEng").classList.toggle("ok", /[A-Za-z]/.test(val));
-      document.getElementById("ruleNum").classList.toggle("ok", /[0-9]/.test(val));
-      document.getElementById("ruleSym").classList.toggle("ok", /[^A-Za-z0-9\s]/.test(val));
-    }
-
-    async function submitPinAuth() {
-      const pw = document.getElementById("pinInput").value.trim();
-      const errEl = document.getElementById("pinError");
-
-      const isValid = pw.length >= 8 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw) && /[^A-Za-z0-9\s]/.test(pw);
-      if (!isValid) {
-        errEl.textContent = "영문, 숫자, 특수기호가 모두 포함된 8자 이상의 비밀번호를 입력해 주세요.";
-        errEl.style.display = "block";
-        return;
-      }
-
-      sessionStorage.setItem("vision_pin", pw);
-      const res = await postToGas({ action: "verifyPin" });
-      if (res && res.auth.authenticated) {
-        closeModal("settingsModal");
-      } else {
-        sessionStorage.removeItem("vision_pin");
-        errEl.textContent = "일치하는 비밀번호가 없거나 사용 중지된 계정입니다.";
-        errEl.style.display = "block";
-      }
-    }
-
-    function logoutPin() {
-      sessionStorage.removeItem("vision_pin");
-      closeModal("settingsModal");
-      fetchInitialData("");
-    }
-
-    // 등록/수정 모달에서 상태(S1~S4) 값 연동
-    function toggleDischargeDateField() {
-      const st = document.getElementById("m_status").value;
-      document.getElementById("m_dischargeBox").style.display = st === "입대" ? "block" : "none";
-    }
-
-    function openMemberModal(isNewFamily = false) {
-      document.getElementById("memberModalTitle").textContent = isNewFamily ? "🌱 새가족 등록" : "👥 목원/새가족 등록";
-      document.getElementById("m_id").value = "";
-      document.getElementById("m_role").value = isNewFamily ? "새가족" : "목원";
-      document.getElementById("m_status").value = "S1";
-      document.getElementById("m_dischargeDate").value = "";
-      toggleDischargeDateField();
-      ["m_name", "m_bday", "m_phone", "m_city", "m_dong", "m_ice", "m_md", "m_photo"].forEach(id => document.getElementById(id).value = "");
-      document.getElementById("m_regDate").value = new Date().toISOString().slice(0, 10);
-      const fileInput = document.getElementById("m_photoFile");
-      if (fileInput) fileInput.value = "";
-      openModal("memberModal");
-    }
-
-    function openEditMember(m) {
-      document.getElementById("memberModalTitle").textContent = "✏️ 구성원 정보 수정";
-      document.getElementById("m_id").value = m.ID;
-      document.getElementById("m_group").value = m.목장;
-      document.getElementById("m_role").value = m.직분;
-      document.getElementById("m_status").value = ["S1", "S2", "입대", "S3", "S4"].includes(m.상태) ? m.상태 : "S1";
-      document.getElementById("m_dischargeDate").value = m.전역일 || "";
-      toggleDischargeDateField();
-      document.getElementById("m_name").value = m.이름;
-      document.getElementById("m_bday").value = m.생일 || "";
-      document.getElementById("m_phone").value = m.연락처 || "";
-      document.getElementById("m_city").value = m.주소_시구 || "";
-      document.getElementById("m_dong").value = m.주소_동 || "";
-      document.getElementById("m_regDate").value = m.등록일 || "";
-      document.getElementById("m_ice").value = m.친해지기정보 || "";
-      document.getElementById("m_md").value = m.담당MD || "";
-      document.getElementById("m_photo").value = m.사진URL || "";
-      const fileInput = document.getElementById("m_photoFile");
-      if (fileInput) fileInput.value = "";
-      openModal("memberModal");
-    }
-
-    async function saveMember() {
-      const id = document.getElementById("m_id").value;
-      const role = document.getElementById("m_role").value;
-      const status = document.getElementById("m_status").value;
-      const fileInput = document.getElementById("m_photoFile");
-      const photoBase64 = fileInput && fileInput.files[0] ? await compressImageFile(fileInput.files[0]) : "";
-
-      const payload = {
-        ID: id,
-        목장: document.getElementById("m_group").value,
-        직분: role,
-        이름: document.getElementById("m_name").value.trim(),
-        생일: document.getElementById("m_bday").value,
-        연락처: document.getElementById("m_phone").value.trim(),
-        주소_시구: document.getElementById("m_city").value.trim(),
-        주소_동: document.getElementById("m_dong").value.trim(),
-        새가족여부: role === "새가족" ? "Y" : "N",
-        등록일: document.getElementById("m_regDate").value,
-        친해지기정보: document.getElementById("m_ice").value.trim(),
-        담당MD: document.getElementById("m_md").value.trim(),
-        사진URL: document.getElementById("m_photo").value.trim(),
-        photoBase64: photoBase64,
-        MD잔여횟수: role === "새가족" ? 5 : 0,
-        상태: status,
-        전역일: status === "입대" ? document.getElementById("m_dischargeDate").value : ""
-      };
-      if (!payload.이름) return alert("이름을 입력해 주세요.");
-      const res = await postToGas({ action: id ? "updateMember" : "addMember", payload });
-      if (res) {
-        if (fileInput) fileInput.value = "";
-        closeModal("memberModal");
-      }
-    }
-
-    // 새가족 등록 전용 모달 열기
-    function openNewFamilyModal() {
-      ["nf_name", "nf_bday", "nf_phone", "nf_city", "nf_dong", "nf_md", "nf_ice"].forEach(id => {
-        document.getElementById(id).value = "";
+      document.getElementById('calSelectedDateTitle').textContent = `📌 ${dateStr} 상세 일정`;
+      let items = [];
+      bdays.forEach(b => items.push(`<div>🎂 <strong>${b['이름']}</strong> (${b['목장']}) 생일입니다!</div>`));
+      events.forEach(ev => {
+        const badge = ev['공개범위'] === '리더십전용' ? '<span class="badge b-purple">🔒 리더십전용</span>' : '<span class="badge b-blue">📅 전체일정</span>';
+        items.push(`<div>${badge} <strong>${ev['제목']}</strong> <span style="color:var(--text-muted);">(${ev['시간'] || ''})</span></div>`);
       });
-      document.getElementById("nf_regDate").value = new Date().toISOString().slice(0, 10);
-      const photoInput = document.getElementById("nf_photoFile");
-      if (photoInput) photoInput.value = "";
-      openModal("newFamilyModal");
+      buls.forEach(bu => {
+        items.push(`<div>📖 <strong>${bu['제목']}</strong> ${bu['이미지URL'] ? `<a href="${bu['이미지URL']}" target="_blank" class="badge b-red">주보 보기 ↗</a>` : ''}</div>`);
+      });
+      document.getElementById('calSelectedDateList').innerHTML = items.length
+        ? items.join('<div style="margin:6px 0;"></div>')
+        : '등록된 일정이나 생일이 없습니다.';
     }
 
-    // 새가족 전용 저장 (직분='새가족', 상태='S1' 자동 고정)
-    async function saveNewFamily() {
-      const name = document.getElementById("nf_name").value.trim();
-      if (!name) return alert("새가족 이름을 입력해 주세요.");
-
-      const fileInput = document.getElementById("nf_photoFile");
-      const photoBase64 = fileInput && fileInput.files[0] ? await compressImageFile(fileInput.files[0]) : "";
-
-      const payload = {
-        목장: document.getElementById("nf_group").value,
-        직분: "새가족",
-        이름: name,
-        생일: document.getElementById("nf_bday").value,
-        연락처: document.getElementById("nf_phone").value.trim(),
-        주소_시구: document.getElementById("nf_city").value.trim(),
-        주소_동: document.getElementById("nf_dong").value.trim(),
-        새가족여부: "Y",
-        등록일: document.getElementById("nf_regDate").value,
-        친해지기정보: document.getElementById("nf_ice").value.trim(),
-        담당MD: document.getElementById("nf_md").value.trim(),
-        사진URL: "",
-        photoBase64: photoBase64,
-        MD잔여횟수: 5,
-        상태: "S1"
+    async function submitSchedule() {
+      const item = {
+        date: document.getElementById('schDate').value,
+        title: document.getElementById('schTitle').value.trim(),
+        time: document.getElementById('schTime').value.trim(),
+        scope: document.getElementById('schScope').value
       };
-
-      const res = await postToGas({ action: "addMember", payload });
-      if (res) {
-        if (fileInput) fileInput.value = "";
-        closeModal("newFamilyModal");
-      }
+      if (!item.date || !item.title) return alert('날짜와 제목을 입력해 주세요.');
+      const res = await apiPost({ action: 'addSchedule', item });
+      alert(res.message);
+      if (res.success) { closeModal('scheduleModal'); await loadAllData(); }
     }
 
-    function openScheduleModal() {
-      ["s_title", "s_time", "s_place", "s_memo"].forEach(id => document.getElementById(id).value = "");
-      document.getElementById("s_date").value = new Date().toISOString().slice(0, 10);
-      openModal("scheduleModal");
-    }
-
-    async function saveSchedule() {
-      const payload = {
-        카테고리: document.getElementById("s_cat").value,
-        제목: document.getElementById("s_title").value.trim(),
-        시작일: document.getElementById("s_date").value,
-        시간: document.getElementById("s_time").value.trim(),
-        장소: document.getElementById("s_place").value.trim(),
-        메모: document.getElementById("s_memo").value.trim()
-      };
-      if (!payload.제목 || !payload.시작일) return alert("제목과 날짜를 입력해 주세요.");
-      const res = await postToGas({ action: "addSchedule", payload });
-      if (res) closeModal("scheduleModal");
-    }
-
-    function openMdModal(nf) {
-      document.getElementById("mdModalTitle").textContent = `📝 ${nf.이름} 새가족 만남보고서`;
-      document.getElementById("md_nf_id").value = nf.ID;
-      document.getElementById("md_nf_name").value = nf.이름;
-      document.getElementById("md_writer").value = nf.담당MD || APP_STATE.auth.name || "";
-      document.getElementById("md_date").value = new Date().toISOString().slice(0, 10);
-
-      const rem = Number(nf.MD잔여횟수 || 0);
-      document.getElementById("md_round").value = Math.min(5, Math.max(1, 6 - rem));
-
-      ["md_place", "md_content", "md_prayer", "md_intro"].forEach(id => document.getElementById(id).value = "");
-      const photoInput = document.getElementById("md_photoFile");
-      if (photoInput) photoInput.value = "";
-
-      const logs = APP_STATE.reports.filter(r => String(r.새가족ID) === String(nf.ID));
-      document.getElementById("mdHistoryList").innerHTML = logs.length
-        ? logs.map(l => `
-            <div style="background:var(--sub-bg); padding:12px; border-radius:12px; border:1px solid var(--border); margin-bottom:10px; font-size:13px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <strong>[${l.회차}회차 · ${l.만난날짜}]</strong>
-                <button class="btn btn-sm" onclick='copyMdReportText(${JSON.stringify(l)})'>📋 양식 복사</button>
+    // ==================== 3. 새가족 초경량 관리 ====================
+    function renderNewcomers() {
+      const canManage = STATE.auth.valid && STATE.auth.level >= 2;
+      document.getElementById('newcomersGrid').innerHTML = STATE.newcomers.map(n => {
+        const total = Number(n['총횟수']) || 4;
+        const done = Number(n['진행횟수']) || 0;
+        const remain = Math.max(0, total - done);
+        return `
+          <div class="card" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:16px;">🌱 ${n['이름']}</strong>
+              <span class="badge ${remain === 0 ? 'b-green' : 'b-amber'}">${remain === 0 ? '🎉 정착 완료!' : `정착까지 ${remain}회 남음`}</span>
+            </div>
+            <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
+              담당 MD: <strong>${n['담당MD']}</strong> · 진행 (${done}/${total}회)
+            </div>
+            ${canManage ? `
+              <div style="display:flex; gap:6px;">
+                ${remain > 0 ? `<button class="btn btn-primary btn-sm" style="flex:1;" onclick="manageNewcomer('increment', '${n['ID']}')">+1회 진행 체크</button>` : ''}
+                <button class="btn btn-success btn-sm" onclick="manageNewcomer('graduate', '${n['ID']}')">수료 처리</button>
               </div>
-              <div><strong>MD:</strong> ${l.담당MD} · <strong>장소:</strong> ${l.만남장소 || "-"}</div>
-              <p style="margin-top:6px; white-space:pre-line;"><strong>내용:</strong> ${l.나눔내용}</p>
-              ${l.기도제목 ? `<p style="color:var(--primary); margin-top:4px;"><strong>기도제목:</strong> ${l.기도제목}</p>` : ""}
-              ${l.소개한사람 ? `<p style="color:var(--mint); margin-top:4px;"><strong>소개한 사람:</strong> ${l.소개한사람}</p>` : ""}
-              ${l.인증사진URL ? `<img src="${l.인증사진URL}" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-top:8px;" alt="인증사진" />` : ""}
-            </div>`).join("")
-        : `<p style="font-size:13px; color:var(--text-sub);">아직 작성된 만남보고서가 없습니다.</p>`;
-
-      const canWrite = APP_STATE.auth.tab3 >= 2 && rem > 0;
-      document.getElementById("mdWriteBox").style.display = canWrite ? "block" : "none";
-      openModal("mdModal");
+            ` : ''}
+          </div>
+        `;
+      }).join('') || '<div style="color:var(--text-muted); font-size:13px;">현재 정착 과정 중인 새가족이 없습니다.</div>';
     }
 
-    async function submitMdReport() {
+    async function submitNewcomer() {
       const payload = {
-        새가족ID: document.getElementById("md_nf_id").value,
-        만남날짜: document.getElementById("md_date").value,
-        담당MD: document.getElementById("md_writer").value.trim(),
-        만남장소: document.getElementById("md_place").value.trim(),
-        나눔내용: document.getElementById("md_content").value.trim(),
-        기도제목: document.getElementById("md_prayer").value.trim()
+        name: document.getElementById('ncName').value.trim(),
+        md: document.getElementById('ncMd').value.trim(),
+        total: document.getElementById('ncTotal').value
       };
-      if (!payload.나눔내용) return alert("나눔 내용을 입력해 주세요.");
-      const res = await postToGas({ action: "addMdReport", payload });
-      if (res) closeModal("mdModal");
+      if (!payload.name || !payload.md) return alert('새가족과 담당 MD 이름을 입력해 주세요.');
+      const res = await apiPost({ action: 'updateNewcomer', subAction: 'add', payload });
+      alert(res.message);
+      if (res.success) { closeModal('newcomerModal'); await loadAllData(); }
     }
 
-    // 이미지 파일 자동 압축(리사이징) 헬퍼 (가로 최대 800px)
-    function compressImageFile(file) {
-      return new Promise((resolve) => {
-        if (!file) return resolve("");
+    async function manageNewcomer(subAction, id) {
+      const res = await apiPost({ action: 'updateNewcomer', subAction, payload: { id } });
+      alert(res.message);
+      if (res.success) await loadAllData();
+    }
+
+    // ==================== 4. 소식 · 주보 · 광고 · 업데이트 노트 ====================
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const maxW = 800;
-            const scale = img.width > maxW ? maxW / img.width : 1;
-            const canvas = document.createElement("canvas");
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL("image/jpeg", 0.78));
-          };
-          img.src = e.target.result;
-        };
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
     }
 
-    // 보고서 양식 그대로 카카오톡 복사
-    function copyMdReportText(l) {
-      const text = `*새가족 만남보고서 *\n이름 : ${l.새가족이름}\nMD : ${l.담당MD}\n만난 날짜 : ${l.만난날짜}\n장소 : ${l.만남장소 || ""}\n횟수 : ${l.회차}회\n내용 : ${l.나눔내용}\n기도제목 : ${l.기도제목 || ""}\n소개한 사람(2명 이상) : ${l.소개한사람 || ""}`;
-      navigator.clipboard.writeText(text).then(() => alert("새가족 만남보고서 양식이 클립보드에 복사되었습니다!"));
-    }
+    function renderNews() {
+      // 주보
+      document.getElementById('bulletinsList').innerHTML = STATE.bulletins.slice(0, 4).map(b => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+          <div>
+            <strong>${b['제목']}</strong>
+            <div style="font-size:12px; color:var(--text-muted);">${b['예배날짜']} · 등록: ${b['등록자']}</div>
+          </div>
+          ${b['이미지URL'] ? `<a href="${b['이미지URL']}" target="_blank" class="btn btn-outline btn-sm">주보 열기 ↗</a>` : ''}
+        </div>
+      `).join('') || '<div style="color:var(--text-muted); font-size:13px;">등록된 주보가 없습니다.</div>';
 
-    // MD 보고서 제출
-    async function submitMdReport() {
-      const photoInput = document.getElementById("md_photoFile");
-      const photoBase64 = photoInput && photoInput.files[0] ? await compressImageFile(photoInput.files[0]) : "";
+      // 청년부 자유 광고
+      document.getElementById('adsGrid').innerHTML = STATE.ads.map(a => `
+        <div class="card" style="margin-bottom:0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span class="badge b-blue">${a['말머리']}</span>
+            <button class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="promptDeleteAd('${a['광고ID']}')">삭제</button>
+          </div>
+          <strong style="display:block; margin-bottom:4px;">${a['제목']}</strong>
+          <p style="font-size:13px; color:var(--text-muted); white-space:pre-line; margin-bottom:8px;">${a['내용']}</p>
+          ${a['이미지URL'] ? `<img src="${a['이미지URL']}" style="width:100%; border-radius:10px; margin-bottom:8px; max-height:220px; object-fit:cover;" />` : ''}
+          <div style="font-size:11.5px; color:var(--text-muted);">작성자: ${a['작성자']} ${a['마감일'] ? `· 마감: ${a['마감일']}` : ''}</div>
+        </div>
+      `).join('') || '<div style="color:var(--text-muted); font-size:13px;">게시된 청년부 광고가 없습니다.</div>';
 
-      const payload = {
-        새가족ID: document.getElementById("md_nf_id").value,
-        담당MD: document.getElementById("md_writer").value.trim(),
-        만난날짜: document.getElementById("md_date").value,
-        회차: Number(document.getElementById("md_round").value),
-        만남장소: document.getElementById("md_place").value.trim(),
-        나눔내용: document.getElementById("md_content").value.trim(),
-        기도제목: document.getElementById("md_prayer").value.trim(),
-        소개한사람: document.getElementById("md_intro").value.trim(),
-        photoBase64: photoBase64
-      };
-      if (!payload.나눔내용) return alert("만남 내용을 입력해 주세요.");
-      const res = await postToGas({ action: "addMdReport", payload });
-      if (res) closeModal("mdModal");
-    }
-
-    // 4탭: 기도제목 렌더링 (중보기도 상단 고정 + 최신순 + 7일 만료 카운트)
-    function renderPrayerTab() {
-      const grid = document.getElementById("prayerListGrid");
-      if (!grid) return;
-
-      const list = [...(APP_STATE.prayers || [])].sort((a, b) => {
-        // 1순위: 중보기도(Y) 최상단 고정
-        const interDiff = (b.중보기도 === "Y" ? 1 : 0) - (a.중보기도 === "Y" ? 1 : 0);
-        if (interDiff !== 0) return interDiff;
-        // 2순위: 최신 작성순
-        return String(b.작성일시 || "").localeCompare(String(a.작성일시 || ""));
-      });
-
-      if (!list.length) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><p>현재 등록된 기도제목이 없습니다. 첫 기도제목을 나눠보세요!</p></div>`;
+      // 업데이트 노트 (최신 1건 전체 노출 + 과거 아코디언)
+      const upds = STATE.updates || [];
+      if (!upds.length) {
+        document.getElementById('updatesContainer').innerHTML = '<div style="color:var(--text-muted);">등록된 업데이트 노트가 없습니다.</div>';
         return;
       }
+      const latest = upds[0];
+      const past = upds.slice(1);
+      let updHtml = `
+        <div style="background:var(--primary-soft); padding:14px; border-radius:12px; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+            <span class="badge b-blue">${latest['버전']}</span>
+            <strong>${latest['업데이트이름']}</strong>
+            <span style="font-size:11.5px; color:var(--text-muted); margin-left:auto;">${latest['작성일시'] || ''}</span>
+          </div>
+          <div style="font-size:13.5px; white-space:pre-line;">${latest['내용']}</div>
+        </div>
+      `;
+      if (past.length) {
+        updHtml += past.map(p => `
+          <details style="border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:6px;">
+            <summary style="cursor:pointer; font-weight:700; font-size:13.5px;">
+              <span class="badge b-amber" style="margin-right:6px;">${p['버전']}</span> ${p['업데이트이름']}
+            </summary>
+            <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:13px; white-space:pre-line; color:var(--text-muted);">
+              ${p['내용']}
+            </div>
+          </details>
+        `).join('');
+      }
+      document.getElementById('updatesContainer').innerHTML = updHtml;
+    }
 
-      const now = new Date();
-      grid.innerHTML = list.map(p => {
-        const isInter = p.중보기도 === "Y";
-        const expDate = p.만료일시 ? new Date(String(p.만료일시).replace(" ", "T") + "+09:00") : null;
-        const daysLeft = expDate ? Math.max(1, Math.ceil((expDate - now) / (1000 * 60 * 60 * 24))) : 7;
-        const canDelete = APP_STATE.auth.authenticated && (APP_STATE.auth.group === "전체" || APP_STATE.auth.tab1 >= 3);
+    async function submitBulletin() {
+      const date = document.getElementById('bulDate').value;
+      const title = document.getElementById('bulTitle').value.trim();
+      const file = document.getElementById('bulFile').files[0];
+      if (!date || !title) return alert('날짜와 제목을 입력해 주세요.');
+      const base64Image = file ? await fileToBase64(file) : '';
+      const res = await apiPost({ action: 'addBulletin', data: { date, title, base64Image } });
+      alert(res.message);
+      if (res.success) { closeModal('bulletinModal'); await loadAllData(); }
+    }
 
+    async function submitAd() {
+      const title = document.getElementById('adTitle').value.trim();
+      const content = document.getElementById('adContent').value.trim();
+      const author = document.getElementById('adAuthor').value.trim();
+      const deletePw = document.getElementById('adDelPw').value.trim();
+      if (!title || !content || !author || !deletePw) return alert('필수 항목을 모두 입력해 주세요.');
+      const file = document.getElementById('adFile').files[0];
+      const base64Image = file ? await fileToBase64(file) : '';
+      const res = await apiPost({
+        action: 'addAd',
+        data: {
+          tag: document.getElementById('adTag').value,
+          title, content, author, deletePw,
+          deadline: document.getElementById('adDeadline').value,
+          base64Image
+        }
+      });
+      alert(res.message);
+      if (res.success) { closeModal('adModal'); await loadAllData(); }
+    }
+
+    async function promptDeleteAd(adId) {
+      let inputPw = '';
+      if (!(STATE.auth.valid && STATE.auth.isPastorOrAdmin)) {
+        inputPw = prompt('글 등록 시 설정한 삭제 비밀번호를 입력하세요:');
+        if (inputPw === null) return;
+      } else {
+        if (!confirm('교역자/관리자 권한으로 이 광고를 즉시 삭제할까요?')) return;
+      }
+      const res = await apiPost({ action: 'deleteAd', adId, inputPw });
+      alert(res.message);
+      if (res.success) await loadAllData();
+    }
+
+    async function submitUpdateNote() {
+      const version = document.getElementById('updVersion').value.trim();
+      const title = document.getElementById('updTitle').value.trim();
+      const content = document.getElementById('updContent').value.trim();
+      if (!version || !title || !content) return alert('버전, 이름, 내용을 모두 입력해 주세요.');
+      const res = await apiPost({ action: 'addUpdate', data: { version, title, content } });
+      alert(res.message);
+      if (res.success) { closeModal('updateModal'); await loadAllData(); }
+    }
+
+    // ==================== 5. 번개모임 (인원 무제한 & 명단 검증) & 기도제목 ====================
+    function renderPrayerAndFlash() {
+      document.getElementById('flashGrid').innerHTML = STATE.flashMeetings.map(f => {
+        let parts = [];
+        try { parts = JSON.parse(f['참여자목록'] || '[]'); } catch (e) {}
+        const isUnlim = String(f['최대인원']) === '무제한';
+        const capText = isUnlim ? `참여 ${parts.length}명 / ∞ 인원 무제한` : `참여 ${parts.length} / ${f['최대인원']}명`;
         return `
-          <div class="group-box" style="${isInter ? "border: 2px solid #F59E0B; background: var(--card-bg);" : "background: var(--card-bg);"}">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-              <div style="display:flex; align-items:center; gap:6px;">
-                ${isInter ? `<span class="widget-badge badge-bday" style="font-size:11px; padding:2px 8px;">🔥 중보기도</span>` : ""}
-                <strong style="font-size:14px;">${p.익명여부 === "Y" ? "익명" : p.작성자}</strong>
-              </div>
-              <span style="font-size:11px; color:var(--text-sub);">${daysLeft}일 후 자동삭제</span>
+          <div class="card" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong>⚡ ${f['제목']}</strong>
+              <span class="badge ${isUnlim ? 'b-green' : 'b-blue'}">${capText}</span>
             </div>
-            <p style="font-size:14px; white-space:pre-line; line-height:1.6; margin-bottom:12px;">${p.기도제목내용}</p>
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--border); font-size:11px; color:var(--text-sub);">
-              <span>작성: ${p.작성일시 || "-"}</span>
-              <div style="display:flex; gap:6px;">
-                <button class="btn btn-sm" onclick='copyPrayerText(${JSON.stringify(p)})'>📋 복사</button>
-                ${canDelete ? `<button class="btn btn-sm btn-danger" onclick="deletePrayer('${p.기도ID}')">삭제</button>` : ""}
-              </div>
+            <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:6px;">
+              🕒 ${f['일시']} · 📍 ${f['장소']}<br>
+              개설: ${f['개설자']} | 참여자: ${parts.join(', ')}
             </div>
-          </div>`;
-      }).join("");
+            <button class="btn btn-primary btn-sm" style="width:100%;" onclick="handleJoinFlash('${f['ID']}')">🙋‍♂️ 참여 신청하기</button>
+          </div>
+        `;
+      }).join('') || '<div style="color:var(--text-muted); font-size:13px;">진행 중인 번개모임이 없습니다.</div>';
+
+      document.getElementById('prayersList').innerHTML = STATE.prayers.map(p => `
+        <div style="padding:12px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div>
+            <strong>${p['작성자']}</strong>
+            <div style="font-size:13.5px; margin-top:2px;">${p['내용']}</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="handleAmen('${p['ID']}')">🙏 아멘 ${p['아멘수'] || 0}</button>
+        </div>
+      `).join('') || '<div style="color:var(--text-muted); font-size:13px;">이번 주 나눈 기도제목이 없습니다.</div>';
     }
 
-    function openPrayerModal() {
-      document.getElementById("p_anon").checked = false;
-      document.getElementById("p_intercessory").checked = false;
-      document.getElementById("p_authorBox").style.display = "block";
-      document.getElementById("p_author").value = APP_STATE.auth.name || "";
-      document.getElementById("p_content").value = "";
-      openModal("prayerModal");
+    function openFlashCreateModal() {
+      document.getElementById('flHost').value = localStorage.getItem('vv_pref_name') || '';
+      openModal('flashCreateModal');
     }
 
-    function togglePrayerAnon() {
-      const isAnon = document.getElementById("p_anon").checked;
-      document.getElementById("p_authorBox").style.display = isAnon ? "none" : "block";
+    async function submitFlashCreate() {
+      const data = {
+        title: document.getElementById('flTitle').value.trim(),
+        dateTime: document.getElementById('flTime').value.trim(),
+        location: document.getElementById('flLoc').value.trim(),
+        maxCount: document.getElementById('flMax').value,
+        isUnlimited: document.getElementById('flUnlimited').checked,
+        host: document.getElementById('flHost').value.trim(),
+        desc: document.getElementById('flDesc').value.trim()
+      };
+      if (!data.title || !data.dateTime || !data.host) return alert('필수 항목을 입력해 주세요.');
+      const res = await apiPost({ action: 'createFlash', data });
+      alert(res.message);
+      if (res.success) { closeModal('flashCreateModal'); await loadAllData(); }
+    }
+
+    async function handleJoinFlash(meetingId) {
+      const defName = localStorage.getItem('vv_pref_name') || '';
+      const applicantName = prompt('참여 신청할 본인의 이름을 입력해 주세요 (비전마을 명단 확인):', defName);
+      if (applicantName === null) return;
+      const res = await apiPost({ action: 'joinFlash', meetingId, applicantName });
+      alert(res.message);
+      if (res.success) await loadAllData();
+    }
+
+    function openPrayerCreateModal() {
+      document.getElementById('pryAuthor').value = localStorage.getItem('vv_pref_name') || '';
+      openModal('prayerModal');
     }
 
     async function submitPrayer() {
-      const isAnon = document.getElementById("p_anon").checked;
-      const author = document.getElementById("p_author").value.trim();
-      const content = document.getElementById("p_content").value.trim();
-
-      if (!isAnon && !author) return alert("실명 작성 시 이름을 입력해 주세요.");
-      if (!content) return alert("기도제목 내용을 입력해 주세요.");
-
-      const payload = {
-        익명여부: isAnon ? "Y" : "N",
-        작성자: isAnon ? "익명" : author,
-        중보기도: document.getElementById("p_intercessory").checked ? "Y" : "N",
-        기도제목내용: content
-      };
-
-      const res = await postToGas({ action: "addPrayer", payload });
-      if (res) closeModal("prayerModal");
+      const author = document.getElementById('pryAuthor').value.trim();
+      const content = document.getElementById('pryContent').value.trim();
+      if (!content) return alert('기도제목을 입력해 주세요.');
+      await apiPost({ action: 'addPrayer', author, content });
+      closeModal('prayerModal');
+      await loadAllData();
     }
 
-    async function deletePrayer(prayerId) {
-      if (!confirm("이 기도제목을 삭제하시겠습니까?")) return;
-      await postToGas({ action: "deletePrayer", prayerId });
+    async function handleAmen(prayerId) {
+      await apiPost({ action: 'amenPrayer', prayerId });
+      await loadAllData();
     }
 
-    function copyPrayerText(p) {
-      const tag = p.중보기도 === "Y" ? "[🔥 중보기도 요청]" : "[🙏 비전마을 기도제목]";
-      const name = p.익명여부 === "Y" ? "익명" : p.작성자;
-      const text = `${tag}\n작성자: ${name}\n내용: ${p.기도제목내용}`;
-      navigator.clipboard.writeText(text).then(() => alert("기도제목이 복사되었습니다!"));
+    // ==================== 6. 놀이터 (목장별 게임 & 청년 워들/스톱워치/반응속도/폭탄) ====================
+    function switchPlaygroundMode(mode) {
+      document.getElementById('pg-group').style.display = mode === 'group' ? 'block' : 'none';
+      document.getElementById('pg-all').style.display = mode === 'all' ? 'block' : 'none';
+      document.getElementById('pgTabGroupBtn').className = mode === 'group' ? 'btn btn-primary' : 'btn btn-outline';
+      document.getElementById('pgTabAllBtn').className = mode === 'all' ? 'btn btn-primary' : 'btn btn-outline';
     }
 
-    // URL 파라미터(?tab=tab5&meetup=B001) 감지 및 해당 공지문 바로가기 처리
-    function handleDeepLink() {
-      const params = new URLSearchParams(window.location.search);
-      const targetTab = params.get("tab");
-      const targetMeetupId = params.get("meetup");
-
-      if (targetTab) {
-        switchTab(targetTab);
-      }
-
-      if (targetTab === "tab5" && targetMeetupId) {
-        setTimeout(() => {
-          const card = document.getElementById(`meetup-card-${targetMeetupId}`);
-          if (card) {
-            card.scrollIntoView({ behavior: "smooth", block: "center" });
-            card.classList.add("meetup-highlight");
-          } else {
-            alert("이미 모집이 마감되었거나 삭제된 번개모임 공고입니다.");
-          }
-          // 뒤로가기/새로고침 시 중복 알림 방지를 위해 주소창 파라미터 정리
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }, 200);
-      }
+    function loadPlaygroundGroupMembers() {
+      const grp = document.getElementById('pgGroupSelect').value;
+      const list = STATE.members.filter(m => m['목장'] === grp);
+      document.getElementById('pgMemberCheckboxes').innerHTML = list.map(m => `
+        <label class="pill active" style="display:inline-flex; align-items:center; gap:5px;">
+          <input type="checkbox" class="pg-mem-chk" value="${m['이름']}" checked style="width:15px; height:15px; margin:0;" onchange="this.parentElement.classList.toggle('active', this.checked)" />
+          ${m['이름']}
+        </label>
+      `).join('');
+      document.getElementById('pgGroupGameArea').innerHTML = '';
     }
 
-    // 5탭: 번개모임 카드 렌더링 (특수문자/따옴표 오류 방지를 위해 모임ID만 전달)
-    function renderMeetupTab() {
-      const grid = document.getElementById("meetupListGrid");
-      if (!grid) return;
+    function getCheckedGroupPlayers() {
+      return Array.from(document.querySelectorAll('.pg-mem-chk:checked')).map(el => el.value);
+    }
 
-      const list = APP_STATE.meetups || [];
-      if (!list.length) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><p>현재 모집 중인 번개모임이 없습니다. 첫 번개모임을 열어보세요! ⚡</p></div>`;
-        return;
-      }
+    function runGroupRoulette() {
+      const players = getCheckedGroupPlayers();
+      if (players.length < 2) return alert('최소 2명 이상 체크해 주세요.');
+      const area = document.getElementById('pgGroupGameArea');
+      area.innerHTML = `
+        <div class="roulette-wrap">
+          <div class="pointer">▼</div>
+          <canvas id="rouletteCanvas" width="260" height="260" style="transition: transform 3.2s cubic-bezier(0.15, 0.85, 0.25, 1);"></canvas>
+          <div id="rouletteResult" style="font-size:18px; font-weight:800; color:var(--primary);">돌아가는 중...</div>
+        </div>
+      `;
+      const canvas = document.getElementById('rouletteCanvas');
+      const ctx = canvas.getContext('2d');
+      const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
+      const arc = (2 * Math.PI) / players.length;
 
-      grid.innerHTML = list.map(b => {
-        const members = b.참여자목록 ? String(b.참여자목록).split(",").map(s => s.trim()).filter(Boolean) : [];
-        const max = Number(b.모집인원 || 1);
-        const remain = Math.max(0, max - members.length);
-        const pct = Math.min(100, Math.round((members.length / max) * 100));
+      players.forEach((name, i) => {
+        ctx.beginPath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.moveTo(130, 130);
+        ctx.arc(130, 130, 125, i * arc, (i + 1) * arc);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(130, 130);
+        ctx.rotate(i * arc + arc / 2);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Pretendard';
+        ctx.fillText(name, 55, 5);
+        ctx.restore();
+      });
 
-        return `
-          <div id="meetup-card-${b.모임ID}" class="group-box" style="background:var(--card-bg); display:flex; flex-direction:column; justify-content:space-between;">
-            <div>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span class="widget-badge badge-event" style="font-size:11px;">⚡ 모집 중 (잔여 ${remain}석)</span>
-                <span style="font-size:11px; color:var(--text-sub);">작성: ${b.작성자}</span>
-              </div>
-              <h3 style="font-size:17px; font-weight:800; margin-bottom:10px; color:var(--primary-dark);">${b.제목}</h3>
-              <div style="font-size:13px; line-height:1.7; margin-bottom:10px;">
-                <div>📅 <strong>일시:</strong> ${b.모임일시}</div>
-                <div>📍 <strong>장소:</strong> ${b.모임장소}</div>
-                <div>⏰ <strong>마감:</strong> ${b.모집마감일시 || "별도 공지 시"}</div>
-              </div>
-              ${b.추가내용 ? `<p style="font-size:13px; background:var(--sub-bg); padding:10px; border-radius:10px; border:1px solid var(--border); margin-bottom:12px; white-space:pre-line;">${b.추가내용}</p>` : ""}
+      const winIdx = Math.floor(Math.random() * players.length);
+      const degPerSlice = 360 / players.length;
+      const targetDeg = 360 * 5 + (270 - (winIdx * degPerSlice + degPerSlice / 2));
+      setTimeout(() => { canvas.style.transform = `rotate(${targetDeg}deg)`; }, 50);
+      setTimeout(() => {
+        document.getElementById('rouletteResult').textContent = `🎉 당첨: ${players[winIdx]}!`;
+      }, 3300);
+    }
 
-              <div style="background:var(--sub-bg); padding:10px 12px; border-radius:10px; border:1px solid var(--border); margin-bottom:12px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:5px;">
-                  <span>모집 현황 (${members.length} / ${max}명)</span>
-                  <span style="color:var(--mint);">${remain}명 남음</span>
-                </div>
-                <div style="height:7px; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:6px;">
-                  <div style="width:${pct}%; height:100%; background:var(--mint);"></div>
-                </div>
-                <div style="font-size:12px; color:var(--text-sub);">
-                  참여자: ${members.length ? members.join(", ") : "아직 없음"}
-                </div>
-              </div>
+    function setupGroupLots() {
+      const players = getCheckedGroupPlayers();
+      if (players.length < 2) return alert('최소 2명 이상 체크해 주세요.');
+      const winCount = Number(prompt(`당첨(벌칙/기도) 인원 수를 입력하세요 (1 ~ ${players.length - 1}):`, '1')) || 1;
+      const deck = players.map((_, i) => i < winCount ? '당첨' : '통과').sort(() => Math.random() - 0.5);
+      document.getElementById('pgGroupGameArea').innerHTML = `
+        <div class="lot-grid">
+          ${deck.map((res, idx) => `
+            <div class="lot-card" onclick="this.classList.add('revealed', '${res==='당첨'?'win':'safe'}'); this.textContent='${res==='당첨'?'🎉 당첨!':' 통과'}';">
+              제비 #${idx + 1}
             </div>
-
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="joinMeetup('${b.모임ID}')">🙋‍♂️ 참여 신청</button>
-              <button type="button" class="btn btn-sm" onclick="copyMeetupById('${b.모임ID}')">📋 카톡 복사</button>
-              <button type="button" class="btn btn-sm btn-danger" onclick="deleteMeetup('${b.모임ID}')">삭제</button>
-            </div>
-          </div>`;
-      }).join("");
+          `).join('')}
+        </div>
+      `;
     }
 
-    async function joinMeetup(meetupId) {
-      const target = (APP_STATE.meetups || []).find(item => String(item.모임ID) === String(meetupId));
-      const title = target ? target.제목 : "번개모임";
-      const defaultName = APP_STATE.auth.name || "";
+    function shuffleGroupOrder() {
+      const players = getCheckedGroupPlayers().sort(() => Math.random() - 0.5);
+      if (!players.length) return;
+      document.getElementById('pgGroupGameArea').innerHTML = `
+        <div style="background:var(--surface-sub); padding:12px; border-radius:12px;">
+          ${players.map((p, i) => `<div style="padding:4px 0;"><strong>${i + 1}번:</strong> ${p}</div>`).join('')}
+        </div>
+      `;
+    }
 
-      const applicant = prompt(`[${title}]\n참여 신청할 본인의 이름을 입력해 주세요:`, defaultName);
-      if (!applicant || !applicant.trim()) return;
+    // 장난감 상자 탭 전환
+    function selectToyGame(toy, btn) {
+      ['wordle', 'stopwatch', 'reaction', 'bomb'].forEach(t => {
+        document.getElementById('toy-' + t).style.display = t === toy ? 'block' : 'none';
+      });
+      btn.parentElement.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+    }
 
-      const res = await postToGas({ action: "joinMeetup", meetupId, applicant: applicant.trim() });
-      if (res) {
-        if (res.autoClosed) {
-          alert("🎉 마지막 모집 인원이 채워져 해당 번개모임 공고가 자동으로 마감(삭제)되었습니다!");
-        } else {
-          alert("참여 신청이 완료되었습니다!");
+    // 게임 A: 비전마을 청년 워들 (목장 · 직분 · 생일 월 · 초성 4칸)
+    let WORDLE_ANSWER = null;
+    let WORDLE_TRIES = 0;
+
+    function getChosung(str) {
+      const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+      return Array.from(str).map(ch => {
+        const code = ch.charCodeAt(0) - 44032;
+        if (code >= 0 && code <= 11171) return CHO[Math.floor(code / 588)];
+        return ch;
+      }).join('');
+    }
+
+    function initYouthWordle() {
+      const mode = document.getElementById('wordleModeSelect').value;
+      const pool = mode === 'ALL' ? STATE.members : STATE.members.filter(m => m['목장'] === mode);
+      document.getElementById('wordleMemberDatalist').innerHTML = pool.map(m => `<option value="${m['이름']}">`).join('');
+      WORDLE_ANSWER = pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
+      WORDLE_TRIES = 0;
+      document.getElementById('wordleBoard').innerHTML = '';
+      document.getElementById('wordleResultMsg').textContent = '';
+      document.getElementById('wordleGuessInput').value = '';
+    }
+
+    function submitWordleGuess() {
+      if (!WORDLE_ANSWER) return alert('명단 데이터가 부족합니다.');
+      const guessName = document.getElementById('wordleGuessInput').value.trim();
+      const guess = STATE.members.find(m => m['이름'] === guessName);
+      if (!guess) return alert('목록에 있는 청년 이름을 정확히 선택해 주세요.');
+
+      WORDLE_TRIES++;
+      const ans = WORDLE_ANSWER;
+
+      // 1. 목장
+      const grpClass = guess['목장'] === ans['목장'] ? 'w-green' : 'w-gray';
+      // 2. 직분
+      const roleClass = guess['직분'] === ans['직분'] ? 'w-green' : 'w-gray';
+      // 3. 생일 월
+      const gMon = guess['생년월일'] ? Number(guess['생년월일'].split('-')[1]) : 0;
+      const aMon = ans['생년월일'] ? Number(ans['생년월일'].split('-')[1]) : 0;
+      let monClass = 'w-gray', monText = gMon ? `${gMon}월` : '-';
+      if (gMon && aMon) {
+        if (gMon === aMon) monClass = 'w-green';
+        else if (Math.abs(gMon - aMon) <= 2) {
+          monClass = 'w-yellow';
+          monText += gMon < aMon ? ' ▲' : ' ▼';
         }
       }
+      // 4. 초성
+      const gCho = getChosung(guess['이름']);
+      const aCho = getChosung(ans['이름']);
+      let choClass = 'w-gray';
+      if (gCho === aCho) choClass = 'w-green';
+      else if (Array.from(gCho).some(c => aCho.includes(c))) choClass = 'w-yellow';
+
+      const rowHtml = `
+        <div style="font-size:12px; font-weight:700; margin-top:6px;">#${WORDLE_TRIES} ${guess['이름']}</div>
+        <div class="wordle-row">
+          <div class="w-tile ${grpClass}">${guess['목장']}</div>
+          <div class="w-tile ${roleClass}">${guess['직분']}</div>
+          <div class="w-tile ${monClass}">${monText}</div>
+          <div class="w-tile ${choClass}">${gCho}</div>
+        </div>
+      `;
+      document.getElementById('wordleBoard').insertAdjacentHTML('beforeend', rowHtml);
+      document.getElementById('wordleGuessInput').value = '';
+
+      if (guess['이름'] === ans['이름']) {
+        document.getElementById('wordleResultMsg').innerHTML = `🎉 정답입니다! (${WORDLE_TRIES}번 만에 성공) · ${ans['이름']} (${ans['친해지기정보'] || '반가워요!'})`;
+      } else if (WORDLE_TRIES >= 6) {
+        document.getElementById('wordleResultMsg').innerHTML = `😅 아쉽네요! 정답은 <strong>${ans['이름']} (${ans['목장']})</strong> 입니다.`;
+      }
     }
 
-    function copyMeetupById(meetupId) {
-      const b = (APP_STATE.meetups || []).find(item => String(item.모임ID) === String(meetupId));
-      if (b) copyMeetupText(b);
+    // 게임 B: 블라인드 스톱워치 (7.77초 또는 1.00~10.00초 랜덤)
+    let SW_TARGET = 7.77, SW_MODE = 'fixed', SW_RUNNING = false, SW_START = 0, SW_RAF = null;
+    function setStopwatchMode(mode) {
+      SW_MODE = mode;
+      SW_RUNNING = false; cancelAnimationFrame(SW_RAF);
+      SW_TARGET = mode === 'fixed' ? 7.77 : Number((Math.random() * 9 + 1).toFixed(2));
+      document.getElementById('swTargetDisplay').textContent = `목표 시간: ${SW_TARGET.toFixed(2)}초`;
+      document.getElementById('swTimerText').textContent = '0.00초';
+      document.getElementById('swHintText').textContent = '터치하면 시작합니다!';
+      document.getElementById('swModeFixed').className = mode === 'fixed' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+      document.getElementById('swModeRandom').className = mode === 'random' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
     }
 
-    function openMeetupModal() {
-      ["b_title", "b_date", "b_time", "b_place", "b_desc", "b_pw"].forEach(id => document.getElementById(id).value = "");
-      document.getElementById("b_max").value = 10;
-      document.getElementById("b_author").value = APP_STATE.auth.name || "";
-      document.getElementById("b_includeAuthor").checked = true;
-      document.getElementById("b_saveToCal").checked = false;
-
-      const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
-      const yyyy = tomorrow.getFullYear();
-      const mm = String(tomorrow.getMonth() + 1).padStart(2, "0");
-      const dd = String(tomorrow.getDate()).padStart(2, "0");
-      document.getElementById("b_deadline").value = `${yyyy}-${mm}-${dd}T23:59`;
-      openModal("meetupModal");
+    function toggleStopwatch() {
+      if (!SW_RUNNING) {
+        if (SW_MODE === 'random') {
+          SW_TARGET = Number((Math.random() * 9 + 1).toFixed(2));
+          document.getElementById('swTargetDisplay').textContent = `목표 시간: ${SW_TARGET.toFixed(2)}초`;
+        }
+        SW_RUNNING = true;
+        SW_START = performance.now();
+        document.getElementById('swHintText').textContent = '목표 시간에 맞춰 다시 터치하세요!';
+        const tick = () => {
+          if (!SW_RUNNING) return;
+          const elapsed = (performance.now() - SW_START) / 1000;
+          if (elapsed > SW_TARGET * 0.35) {
+            document.getElementById('swTimerText').textContent = '🙈 ??.??초';
+          } else {
+            document.getElementById('swTimerText').textContent = elapsed.toFixed(2) + '초';
+          }
+          SW_RAF = requestAnimationFrame(tick);
+        };
+        tick();
+      } else {
+        SW_RUNNING = false;
+        cancelAnimationFrame(SW_RAF);
+        const finalSec = (performance.now() - SW_START) / 1000;
+        const diff = (finalSec - SW_TARGET).toFixed(2);
+        document.getElementById('swTimerText').textContent = `${finalSec.toFixed(2)}초`;
+        document.getElementById('swHintText').innerHTML = `목표 ${SW_TARGET.toFixed(2)}초 | 오차: <strong>${diff >= 0 ? '+' + diff : diff}초</strong> (터치 시 재시작)`;
+      }
     }
 
-    async function submitMeetup() {
-      const deadlineRaw = document.getElementById("b_deadline").value;
+    // 게임 C: 번개 반응속도 테스트
+    let RX_STATE = 'idle', RX_TIMER = null, RX_GO_TIME = 0;
+    function handleReactionClick() {
+      const pad = document.getElementById('rxPad');
+      const main = document.getElementById('rxMainText');
+      const sub = document.getElementById('rxSubText');
+      if (RX_STATE === 'idle' || RX_STATE === 'done') {
+        RX_STATE = 'waiting';
+        pad.style.background = '#fee2e2'; pad.style.borderColor = '#ef4444';
+        main.style.color = '#dc2626'; main.textContent = '기다리세요...';
+        sub.textContent = '초록색이 되면 바로 터치!';
+        RX_TIMER = setTimeout(() => {
+          RX_STATE = 'ready';
+          RX_GO_TIME = performance.now();
+          pad.style.background = '#dcfce7'; pad.style.borderColor = '#10b981';
+          main.style.color = '#059669'; main.textContent = '지금 터치!!';
+        }, 1500 + Math.random() * 2500);
+      } else if (RX_STATE === 'waiting') {
+        clearTimeout(RX_TIMER);
+        RX_STATE = 'done';
+        main.textContent = '⚠️ 너무 빨랐어요!';
+        sub.textContent = '터치해서 다시 시도';
+      } else if (RX_STATE === 'ready') {
+        const ms = Math.round(performance.now() - RX_GO_TIME);
+        RX_STATE = 'done';
+        pad.style.background = 'var(--primary-soft)'; pad.style.borderColor = 'var(--primary)';
+        main.style.color = 'var(--primary)'; main.textContent = `${(ms / 1000).toFixed(3)}초 (${ms}ms)`;
+        sub.textContent = '터치하면 다시 도전합니다';
+      }
+    }
+
+    // 게임 D: 한 폰으로 시한폭탄 돌리기
+    let BOMB_INDEX = 0, BOMB_OVER = false;
+    function initBombGame() {
+      BOMB_INDEX = Math.floor(Math.random() * 12);
+      BOMB_OVER = false;
+      document.getElementById('bombStatus').textContent = '';
+      document.getElementById('bombGrid').innerHTML = Array.from({ length: 12 }, (_, i) =>
+        `<button class="bomb-btn" onclick="pressBombBtn(this, ${i})">${i + 1}</button>`
+      ).join('');
+    }
+
+    function pressBombBtn(btn, idx) {
+      if (BOMB_OVER || btn.disabled) return;
+      btn.disabled = true;
+      if (idx === BOMB_INDEX) {
+        BOMB_OVER = true;
+        btn.classList.add('boom');
+        btn.textContent = '💥';
+        document.getElementById('bombStatus').innerHTML = '<span style="color:var(--danger);">💥 펑!! 폭탄이 터졌습니다!</span>';
+      } else {
+        btn.classList.add('safe');
+        btn.textContent = '✅';
+      }
+    }
+
+    // ==================== 7. 🔒 리더십 전용 탭 (담당목사 · 디렉터 · 목자) ====================
+    function renderLeadershipTab() {
+      const ld = STATE.leadershipData;
+      if (!ld) return;
+
+      // 1. 주일 예배 출결 브리핑 보고서
+      const recs = ld.attendanceRecords || [];
+      const sel = document.getElementById('attReportDateSelect');
+      sel.innerHTML = recs.map((r, i) => `<option value="${i}">${r['날짜']} (${r['총인원']}명)</option>`).join('');
+      renderAttendanceReport();
+
+      // 2. 목양 통계 (S1, S2, 입대, S3, S4 및 제적 사유)
+      const full = ld.allMembersFull || [];
+      const s1 = full.filter(m => m['상태'] === 'S1').length;
+      const s2 = full.filter(m => m['상태'] === 'S2').length;
+      const mil = full.filter(m => m['상태'] === '입대').length;
+      const s3List = full.filter(m => m['상태'] === 'S3');
+      const s4List = full.filter(m => m['상태'] === 'S4');
+
+      document.getElementById('pastoralStatsGrid').innerHTML = `
+        <div class="stat-box"><div class="num">${full.length}명</div><div class="lbl">전체 등록</div></div>
+        <div class="stat-box"><div class="num" style="color:var(--success);">${s1}명</div><div class="lbl">S1 (안정)</div></div>
+        <div class="stat-box"><div class="num" style="color:var(--warning);">${s2}명</div><div class="lbl">S2 (간헐)</div></div>
+        <div class="stat-box"><div class="num" style="color:var(--danger);">${s3List.length + s4List.length}명</div><div class="lbl">관심필요 (S3·S4)</div></div>
+      `;
+
+      document.getElementById('pastoralAlertBox').innerHTML = `
+        <div style="font-size:13px; background:var(--surface-sub); padding:10px 12px; border-radius:10px;">
+          🪖 <strong>군복무(입대):</strong> ${mil}명 &nbsp;|&nbsp;
+          🚨 <strong>S3(6개월 주기):</strong> ${s3List.length}명 &nbsp;|&nbsp;
+          📁 <strong>S4(제적대상):</strong> ${s4List.length}명
+        </div>
+      `;
+
+      document.getElementById('s3s4DetailList').innerHTML = [...s3List, ...s4List].map(m => `
+        <div style="padding:8px 10px; border-bottom:1px solid var(--border); font-size:13px; display:flex; justify-content:space-between;">
+          <div>
+            <strong>${m['이름']}</strong> (${m['목장']})
+            <span class="badge ${m['상태']==='S4'?'b-red':'b-amber'}">${m['상태']}</span>
+            ${m['제적사유'] ? `<span style="color:var(--danger); font-size:12px;"> · 사유: ${m['제적사유']}</span>` : ''}
+          </div>
+        </div>
+      `).join('') || '<div style="font-size:12.5px; color:var(--text-muted);">S3 · S4 해당 인원이 없습니다.</div>';
+
+      // 3. 상담 · 심방 요청 목록
+      const canChangeVis = STATE.auth.isPastorOrAdmin;
+      document.getElementById('visitationsList').innerHTML = (ld.visitations || []).map(v => `
+        <div style="padding:12px; border:1px solid var(--border); border-radius:12px; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <div><strong>${v['대상청년']}</strong> <span class="badge b-purple">${v['상담영역']}</span></div>
+            <span class="badge ${v['진행상태']==='심방 완료'?'b-green':(v['진행상태']==='약속 예정'?'b-amber':'b-red')}">${v['진행상태']}</span>
+          </div>
+          <div style="font-size:13px; margin-bottom:6px;">${v['상세내용']}</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">요청자: ${v['요청목자']} · ${v['등록일시']} ${v['심방일정메모'] ? `| 메모: ${v['심방일정메모']}` : ''}</div>
+          ${canChangeVis ? `
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn btn-outline btn-sm" onclick="updateVisStatus('${v['요청ID']}', '약속 예정')">🟡 약속 예정</button>
+              <button class="btn btn-success btn-sm" onclick="updateVisStatus('${v['요청ID']}', '심방 완료')">🟢 심방 완료</button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('') || '<div style="font-size:13px; color:var(--text-muted);">등록된 상담·심방 요청이 없습니다.</div>';
+
+      // 4. 담당 목사님의 노트
+      document.getElementById('leaderNotesList').innerHTML = (ld.leaderNotes || []).map(n => {
+        let acks = [];
+        try { acks = JSON.parse(n['확인목자목록'] || '[]'); } catch (e) {}
+        const iChecked = acks.includes(STATE.auth.name);
+        return `
+          <div style="padding:12px; border:1px solid var(--border); border-radius:12px; margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span class="badge b-purple">${n['분류'] || n['카테고리']}</span>
+              <span style="font-size:11.5px; color:var(--text-muted);">${n['작성자']} · ${n['등록일시']}</span>
+            </div>
+            <strong style="display:block; margin-bottom:4px;">${n['제목']}</strong>
+            <p style="font-size:13.5px; white-space:pre-line; margin-bottom:8px;">${n['내용']}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:12px; color:var(--text-muted);">✅ 확인: ${acks.length ? acks.join(', ') : '아직 없음'}</span>
+              ${!iChecked ? `<button class="btn btn-outline btn-sm" onclick="ackLeaderNote('${n['노트ID']}')">✅ 확인했습니다</button>` : '<span class="badge b-green">확인 완료</span>'}
+            </div>
+          </div>
+        `;
+      }).join('') || '<div style="font-size:13px; color:var(--text-muted);">작성된 리더십 노트가 없습니다.</div>';
+    }
+
+    function renderAttendanceReport() {
+      const recs = (STATE.leadershipData && STATE.leadershipData.attendanceRecords) || [];
+      const sumBox = document.getElementById('attReportSummary');
+      const namesBox = document.getElementById('attReportNamesBox');
+      if (!recs.length) {
+        sumBox.innerHTML = '<div style="font-size:13px; color:var(--text-muted);">저장된 주일 예배 출결 기록이 없습니다.</div>';
+        return;
+      }
+      const idx = Number(document.getElementById('attReportDateSelect').value) || 0;
+      const cur = recs[idx];
+      const prev = recs[idx + 1];
+      const curCnt = Number(cur['총인원']) || 0;
+      const prevCnt = prev ? (Number(prev['총인원']) || 0) : null;
+      const diff = prevCnt !== null ? curCnt - prevCnt : null;
+
+      // 지난달 평균 계산
+      const curYm = String(cur['날짜']).slice(0, 7);
+      const prevMonthRecs = recs.filter(r => String(r['날짜']).slice(0, 7) < curYm).slice(0, 4);
+      const prevMonthAvg = prevMonthRecs.length
+        ? (prevMonthRecs.reduce((acc, r) => acc + Number(r['총인원'] || 0), 0) / prevMonthRecs.length).toFixed(1)
+        : null;
+
+      // 최고 인원 갱신 여부
+      const maxBefore = recs.slice(idx + 1).reduce((m, r) => Math.max(m, Number(r['총인원'] || 0)), 0);
+      const isRecordHigh = curCnt > maxBefore && recs.length > 1;
+
+      let names = [];
+      try { names = JSON.parse(cur['출석자명단JSON'] || '[]'); } catch (e) {}
+
+      sumBox.innerHTML = `
+        ${isRecordHigh ? '<div class="badge b-amber" style="margin-bottom:8px;">🏆 역대 최고 출석 인원 갱신!</div>' : ''}
+        <div style="font-size:18px; font-weight:800; margin-bottom:4px;">총 출석 인원: <span style="color:var(--primary);">${curCnt}명</span></div>
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
+          • 전주 대비: ${diff !== null ? `<strong>${diff >= 0 ? '▲ +' + diff : '▼ ' + diff}명</strong> (지난주 ${prevCnt}명)` : '첫 주차 기록'}<br>
+          • 전월 평균 대비: ${prevMonthAvg !== null ? `지난달 평균 ${prevMonthAvg}명 대비 <strong>${(curCnt - prevMonthAvg) >= 0 ? '▲ +' + (curCnt - prevMonthAvg).toFixed(1) : '▼ ' + (curCnt - prevMonthAvg).toFixed(1)}명</strong>` : '비교 데이터 누적 중'}
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="const b=document.getElementById('attReportNamesBox'); b.style.display=b.style.display==='none'?'block':'none';">더보기 (출석자 명단 확인) ▾</button>
+      `;
+
+      namesBox.innerHTML = `<strong>출석 지체 명단 (${names.length}명):</strong><div style="margin-top:6px; font-size:13px; line-height:1.7;">${names.join(', ') || '없음'}</div>`;
+    }
+
+    function toggleS3S4List() {
+      const el = document.getElementById('s3s4DetailList');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function submitVisitation() {
+      const targetName = document.getElementById('visTargetName').value.trim();
+      const category = document.getElementById('visCategory').value;
+      const memo = document.getElementById('visMemo').value.trim();
+      if (!targetName || !memo) return alert('대상 청년과 상황 메모를 입력해 주세요.');
+      const found = STATE.members.find(m => m['이름'] === targetName);
+      const res = await apiPost({
+        action: 'visitation', subAction: 'create',
+        payload: { targetName, group: found ? found['목장'] : '', category, memo }
+      });
+      alert(res.message);
+      if (res.success) { closeModal('visitationModal'); await loadAllData(); }
+    }
+
+    async function updateVisStatus(id, status) {
+      const scheduleMemo = prompt('심방 예정일이나 후속 메모를 남겨주세요 (선택):', '') || '';
+      const res = await apiPost({ action: 'visitation', subAction: 'updateStatus', payload: { id, status, scheduleMemo } });
+      alert(res.message);
+      if (res.success) await loadAllData();
+    }
+
+    async function submitLeaderNote() {
       const payload = {
-        제목: document.getElementById("b_title").value.trim(),
-        모임날짜: document.getElementById("b_date").value,
-        모임시간: document.getElementById("b_time").value.trim(),
-        모임장소: document.getElementById("b_place").value.trim(),
-        모집인원: Number(document.getElementById("b_max").value),
-        모집마감일시: deadlineRaw ? deadlineRaw.replace("T", " ") : "",
-        작성자: document.getElementById("b_author").value.trim(),
-        삭제비번: document.getElementById("b_pw").value.trim(),
-        작성자포함여부: document.getElementById("b_includeAuthor").checked ? "Y" : "N",
-        달력저장여부: document.getElementById("b_saveToCal").checked ? "Y" : "N",
-        추가내용: document.getElementById("b_desc").value.trim()
+        category: document.getElementById('lnCategory').value,
+        title: document.getElementById('lnTitle').value.trim(),
+        content: document.getElementById('lnContent').value.trim()
       };
-
-      if (!payload.제목 || !payload.모임날짜 || !payload.모임시간 || !payload.모임장소) {
-        return alert("모임 제목, 날짜, 시간, 장소를 모두 입력해 주세요.");
-      }
-      if (!payload.작성자 || payload.삭제비번.length !== 4) {
-        return alert("작성자 이름과 삭제용 비밀번호 4자리를 입력해 주세요.");
-      }
-
-      const res = await postToGas({ action: "addMeetup", payload });
-      if (res) closeModal("meetupModal");
+      if (!payload.title || !payload.content) return alert('제목과 내용을 입력해 주세요.');
+      const res = await apiPost({ action: 'leaderNote', subAction: 'create', payload });
+      alert(res.message);
+      if (res.success) { closeModal('leaderNoteModal'); await loadAllData(); }
     }
 
-    // 카톡 공유용 텍스트 + 해당 공지문 바로가기 URL 자동 생성
-    function copyMeetupText(b) {
-      const members = b.참여자목록 ? String(b.참여자목록).split(",").map(s => s.trim()).filter(Boolean) : [];
-      const baseUrl = window.location.origin + window.location.pathname;
-      const directUrl = `${baseUrl}?tab=tab5&meetup=${encodeURIComponent(b.모임ID)}`;
-
-      const text = `[⚡ 비전마을 번개모임 모집]\n`
-        + `• 모임명: ${b.제목}\n`
-        + `• 일시: ${b.모임일시}\n`
-        + `• 장소: ${b.모임장소}\n`
-        + `• 모집인원: ${members.length} / ${b.모집인원}명 (잔여 ${Math.max(0, Number(b.모집인원) - members.length)}석)\n`
-        + `• 모집마감: ${b.모집마감일시 || "선착순 마감"}\n`
-        + (b.추가내용 ? `• 안내: ${b.추가내용}\n` : "")
-        + `\n👉 바로 신청하기:\n${directUrl}`;
-
-      navigator.clipboard.writeText(text).then(() => alert("공고문과 해당 모임 바로가기 링크가 복사되었습니다!"));
+    async function ackLeaderNote(id) {
+      await apiPost({ action: 'leaderNote', subAction: 'ack', payload: { id } });
+      await loadAllData();
     }
-    
   </script>
 </body>
 </html>
