@@ -1526,6 +1526,14 @@
       await loadAllData();
     };
 
+    // 날짜 문자열을 YYYY-MM-DD 형식으로 안전하게 정규화
+    function normalizeYMD(raw) {
+      if (!raw) return '';
+      const parts = String(raw).trim().split(/[-./\s]+/);
+      if (parts.length < 3) return String(raw).trim();
+      return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+    }
+
     // 달력
     window.changeMonth = function (delta) {
       STATE.calMonth += delta;
@@ -1548,9 +1556,12 @@
         const ddStr = String(d).padStart(2, '0');
         const dateStr = `${y}-${mmStr}-${ddStr}`;
         const dayOfWeek = new Date(y, m, d).getDay();
-        const bdays = STATE.members.filter(mem => mem['생년월일'] && mem['생년월일'].slice(5) === `${mmStr}-${ddStr}`);
-        const events = STATE.schedules.filter(s => String(s['날짜']) === dateStr);
-        const buls = STATE.bulletins.filter(b => String(b['예배날짜']) === dateStr);
+        const bdays = STATE.members.filter(mem => {
+          const bNorm = normalizeYMD(mem['생년월일']);
+          return bNorm && bNorm.slice(5) === `${mmStr}-${ddStr}`;
+        });
+        const events = STATE.schedules.filter(s => normalizeYMD(s['날짜']) === dateStr);
+        const buls = STATE.bulletins.filter(b => normalizeYMD(b['예배날짜']) === dateStr);
 
         let chipsHtml = '', dotsHtml = '';
         bdays.forEach(b => { chipsHtml += `<div class="cal-chip chip-bday">🎂 ${b['이름']}</div>`; dotsHtml += `<span class="dot" style="background:#f59e0b;"></span>`; });
@@ -1574,7 +1585,7 @@
 
     // 날짜 기준 D-day 문자열 계산 (오늘 자정 기준 일수 차이)
     function calcDDayLabel(targetDateStr) {
-      const [ty, tm, td] = targetDateStr.split('-').map(Number);
+      const [ty, tm, td] = normalizeYMD(targetDateStr).split('-').map(Number);
       const target = new Date(ty, tm - 1, td);
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -1587,23 +1598,37 @@
 
     // 요일 반환 헬퍼
     function getKoreanWeekday(dateStr) {
-      const [y, m, d] = dateStr.split('-').map(Number);
+      const [y, m, d] = normalizeYMD(dateStr).split('-').map(Number);
       return ['일', '월', '화', '수', '목', '금', '토'][new Date(y, m - 1, d).getDay()];
     }
 
     window.selectCalDate = function (dateStr) {
-      STATE.selectedDate = dateStr;
+      const normDate = normalizeYMD(dateStr);
+      STATE.selectedDate = normDate;
       renderCalendar();
-      const mmdd = dateStr.slice(5);
-      const bdays = STATE.members.filter(m => m['생년월일'] && m['생년월일'].slice(5) === mmdd);
-      const events = STATE.schedules.filter(s => String(s['날짜']) === dateStr);
-      const buls = STATE.bulletins.filter(b => String(b['예배날짜']) === dateStr);
-      const dday = calcDDayLabel(dateStr);
-      const weekday = getKoreanWeekday(dateStr);
 
-      document.getElementById('calSelectedDateTitle').textContent = `📌 ${dateStr} (${weekday}) · ${dday}`;
+      const titleEl = document.getElementById('calSelectedDateTitle');
+      const listEl = document.getElementById('calSelectedDateList');
       const copyAllBtn = document.getElementById('btnCopyDayAll');
-      copyAllBtn.style.display = (bdays.length || events.length) ? 'inline-flex' : 'none';
+      if (!titleEl || !listEl) return;
+
+      // 이전 날짜 표시 초기화
+      listEl.innerHTML = '';
+
+      const mmdd = normDate.slice(5);
+      const bdays = STATE.members.filter(m => {
+        const bNorm = normalizeYMD(m['생년월일']);
+        return bNorm && bNorm.slice(5) === mmdd;
+      });
+      const events = STATE.schedules.filter(s => normalizeYMD(s['날짜']) === normDate);
+      const buls = STATE.bulletins.filter(b => normalizeYMD(b['예배날짜']) === normDate);
+      const dday = calcDDayLabel(normDate);
+      const weekday = getKoreanWeekday(normDate);
+
+      titleEl.textContent = `📌 ${normDate} (${weekday}) · ${dday}`;
+      if (copyAllBtn) {
+        copyAllBtn.style.display = (bdays.length || events.length) ? 'inline-flex' : 'none';
+      }
 
       let items = [];
       bdays.forEach(b => {
@@ -1614,7 +1639,7 @@
         `);
       });
 
-      events.forEach((ev, idx) => {
+      events.forEach(ev => {
         const isLeaderOnly = ev['공개범위'] === '리더십전용';
         const badge = isLeaderOnly ? '<span class="badge b-purple">🔒 리더십전용</span>' : '<span class="badge b-blue">📅 전체일정</span>';
         const encodedEv = encodeURIComponent(JSON.stringify(ev));
@@ -1630,7 +1655,7 @@
       });
 
       buls.forEach(bu => {
-        const urls = parseImageUrls(bu['이미지URL']);
+        const urls = typeof parseImageUrls === 'function' ? parseImageUrls(bu['이미지URL']) : (bu['이미지URL'] ? [bu['이미지URL']] : []);
         const encoded = encodeURIComponent(JSON.stringify(urls));
         items.push(`
           <div style="padding-top:4px;">
@@ -1640,7 +1665,7 @@
         `);
       });
 
-      document.getElementById('calSelectedDateList').innerHTML = items.length
+      listEl.innerHTML = items.length
         ? items.join('<div style="margin:4px 0;"></div>')
         : '등록된 일정이나 생일이 없습니다.';
     };
@@ -1648,14 +1673,15 @@
     // 개별 일정 D-day 카톡 안내문 복사
     window.copySingleSchedule = async function (encodedEv) {
       const ev = JSON.parse(decodeURIComponent(encodedEv));
-      const dday = calcDDayLabel(ev['날짜']);
-      const weekday = getKoreanWeekday(ev['날짜']);
+      const normDate = normalizeYMD(ev['날짜']);
+      const dday = calcDDayLabel(normDate);
+      const weekday = getKoreanWeekday(normDate);
       const baseUrl = window.location.origin + window.location.pathname;
 
       const text = [
         `📅 [비전마을 일정 안내 | ${dday}]`,
         `📌 ${ev['제목']}`,
-        `🗓️ 일시: ${ev['날짜']} (${weekday})${ev['시간'] ? ' ' + ev['시간'] : ''}`,
+        `🗓️ 일시: ${normDate} (${weekday})${ev['시간'] ? ' ' + ev['시간'] : ''}`,
         ev['장소'] ? `📍 장소: ${ev['장소']}` : '',
         ``,
         `🔗 비전마을 달력 보기: ${baseUrl}?tab=calendar`
@@ -1676,8 +1702,11 @@
       const dday = calcDDayLabel(dateStr);
       const weekday = getKoreanWeekday(dateStr);
       const mmdd = dateStr.slice(5);
-      const bdays = STATE.members.filter(m => m['생년월일'] && m['생년월일'].slice(5) === mmdd);
-      const publicEvents = STATE.schedules.filter(s => String(s['날짜']) === dateStr && s['공개범위'] !== '리더십전용');
+      const bdays = STATE.members.filter(m => {
+        const bNorm = normalizeYMD(m['생년월일']);
+        return bNorm && bNorm.slice(5) === mmdd;
+      });
+      const publicEvents = STATE.schedules.filter(s => normalizeYMD(s['날짜']) === dateStr && s['공개범위'] !== '리더십전용');
       const baseUrl = window.location.origin + window.location.pathname;
 
       const lines = [`📅 [비전마을 ${dateStr}(${weekday}) 안내 | ${dday}]`];
