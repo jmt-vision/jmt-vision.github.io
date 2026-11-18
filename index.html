@@ -1583,6 +1583,73 @@
       document.getElementById('calendarGrid').innerHTML = html;
     }
 
+    // 일정 등록 모달 열기 (선택된 날짜가 있으면 자동으로 날짜 칸에 채움)
+    window.openScheduleModal = function () {
+      const dateEl = document.getElementById('schDate');
+      if (dateEl) {
+        dateEl.value = STATE.selectedDate || todayFormatted();
+      }
+      if (typeof openModal === 'function') openModal('scheduleModal');
+    };
+
+    // 일정 저장 실행 (전역 window에 명시적 등록)
+    window.submitSchedule = async function () {
+      const dateEl = document.getElementById('schDate');
+      const titleEl = document.getElementById('schTitle');
+      const timeEl = document.getElementById('schTime');
+      const locEl = document.getElementById('schLoc');
+      const scopeEl = document.getElementById('schScope');
+
+      if (!dateEl || !titleEl) {
+        return alert('일정 입력 폼(schDate 또는 schTitle)을 찾을 수 없습니다.');
+      }
+
+      const date = typeof normalizeYMD === 'function' ? normalizeYMD(dateEl.value) : dateEl.value.trim();
+      const title = titleEl.value.trim();
+      const time = timeEl ? timeEl.value.trim() : '';
+      const loc = locEl ? locEl.value.trim() : '';
+      const scope = scopeEl ? scopeEl.value : '전체공개';
+
+      if (!date || !title) {
+        return alert('날짜와 일정 제목을 모두 입력해 주세요.');
+      }
+
+      setLoading(true);
+      try {
+        const id = 'SCH_' + Date.now();
+        await setDoc(doc(db, 'Schedules', id), {
+          일정ID: id,
+          날짜: date,
+          제목: title,
+          시간: time,
+          장소: loc,
+          공개범위: scope,
+          등록자: (STATE.auth && STATE.auth.name) ? STATE.auth.name : (localStorage.getItem('vv_pref_name') || '청년부'),
+          등록일시: nowFormatted()
+        });
+
+        alert(`📅 [${title}] 일정이 달력에 등록되었습니다!`);
+
+        titleEl.value = '';
+        if (timeEl) timeEl.value = '';
+        if (locEl) locEl.value = '';
+        if (typeof closeModal === 'function') closeModal('scheduleModal');
+
+        const [y, m] = date.split('-').map(Number);
+        STATE.calYear = y;
+        STATE.calMonth = m - 1;
+        STATE.selectedDate = date;
+
+        await loadAllData();
+        if (typeof selectCalDate === 'function') selectCalDate(date);
+      } catch (e) {
+        console.error('일정 등록 오류:', e);
+        alert('⚠️ 일정 등록 실패: ' + e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     // 날짜 기준 D-day 문자열 계산 (오늘 자정 기준 일수 차이)
     function calcDDayLabel(targetDateStr) {
       const [ty, tm, td] = normalizeYMD(targetDateStr).split('-').map(Number);
