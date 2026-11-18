@@ -393,7 +393,10 @@
       </div>
 
       <div class="card" id="calDayDetailCard">
-        <div class="card-title" id="calSelectedDateTitle" style="margin-bottom:8px;">날짜를 선택해 주세요</div>
+        <div class="card-header" style="margin-bottom:8px;">
+          <div class="card-title" id="calSelectedDateTitle">날짜를 선택해 주세요</div>
+          <button id="btnCopyDayAll" class="btn btn-outline btn-sm" style="display:none;" onclick="copySelectedDateAll()">📋 하루 일정 전체 복사</button>
+        </div>
         <div id="calSelectedDateList" style="color:var(--text-muted); font-size:13.5px;">달력의 날짜를 누르면 생일·일정·주보가 이곳에 표시됩니다.</div>
       </div>
     </section>
@@ -1569,6 +1572,25 @@
       document.getElementById('calendarGrid').innerHTML = html;
     }
 
+    // 날짜 기준 D-day 문자열 계산 (오늘 자정 기준 일수 차이)
+    function calcDDayLabel(targetDateStr) {
+      const [ty, tm, td] = targetDateStr.split('-').map(Number);
+      const target = new Date(ty, tm - 1, td);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'D-Day';
+      if (diffDays > 0) return `D-${diffDays}`;
+      return `D+${Math.abs(diffDays)}`;
+    }
+
+    // 요일 반환 헬퍼
+    function getKoreanWeekday(dateStr) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      return ['일', '월', '화', '수', '목', '금', '토'][new Date(y, m - 1, d).getDay()];
+    }
+
     window.selectCalDate = function (dateStr) {
       STATE.selectedDate = dateStr;
       renderCalendar();
@@ -1576,37 +1598,107 @@
       const bdays = STATE.members.filter(m => m['생년월일'] && m['생년월일'].slice(5) === mmdd);
       const events = STATE.schedules.filter(s => String(s['날짜']) === dateStr);
       const buls = STATE.bulletins.filter(b => String(b['예배날짜']) === dateStr);
+      const dday = calcDDayLabel(dateStr);
+      const weekday = getKoreanWeekday(dateStr);
 
-      document.getElementById('calSelectedDateTitle').textContent = `📌 ${dateStr} 상세 일정`;
+      document.getElementById('calSelectedDateTitle').textContent = `📌 ${dateStr} (${weekday}) · ${dday}`;
+      const copyAllBtn = document.getElementById('btnCopyDayAll');
+      copyAllBtn.style.display = (bdays.length || events.length) ? 'inline-flex' : 'none';
+
       let items = [];
-      bdays.forEach(b => items.push(`<div>🎂 <strong>${b['이름']}</strong> (${b['목장']}) 생일입니다!</div>`));
-      events.forEach(ev => {
-        const badge = ev['공개범위'] === '리더십전용' ? '<span class="badge b-purple">🔒 리더십전용</span>' : '<span class="badge b-blue">📅 전체일정</span>';
-        items.push(`<div>${badge} <strong>${ev['제목']}</strong> <span style="color:var(--text-muted);">(${ev['시간'] || ''})</span></div>`);
+      bdays.forEach(b => {
+        items.push(`
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <div>🎂 <strong>${b['이름']}</strong> (${b['목장']}) 생일입니다!</div>
+          </div>
+        `);
       });
+
+      events.forEach((ev, idx) => {
+        const isLeaderOnly = ev['공개범위'] === '리더십전용';
+        const badge = isLeaderOnly ? '<span class="badge b-purple">🔒 리더십전용</span>' : '<span class="badge b-blue">📅 전체일정</span>';
+        const encodedEv = encodeURIComponent(JSON.stringify(ev));
+        items.push(`
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 0; border-bottom:1px dashed var(--border);">
+            <div>
+              ${badge} <strong>${ev['제목']}</strong>
+              <span style="color:var(--text-muted); font-size:12.5px;">${ev['시간'] ? `(${ev['시간']})` : ''}</span>
+            </div>
+            ${!isLeaderOnly ? `<button class="btn btn-outline btn-sm" style="flex-shrink:0;" onclick="copySingleSchedule('${encodedEv}')">📋 D-day 복사</button>` : ''}
+          </div>
+        `);
+      });
+
       buls.forEach(bu => {
-        items.push(`<div>📖 <strong>${bu['제목']}</strong> ${bu['이미지URL'] ? `<a href="${bu['이미지URL']}" target="_blank" class="badge b-red">주보 보기 ↗</a>` : ''}</div>`);
+        const urls = parseImageUrls(bu['이미지URL']);
+        const encoded = encodeURIComponent(JSON.stringify(urls));
+        items.push(`
+          <div style="padding-top:4px;">
+            📖 <strong>${bu['제목']}</strong>
+            ${urls.length ? `<button class="badge b-red" style="border:none; cursor:pointer;" onclick="openImageViewer('📖 ${bu['제목']}', '${encoded}')">주보 보기 (${urls.length}장)</button>` : ''}
+          </div>
+        `);
       });
-      document.getElementById('calSelectedDateList').innerHTML = items.length ? items.join('<div style="margin:6px 0;"></div>') : '등록된 일정이나 생일이 없습니다.';
+
+      document.getElementById('calSelectedDateList').innerHTML = items.length
+        ? items.join('<div style="margin:4px 0;"></div>')
+        : '등록된 일정이나 생일이 없습니다.';
     };
 
-    window.submitSchedule = async function () {
-      const id = 'SCH_' + Date.now();
-      const date = document.getElementById('schDate').value;
-      const title = document.getElementById('schTitle').value.trim();
-      if (!date || !title) return alert('날짜와 제목을 입력해 주세요.');
-      await setDoc(doc(db, 'Schedules', id), {
-        ID: id, 날짜: date, 제목: title,
-        시간: document.getElementById('schTime').value.trim(),
-        장소: '', 카테고리: '청년부',
-        공개범위: document.getElementById('schScope').value,
-        작성자: STATE.auth.name || '관리자'
-      });
-      alert('일정이 등록되었습니다.');
-      closeModal('scheduleModal');
-      await loadAllData();
+    // 개별 일정 D-day 카톡 안내문 복사
+    window.copySingleSchedule = async function (encodedEv) {
+      const ev = JSON.parse(decodeURIComponent(encodedEv));
+      const dday = calcDDayLabel(ev['날짜']);
+      const weekday = getKoreanWeekday(ev['날짜']);
+      const baseUrl = window.location.origin + window.location.pathname;
+
+      const text = [
+        `📅 [비전마을 일정 안내 | ${dday}]`,
+        `📌 ${ev['제목']}`,
+        `🗓️ 일시: ${ev['날짜']} (${weekday})${ev['시간'] ? ' ' + ev['시간'] : ''}`,
+        ev['장소'] ? `📍 장소: ${ev['장소']}` : '',
+        ``,
+        `🔗 비전마을 달력 보기: ${baseUrl}?tab=calendar`
+      ].filter(line => line !== '').join('\n');
+
+      try {
+        await navigator.clipboard.writeText(text);
+        alert(`📋 [${ev['제목']}] 일정 안내(${dday})가 복사되었습니다!\n단톡방에 바로 붙여넣어 주세요.`);
+      } catch (e) {
+        prompt('아래 내용을 복사해서 공유해 주세요:', text);
+      }
     };
 
+    // 선택한 날짜의 공개 일정 + 생일 전체 D-day 복사
+    window.copySelectedDateAll = async function () {
+      const dateStr = STATE.selectedDate;
+      if (!dateStr) return;
+      const dday = calcDDayLabel(dateStr);
+      const weekday = getKoreanWeekday(dateStr);
+      const mmdd = dateStr.slice(5);
+      const bdays = STATE.members.filter(m => m['생년월일'] && m['생년월일'].slice(5) === mmdd);
+      const publicEvents = STATE.schedules.filter(s => String(s['날짜']) === dateStr && s['공개범위'] !== '리더십전용');
+      const baseUrl = window.location.origin + window.location.pathname;
+
+      const lines = [`📅 [비전마을 ${dateStr}(${weekday}) 안내 | ${dday}]`];
+      publicEvents.forEach(ev => {
+        lines.push(`• 📌 ${ev['제목']}${ev['시간'] ? ` (${ev['시간']})` : ''}`);
+      });
+      bdays.forEach(b => {
+        lines.push(`• 🎂 ${b['이름']} (${b['목장']}) 생일 축하합니다!`);
+      });
+      lines.push('');
+      lines.push(`🔗 비전마을 달력 보기: ${baseUrl}?tab=calendar`);
+
+      const text = lines.join('\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('📋 해당 날짜의 일정 안내가 복사되었습니다!');
+      } catch (e) {
+        prompt('아래 내용을 복사해서 공유해 주세요:', text);
+      }
+    };
+    
     // 새가족
     function renderNewcomers() {
       const canManage = STATE.auth.valid && STATE.auth.level >= 2;
