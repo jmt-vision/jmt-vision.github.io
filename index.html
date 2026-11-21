@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>비전마을 청년부 포털</title>
+
+  <!-- 10. PWA 및 아이폰(iOS) 전용 앱 모드 대응 -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="비전마을" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -88,6 +97,7 @@
     }
     nav.tabs::-webkit-scrollbar { display: none; }
     .tab-btn {
+      position: relative;
       flex: 0 0 auto; padding: 12px 13px; border: none; background: transparent;
       color: var(--text-muted); font-size: calc(13.5px * var(--font-scale)); font-weight: 700;
       cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap;
@@ -95,6 +105,24 @@
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
     .tab-btn.leader-tab { color: var(--leader); }
     .tab-btn.leader-tab.active { border-bottom-color: var(--leader); }
+
+    /* 6. 새 일정 등록 시 일정·달력 탭 깜박이는 빨간 점 알림 */
+    .tab-notify-dot {
+      position: absolute;
+      top: 8px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      animation: pulseRedDot 1.4s infinite;
+    }
+    @keyframes pulseRedDot {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.75); }
+      70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
 
     main { max-width: 960px; margin: 0 auto; padding: 16px; }
     .tab-panel { display: none; animation: fadeIn 0.18s ease; }
@@ -116,6 +144,7 @@
       border: none; border-radius: 10px; padding: 9px 14px;
       font-size: calc(13.5px * var(--font-scale)); font-weight: 700;
       cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+      text-decoration: none;
     }
     .btn:active { transform: scale(0.97); }
     .btn-primary { background: var(--primary); color: #fff; }
@@ -133,7 +162,7 @@
     }
     label.field-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
 
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .stat-box {
       background: var(--surface-sub); border: 1px solid var(--border); border-radius: 12px;
@@ -149,12 +178,6 @@
     .b-red { background: rgba(239, 68, 68, 0.14); color: #dc2626; }
     .b-purple { background: var(--leader-soft); color: var(--leader); }
 
-    /* 직분별 고대비 배지 */
-    .b-leader-role { background: #7c3aed; color: #ffffff; }
-    .b-subleader-role { background: #0d9488; color: #ffffff; }
-    .b-member-role { background: #e2e8f0; color: #334155; }
-    body.dark .b-member-role { background: #334155; color: #e2e8f0; }
-
     .filter-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; }
     .pill {
       padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border);
@@ -162,17 +185,65 @@
       cursor: pointer; white-space: nowrap;
     }
     .pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* 5 & 8. 명단 카드 2줄 고정 레이아웃 + 권한별 카드 배경색 및 측면 S1~S4 컬러 포인트 */
     .member-card {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px; border: 1px solid var(--border); border-radius: 12px;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px;
       background: var(--surface);
+      transition: transform 0.12s;
     }
+    /* 직분별 카드 배경색 (1단계 일반 및 2단계 리더십 공통) */
+    .member-card.role-leader {
+      background: #f5f3ff;
+      border-color: #ddd6fe;
+    }
+    body.dark .member-card.role-leader {
+      background: rgba(124, 58, 237, 0.18);
+      border-color: rgba(167, 139, 250, 0.35);
+    }
+    .member-card.role-subleader {
+      background: #f0fdfa;
+      border-color: #99f6e4;
+    }
+    body.dark .member-card.role-subleader {
+      background: rgba(13, 148, 136, 0.18);
+      border-color: rgba(45, 212, 191, 0.35);
+    }
+
+    /* 2단계 이상 리더십 권한일 때만 보이는 S1~S4 카드 측면 컬러 포인트 */
+    .member-card.status-bar-S1 { border-left: 5px solid #10b981; }
+    .member-card.status-bar-S2 { border-left: 5px solid #f59e0b; }
+    .member-card.status-bar-S3 { border-left: 5px solid #ef4444; }
+    .member-card.status-bar-S4 { border-left: 5px solid #64748b; }
+    .member-card.status-bar-입대 { border-left: 5px solid #3b82f6; }
+
     .avatar {
-      width: 44px; height: 44px; border-radius: 50%; background: var(--primary-soft);
-      color: var(--primary); font-weight: 800; display: flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 50%; background: var(--primary-soft);
+      color: var(--primary); font-weight: 800; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; overflow: hidden;
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .mem-line-1 {
+      display: flex; align-items: center; gap: 5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size: calc(14px * var(--font-scale));
+    }
+    .mem-name { font-weight: 800; white-space: nowrap; }
+    .mem-age { font-size: 11.5px; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+    .mem-group-tag {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      background: rgba(37, 99, 235, 0.1); padding: 1px 6px; border-radius: 5px;
+      white-space: nowrap;
+    }
+    .mem-line-2 {
+      font-size: calc(12px * var(--font-scale)); color: var(--text-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
     .att-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 10px 12px; border-bottom: 1px solid var(--border);
@@ -210,7 +281,37 @@
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
     }
 
-    /* 모달 */
+    /* 9. 바로가기 카드 테마 스타일 (유형별 좌측 은은한 컬러 바) */
+    .link-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: var(--shadow);
+      border-left-width: 6px;
+    }
+    .link-theme-youtube {
+      border-left-color: rgba(239, 68, 68, 0.72);
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.04) 0%, var(--surface) 28%);
+    }
+    .link-theme-general {
+      border-left-color: rgba(16, 185, 129, 0.72);
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.04) 0%, var(--surface) 28%);
+    }
+    .link-theme-blue {
+      border-left-color: rgba(59, 130, 246, 0.72);
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.04) 0%, var(--surface) 28%);
+    }
+    .link-theme-purple {
+      border-left-color: rgba(139, 92, 246, 0.72);
+      background: linear-gradient(90deg, rgba(139, 92, 246, 0.04) 0%, var(--surface) 28%);
+    }
+
+    /* 모달 & 3. 풀스크린 회의록 에디터 */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
       display: none; align-items: center; justify-content: center;
@@ -218,11 +319,17 @@
     }
     .modal-backdrop.open { display: flex; }
     .modal-box {
-      background: var(--surface); border-radius: 18px; width: 100%; max-width: 500px;
-      max-height: 88vh; overflow-y: auto; padding: 20px;
+      background: var(--surface); border-radius: 18px; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto; padding: 20px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.25);
     }
-    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .modal-backdrop.fullscreen { padding: 0; }
+    .modal-backdrop.fullscreen .modal-box {
+      width: 100vw; max-width: 100vw; height: 100vh; max-height: 100vh;
+      border-radius: 0; padding: 18px 20px 36px;
+    }
+    .fullscreen-inner { max-width: 820px; margin: 0 auto; }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; }
     .modal-head h3 { font-size: 17px; font-weight: 800; }
 
     /* 놀이터 */
@@ -281,11 +388,12 @@
   <header>
     <div class="brand">
       <h1>⛪ 비전마을</h1>
-      <span id="headerVersion" class="ver-badge">v2.0.0</span>
+      <span id="headerVersion" class="ver-badge">v2.1.0</span>
       <span id="headerRoleBadge" class="role-chip" style="display:none;"></span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" onclick="openModal('guideModal')">❓ 이용안내</button>
+      <button class="icon-btn" onclick="openAppInstallGuide()">📲 앱설치</button>
+      <button class="icon-btn" onclick="openModal('guideModal')">❓ 안내</button>
       <button class="icon-btn" onclick="openModal('settingsModal')">⚙️ 설정</button>
     </div>
   </header>
@@ -293,10 +401,14 @@
   <nav class="tabs" id="mainNav">
     <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">🏠 홈</button>
     <button class="tab-btn" data-tab="members" onclick="switchTab('members')">👥 명단·출결</button>
-    <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">📅 일정·달력</button>
+    <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">
+      📅 일정·달력
+      <span id="calNewDot" class="tab-notify-dot" style="display:none;" title="새 일정이 등록되었습니다"></span>
+    </button>
     <button class="tab-btn" data-tab="newcomers" onclick="switchTab('newcomers')">🌱 새가족</button>
     <button class="tab-btn" data-tab="news" onclick="switchTab('news')">📰 소식·주보</button>
     <button class="tab-btn" data-tab="prayer" onclick="switchTab('prayer')">🙏 기도·번개</button>
+    <button class="tab-btn" data-tab="links" onclick="switchTab('links')">🔗 바로가기</button>
     <button class="tab-btn" data-tab="playground" onclick="switchTab('playground')">🎮 놀이터</button>
     <button class="tab-btn leader-tab" id="leaderTabBtn" data-tab="leader" style="display:none;" onclick="switchTab('leader')">🔒 리더십노트</button>
   </nav>
@@ -304,6 +416,14 @@
   <main>
     <!-- 0. 홈 대시보드 -->
     <section id="tab-home" class="tab-panel active">
+      <!-- 4. 메인 화면 새가족 · 복귀 청년 환영 알림 배너 -->
+      <div id="homeWelcomeBanner" class="card" style="display:none; background:linear-gradient(135deg, #eff6ff 0%, #f0fdfa 100%); border-color:#bfdbfe;">
+        <div class="card-header" style="margin-bottom:8px;">
+          <div class="card-title" style="color:#1d4ed8;">🎉 반가워요! 함께 축복해 주세요</div>
+        </div>
+        <div id="homeWelcomeList" style="display:flex; flex-direction:column; gap:6px; font-size:13.5px;"></div>
+      </div>
+
       <div class="card">
         <div class="card-header">
           <div class="card-title">✨ 오늘의 비전마을 한눈에 보기</div>
@@ -344,6 +464,8 @@
 
         <div id="memberListView">
           <div class="filter-pills" id="groupFilterPills"></div>
+          <!-- 색상 안내 범례 (일반 모드: 직분 배경색 / 리더십 모드: 직분 배경색 + S1~S4 측면바) -->
+          <div id="memberColorLegend" style="display:flex; gap:10px; flex-wrap:wrap; font-size:11.5px; color:var(--text-muted); margin-bottom:8px;"></div>
           <input type="text" id="memberSearchInput" placeholder="이름 또는 친해지기 키워드 검색..." oninput="renderMembers()" />
           <div class="grid-2" id="membersGrid"></div>
         </div>
@@ -375,7 +497,7 @@
             <span class="card-title" id="calMonthLabel">2026년 11월</span>
             <button class="btn btn-outline btn-sm" onclick="changeMonth(1)">▶</button>
           </div>
-          <button id="btnAddSchedule" class="btn btn-primary btn-sm" style="display:none;" onclick="openModal('scheduleModal')">+ 일정 등록</button>
+          <button id="btnAddSchedule" class="btn btn-primary btn-sm" style="display:none;" onclick="openScheduleModal()">+ 일정 등록</button>
         </div>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:11.5px; margin-bottom:10px; color:var(--text-muted);">
@@ -428,10 +550,10 @@
       <div class="card">
         <div class="card-header">
           <div class="card-title">📢 청년부 자유 광고</div>
-          <button class="btn btn-primary btn-sm" onclick="openModal('adModal')">+ 광고 올리기</button>
+          <button class="btn btn-primary btn-sm" onclick="openAdModal()">+ 광고 올리기</button>
         </div>
         <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">
-          공연·전시 초대, 단기 알바·청소 스태프 모집, 나눔 소식 등 청년 누구나 자유롭게 올릴 수 있습니다.
+          공연·전시 초대, 단기 알바·청소 스태프 모집, 나눔 소식 등 청년 누구나 자유롭게 올릴 수 있습니다. (일정 등록 시 달력 자동 연동)
         </p>
         <div class="grid-2" id="adsGrid"></div>
       </div>
@@ -461,6 +583,20 @@
           <button class="btn btn-outline btn-sm" onclick="openPrayerCreateModal()">+ 기도제목 나누기</button>
         </div>
         <div id="prayersList"></div>
+      </div>
+    </section>
+
+    <!-- 9. 바로가기 탭 -->
+    <section id="tab-links" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔗 비전마을 유용한 사이트 바로가기</div>
+          <button id="btnAddLink" class="btn btn-primary btn-sm" style="display:none;" onclick="openModal('linkModal')">+ 바로가기 추가</button>
+        </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+          교회 공식 유튜브 채널, 청년부 보드게임 아카이브 등 자주 이용하는 사이트로 빠르게 이동할 수 있습니다.
+        </p>
+        <div class="grid-2" id="linksGrid"></div>
       </div>
     </section>
 
@@ -555,7 +691,7 @@
     <section id="tab-leader" class="tab-panel">
       <div class="card" style="border-left:4px solid var(--primary);">
         <div class="card-header">
-          <div class="card-title">📊 주일 예배 출결 브리핑</div>
+          <div class="card-title">📊 주일 예배 출결 브리핑 <span class="badge b-blue" style="font-size:10.5px;">최근 3개월 보관</span></div>
           <select id="attReportDateSelect" style="width:auto; margin-bottom:0; padding:6px 10px;" onchange="renderAttendanceReport()"></select>
         </div>
         <div id="attReportSummary"></div>
@@ -584,8 +720,8 @@
 
       <div class="card">
         <div class="card-header">
-          <div class="card-title">📝 담당 목사님의 노트 · 사역 공지</div>
-          <button class="btn btn-leader btn-sm" onclick="openModal('leaderNoteModal')">+ 노트 작성</button>
+          <div class="card-title">📝 담당 목사님 · 리더십 회의록 & 사역 노트</div>
+          <button class="btn btn-leader btn-sm" onclick="openFullscreenMeetingEditor()">+ 회의록 · 노트 작성</button>
         </div>
         <div id="leaderNotesList"></div>
       </div>
@@ -593,11 +729,22 @@
   </main>
 
   <footer>
-    비전마을 청년부 통합 포털 · <span id="footerVersion">v2.0.0</span><br>
+    비전마을 청년부 통합 포털 · <span id="footerVersion">v2.1.0</span><br>
     함께 세워가는 믿음의 공동체
   </footer>
 
   <!-- ==================== 모달 영역 ==================== -->
+  <!-- 10. 실제 앱 설치(.apk) 및 아이폰(iOS) 설치 안내 모달 -->
+  <div id="appInstallModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>📲 비전마을 앱으로 설치하기</h3>
+        <button class="icon-btn" onclick="closeModal('appInstallModal')">✕</button>
+      </div>
+      <div id="appInstallDynamicContent" style="font-size:13.5px; line-height:1.6;"></div>
+    </div>
+  </div>
+
   <div id="settingsModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -645,6 +792,7 @@
           <option value="calendar">📅 일정·달력</option>
           <option value="news">📰 소식·주보</option>
           <option value="prayer">🙏 기도·번개</option>
+          <option value="links">🔗 바로가기</option>
           <option value="playground">🎮 놀이터</option>
         </select>
 
@@ -658,10 +806,10 @@
         <div style="font-weight:800; margin-bottom:8px;">📖 도움말 및 시스템 정보</div>
         <button class="btn btn-outline btn-sm" style="width:100%; margin-bottom:8px;" onclick="closeModal('settingsModal'); openModal('guideModal');">❓ 사이트 이용 안내 & 권한 표 보기</button>
         <div id="adminCleanupBox" style="display:none; margin-top:8px;">
-          <button class="btn btn-outline btn-sm" style="width:100%; border-color:var(--warning); color:#d97706;" onclick="runAdminCleanup()">🧹 기간 만료 데이터 일괄 정리 실행</button>
+          <button class="btn btn-outline btn-sm" style="width:100%; border-color:var(--warning); color:#d97706;" onclick="runAdminCleanup()">🧹 기간 만료 데이터 일괄 정리 (출결 3개월·기도 7일·마감 광고)</button>
         </div>
         <div style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;">
-          현재 시스템 버전: <strong id="settingsVersionText">v2.0.0</strong>
+          현재 시스템 버전: <strong id="settingsVersionText">v2.1.0</strong>
         </div>
       </div>
     </div>
@@ -677,17 +825,17 @@
         <p style="margin-bottom:10px;">비전마을 포털은 개인정보를 안전하게 보호하기 위해 <strong>역할별 3단계 권한 체계</strong>로 운영됩니다.</p>
         <div style="background:var(--surface-sub); padding:12px; border-radius:12px; margin-bottom:10px;">
           <strong>1️⃣ 일반 청년 (로그인 불필요)</strong><br>
-          • 활동 목원 편성표, 달력(생일·일정·주보), 새가족 진행 현황 열람<br>
-          • 번개모임 개설/참여(명단 등록자), 기도제목 나눔, 청년부 자유 광고 등록, 놀이터 게임
+          - 활동 목원 편성표(목자·준목자 카드 색상 구분), 달력(생일·일정·주보), 새가족 진행 현황, 유용한 링크 바로가기 열람<br>
+          - 번개모임 개설/참여, 기도제목 나눔, 청년부 자유 광고 등록(일정 자동 연동), 놀이터 게임
         </div>
         <div style="background:var(--surface-sub); padding:12px; border-radius:12px; margin-bottom:10px;">
           <strong>2️⃣ 준목자 · MD (2단계 인증)</strong><br>
-          • 청년 연락처 열람, 명단 추가/수정, 새가족 만남 횟수 체크 및 수료 처리, 일반 일정 등록
+          - 청년 연락처 및 목양 상태(S1~S4 측면 색상) 열람, 명단 추가/수정(동명이인 A·B 자동 구분), 새가족 만남 횟수 체크 및 수료 처리, 일반 일정·바로가기 등록
         </div>
         <div style="background:var(--leader-soft); padding:12px; border-radius:12px;">
           <strong>3️⃣ 목자 · 디렉터 · 담당목사 (3단계 및 리더십 인증)</strong><br>
-          • 주일 예배 출결 체크(일요일 18:00 자동 마감)<br>
-          • <strong>🔒 리더십노트 탭</strong> 개방: 주일 출결 브리핑, S3·S4 목양 통계, 상담·심방 요청 및 비밀 일정 관리
+          - 주일 예배 출결 체크(일요일 18:00 자동 마감)<br>
+          - <strong>🔒 리더십노트 탭</strong> 개방: 주일 출결 브리핑(최근 3개월), S3·S4 목양 통계, 상담·심방 요청 및 회의록(일정 자동 추출·등록) 관리
         </div>
       </div>
     </div>
@@ -700,7 +848,7 @@
         <button class="icon-btn" onclick="closeModal('memberModal')">✕</button>
       </div>
       <input type="hidden" id="editMemberId" />
-      <label class="field-label">이름 *</label>
+      <label class="field-label">이름 * (동명이인 등록 시 자동으로 A, B가 부여됩니다)</label>
       <input type="text" id="memName" placeholder="본명 입력" />
       <label class="field-label">소속 목장 *</label>
       <input type="text" id="memGroup" placeholder="예: 1목장" />
@@ -732,12 +880,16 @@
         </select>
         <input type="text" id="memS4Detail" placeholder="세부 메모 (선택사항)" style="margin-bottom:0;" />
       </div>
-      <label class="field-label">생년월일 (YYYY-MM-DD)</label>
+      <label class="field-label">생년월일 (YYYY-MM-DD · 만 나이 자동 계산)</label>
       <input type="date" id="memBirth" />
       <label class="field-label">연락처</label>
       <input type="text" id="memPhone" placeholder="010-0000-0000" />
       <label class="field-label">친해지기 키워드 (취미·MBTI·관심사)</label>
       <input type="text" id="memBio" placeholder="예: 보드게임, 러닝, ENFP" />
+      <label style="display:flex; align-items:center; gap:6px; font-size:13px; font-weight:700; margin-bottom:12px; cursor:pointer;">
+        <input type="checkbox" id="memIsReturnee" style="width:17px; height:17px; margin:0;" />
+        🎉 최근 복귀 청년으로 홈 환영 배너에 표시 (14일간)
+      </label>
       <button class="btn btn-primary" style="width:100%;" onclick="submitMemberSave()">저장하기</button>
     </div>
   </div>
@@ -752,8 +904,10 @@
       <input type="date" id="schDate" />
       <label class="field-label">일정 제목 *</label>
       <input type="text" id="schTitle" placeholder="예: 청년부 겨울수련회 / 목자회의" />
-      <label class="field-label">시간 및 장소</label>
-      <input type="text" id="schTime" placeholder="예: 주일 오후 2시 / 비전홀" />
+      <label class="field-label">시간</label>
+      <input type="text" id="schTime" placeholder="예: 주일 오후 2시" />
+      <label class="field-label">장소</label>
+      <input type="text" id="schLoc" placeholder="예: 비전홀" />
       <label class="field-label">공개 범위 *</label>
       <select id="schScope">
         <option value="전체공개">🌐 전체 공개 (모든 청년 열람)</option>
@@ -788,13 +942,14 @@
       <label class="field-label">예배 날짜 (일요일) *</label>
       <input type="date" id="bulDate" />
       <label class="field-label">주보 제목 *</label>
-      <input type="text" id="bulTitle" placeholder="예: 2026년 11월 셋째 주 청년부 주보" />
+      <input type="text" id="bulTitle" placeholder="예: 2026년 11월 넷째 주 청년부 주보" />
       <label class="field-label">주보 이미지 파일 *</label>
       <input type="file" id="bulFile" accept="image/*,.pdf" />
       <button class="btn btn-leader" style="width:100%;" onclick="submitBulletin()">주보 게시하기</button>
     </div>
   </div>
 
+  <!-- 2. 광고 모달 (다회차 일정 자동 연동 + 문의처 추가) -->
   <div id="adModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -808,18 +963,47 @@
         <option value="📢 일반광고">📢 일반광고</option>
       </select>
       <label class="field-label">제목 *</label>
-      <input type="text" id="adTitle" placeholder="예: 이번 주 토요일 단기 청소 알바 구합니다!" />
+      <input type="text" id="adTitle" placeholder="예: 청년부 찬양팀 공연 초대 / 단기 스태프 모집" />
       <label class="field-label">내용 *</label>
-      <textarea id="adContent" rows="3" placeholder="일시, 장소, 연락 방법 등을 적어주세요."></textarea>
-      <label class="field-label">작성자 이름 *</label>
-      <input type="text" id="adAuthor" />
-      <label class="field-label">삭제용 비밀번호 (숫자 4자리 등) *</label>
-      <input type="password" id="adDelPw" placeholder="본인 글 삭제 시 필요" />
+      <textarea id="adContent" rows="3" placeholder="상세 안내 내용을 적어주세요."></textarea>
+
+      <!-- 다회차 달력 연동 입력 영역 -->
+      <div style="background:var(--primary-soft); padding:10px 12px; border-radius:10px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:12.5px; font-weight:800; color:var(--primary);">📅 달력 자동 연동 일정 (다회차 가능)</span>
+          <button type="button" class="btn btn-primary btn-sm" style="padding:3px 8px; font-size:11.5px;" onclick="addAdScheduleRow()">+ 일정 추가</button>
+        </div>
+        <div id="adScheduleRows"></div>
+        <div style="font-size:11px; color:var(--text-muted);">* 날짜를 입력한 모든 회차가 달력에 자동 등록됩니다.</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div>
+          <label class="field-label">문의 담당자 이름</label>
+          <input type="text" id="adContactName" placeholder="예: 김청년" />
+        </div>
+        <div>
+          <label class="field-label">문의 연락처 (전화/카톡ID)</label>
+          <input type="text" id="adContactPhone" placeholder="예: 010-1234-5678" />
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div>
+          <label class="field-label">작성자 이름 *</label>
+          <input type="text" id="adAuthor" />
+        </div>
+        <div>
+          <label class="field-label">삭제용 비밀번호 *</label>
+          <input type="password" id="adDelPw" placeholder="숫자 4자리 등" />
+        </div>
+      </div>
+
       <label class="field-label">포스터/안내 이미지 (선택)</label>
       <input type="file" id="adFile" accept="image/*" />
-      <label class="field-label">게시 마감일 (선택 - 지나면 자동 숨김)</label>
+      <label class="field-label">게시 마감일 (비우면 마지막 일정일 다음날 자동 마감)</label>
       <input type="date" id="adDeadline" />
-      <button class="btn btn-primary" style="width:100%;" onclick="submitAd()">광고 등록하기</button>
+      <button class="btn btn-primary" style="width:100%;" onclick="submitAd()">광고 및 일정 등록하기</button>
     </div>
   </div>
 
@@ -830,15 +1014,16 @@
         <button class="icon-btn" onclick="closeModal('updateModal')">✕</button>
       </div>
       <label class="field-label">버전명 (헤더·하단에 자동 반영) *</label>
-      <input type="text" id="updVersion" placeholder="예: v2.1.0" />
+      <input type="text" id="updVersion" placeholder="예: v2.2.0" />
       <label class="field-label">업데이트 이름 *</label>
-      <input type="text" id="updTitle" placeholder="예: Firebase 초고속 DB 전환" />
+      <input type="text" id="updTitle" placeholder="예: 회의록 일정 자동 연동 및 바로가기 탭 신설" />
       <label class="field-label">업데이트 상세 내용 *</label>
       <textarea id="updContent" rows="4" placeholder="변경된 기능들을 작성해 주세요."></textarea>
       <button class="btn btn-primary" style="width:100%;" onclick="submitUpdateNote()">배포 기록 저장</button>
     </div>
   </div>
 
+  <!-- 11. 번개모임 개설 모달 (정확한 날짜+시간 조합 지원) -->
   <div id="flashCreateModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -847,8 +1032,16 @@
       </div>
       <label class="field-label">모임 제목 *</label>
       <input type="text" id="flTitle" placeholder="예: 예배 후 보드게임 카페 가실 분!" />
-      <label class="field-label">일시 *</label>
-      <input type="text" id="flTime" placeholder="예: 오늘 오후 4시 30분" />
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div>
+          <label class="field-label">모임 날짜 *</label>
+          <input type="date" id="flDate" />
+        </div>
+        <div>
+          <label class="field-label">모임 시간 *</label>
+          <input type="time" id="flTimeOnly" value="16:30" />
+        </div>
+      </div>
       <label class="field-label">장소 *</label>
       <input type="text" id="flLoc" placeholder="예: 교회 1층 로비 집합" />
       <label class="field-label">모집 정원</label>
@@ -864,6 +1057,30 @@
       <label class="field-label">간단 설명</label>
       <input type="text" id="flDesc" placeholder="새가족·복귀 청년도 대환영!" />
       <button class="btn btn-primary" style="width:100%;" onclick="submitFlashCreate()">번개 올리기</button>
+    </div>
+  </div>
+
+  <!-- 9. 바로가기 등록 모달 -->
+  <div id="linkModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>🔗 새 바로가기 링크 추가</h3>
+        <button class="icon-btn" onclick="closeModal('linkModal')">✕</button>
+      </div>
+      <label class="field-label">사이트 제목 *</label>
+      <input type="text" id="lnkTitle" placeholder="예: 비전마을 보드게임 아카이브 / 교회 유튜브" />
+      <label class="field-label">URL 주소 *</label>
+      <input type="url" id="lnkUrl" placeholder="https://..." oninput="autoDetectLinkTheme(this.value)" />
+      <label class="field-label">카드 색상 테마 (유형)</label>
+      <select id="lnkTheme">
+        <option value="general">🟢 일반 사이트 (초록색 포인트)</option>
+        <option value="youtube">🔴 유튜브 채널·영상 (빨간색 포인트)</option>
+        <option value="blue">🔵 설문·신청폼 (파란색 포인트)</option>
+        <option value="purple">🟣 자료실·노션 (보라색 포인트)</option>
+      </select>
+      <label class="field-label">사이트 설명 *</label>
+      <textarea id="lnkDesc" rows="2" placeholder="청년들이 어떤 용도로 이용하는 사이트인지 간단히 적어주세요."></textarea>
+      <button class="btn btn-primary" style="width:100%;" onclick="submitLinkSave()">바로가기 등록하기</button>
     </div>
   </div>
 
@@ -903,23 +1120,76 @@
     </div>
   </div>
 
-  <div id="leaderNoteModal" class="modal-backdrop">
+  <!-- 3. 풀스크린 리더십 회의록 & 노트 에디터 -->
+  <div id="leaderNoteModal" class="modal-backdrop fullscreen">
     <div class="modal-box">
-      <div class="modal-head">
-        <h3>📝 리더십 노트 작성</h3>
-        <button class="icon-btn" onclick="closeModal('leaderNoteModal')">✕</button>
+      <div class="fullscreen-inner">
+        <div class="modal-head" style="border-bottom:1px solid var(--border); padding-bottom:12px;">
+          <h3>📝 리더십 회의록 · 사역 노트 작성</h3>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span id="lnAutoSaveStatus" style="font-size:11.5px; color:var(--success); font-weight:700;"></span>
+            <button class="btn btn-outline btn-sm" onclick="clearMeetingDraft()">초기화</button>
+            <button class="icon-btn" onclick="closeModal('leaderNoteModal')">✕ 닫기</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:8px; margin-bottom:8px;">
+          <div>
+            <label class="field-label">분류</label>
+            <select id="lnCategory" onchange="autoSaveMeetingDraft()">
+              <option value="📋 리더십 회의록">📋 리더십 회의록</option>
+              <option value="📢 목양 공지">📢 목양 공지</option>
+              <option value="💡 사역 아이디어">💡 사역 아이디어</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">제목 *</label>
+            <input type="text" id="lnTitle" placeholder="예: 2026년 11월 4주차 정기 목자회의" oninput="autoSaveMeetingDraft()" />
+          </div>
+        </div>
+
+        <div style="background:var(--leader-soft); padding:10px 12px; border-radius:10px; margin-bottom:10px; font-size:12px; color:var(--leader);">
+          💡 <strong>자동 일정 추출 팁:</strong> 결정사항에 <code>12월 6일 성탄절 찬양 연습</code> 또는 <code>12/13 오후 2시 목자모임</code>처럼 날짜를 적어두면, 저장 직후 달력 등록 확인 팝업이 자동으로 열립니다!
+        </div>
+
+        <label class="field-label">① 회의 일시 · 참석 리더십</label>
+        <input type="text" id="lnSec1" placeholder="예: 2026-11-22(주일) 오후 1:30 / 참석: 담당목사, 디렉터, 1~3목자" oninput="autoSaveMeetingDraft()" />
+
+        <label class="field-label">② 예배 · 사역 피드백</label>
+        <textarea id="lnSec2" rows="3" placeholder="예배 분위기, 찬양, 안내, 새가족 환영 등 피드백 기록" oninput="autoSaveMeetingDraft()"></textarea>
+
+        <label class="field-label">③ 목장별 나눔 및 기도제목</label>
+        <textarea id="lnSec3" rows="4" placeholder="각 목장 주요 소식 및 중보기도 제목 정리" oninput="autoSaveMeetingDraft()"></textarea>
+
+        <label class="field-label">④ 결정사항 및 향후 일정 (달력 자동 인식 대상)</label>
+        <textarea id="lnSec4" rows="4" placeholder="예:&#10;- 12월 6일 청년부 성탄절 특송 연습 시작&#10;- 12월 20일 연말 목장 연합 모임 (비전홀)" oninput="autoSaveMeetingDraft()"></textarea>
+
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button class="btn btn-leader" style="flex:2; padding:12px;" onclick="submitLeaderNote()">💾 회의록 저장 및 일정 추출 확인</button>
+          <button class="btn btn-outline" style="flex:1;" onclick="copyDraftKakaoSummary()">📋 카톡 요약 미리복사</button>
+        </div>
       </div>
-      <label class="field-label">분류</label>
-      <select id="lnCategory">
-        <option value="📢 목양 공지">📢 목양 공지</option>
-        <option value="💡 사역 아이디어">💡 사역 아이디어</option>
-        <option value="📋 회의·계획 메모">📋 회의·계획 메모</option>
-      </select>
-      <label class="field-label">제목 *</label>
-      <input type="text" id="lnTitle" placeholder="제목을 입력하세요" />
-      <label class="field-label">내용 *</label>
-      <textarea id="lnContent" rows="4" placeholder="목자·리더십과 나눌 내용을 작성하세요."></textarea>
-      <button class="btn btn-leader" style="width:100%;" onclick="submitLeaderNote()">노트 게시하기</button>
+    </div>
+  </div>
+
+  <!-- 12. 회의록 내 일정 자동 추출 · 인라인 수정 · 달력 일괄 등록 모달 -->
+  <div id="extractedScheduleModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width:600px;">
+      <div class="modal-head">
+        <h3>📅 회의록 일정 감지 · 달력 일괄 등록</h3>
+        <button class="icon-btn" onclick="closeModal('extractedScheduleModal')">✕</button>
+      </div>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
+        회의록에서 감지된 일정입니다. 내용이 잘못 인식되었거나 비어 있다면 <strong>직접 수정</strong>한 뒤 체크하여 달력에 등록하세요!
+      </p>
+      <div id="extractedScheduleList" style="display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow-y:auto; margin-bottom:12px;"></div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="addManualExtractedScheduleRow()">+ 일정 행 직접 추가</button>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-primary" style="flex:2;" onclick="confirmRegisterExtractedSchedules()">✅ 선택한 일정 달력에 일괄 등록</button>
+        <button class="btn btn-outline" style="flex:1;" onclick="closeModal('extractedScheduleModal')">건너뛰기</button>
+      </div>
     </div>
   </div>
 
@@ -941,7 +1211,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    // 이미지 드라이브 업로드 보조용 GAS URL
     const GAS_IMAGE_URL = 'https://script.google.com/macros/s/AKfycbwTxyn39zCE35hM2yaZpN8udZ3RrIiMXQXht66cMlsPRVbhOz8RyF5gGimCUR8YCZej/exec';
 
     let STATE = {
@@ -956,6 +1225,7 @@
       flashMeetings: [],
       bulletins: [],
       ads: [],
+      links: [],
       updates: [],
       attendanceRecords: [],
       visitations: [],
@@ -965,6 +1235,11 @@
       selectedDate: '',
       selectedGroupFilter: localStorage.getItem('vv_pref_group') || '전체'
     };
+
+    // 10. 서비스 워커 등록 (PWA 설치 지원)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
 
     function setLoading(flag) {
       document.getElementById('loadingBar').classList.toggle('active', flag);
@@ -982,7 +1257,29 @@
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     }
 
-    // 이미지 리사이징(가로 최대 1200px) 후 Base64 변환 (PDF는 원본 그대로 변환)
+    function normalizeYMD(raw) {
+      if (!raw) return '';
+      const parts = String(raw).trim().split(/[-./\s]+/);
+      if (parts.length < 3) return String(raw).trim();
+      return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+    }
+
+    // 8. 생년월일(YYYY-MM-DD) 기준 실시간 만 나이 계산
+    function calculateInternationalAge(birthStr) {
+      const norm = normalizeYMD(birthStr);
+      if (!norm || norm.length < 10) return null;
+      const [by, bm, bd] = norm.split('-').map(Number);
+      if (!by || !bm || !bd) return null;
+      const today = new Date();
+      let age = today.getFullYear() - by;
+      const curM = today.getMonth() + 1;
+      const curD = today.getDate();
+      if (curM < bm || (curM === bm && curD < bd)) {
+        age--;
+      }
+      return age >= 0 ? age : null;
+    }
+
     function prepareFilePayload(file, maxWidth = 1200) {
       return new Promise((resolve, reject) => {
         const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
@@ -1012,7 +1309,6 @@
       });
     }
 
-    // 구글 드라이브에 이름 변경하여 저장 후 열람 URL 반환 (GAS_IMAGE_URL 사용)
     async function uploadRenamedFileToDrive(file, category, customName) {
       if (!file) return '';
       const { base64Data, ext } = await prepareFilePayload(file);
@@ -1033,8 +1329,13 @@
     }
 
     async function fetchCol(colName) {
-      const snap = await getDocs(collection(db, colName));
-      return snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+      try {
+        const snap = await getDocs(collection(db, colName));
+        return snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+      } catch (e) {
+        console.warn(`컬렉션(${colName}) 로드 참고:`, e.message);
+        return [];
+      }
     }
 
     async function checkAuth(pw) {
@@ -1062,10 +1363,18 @@
       };
     }
 
+    // 1. 주일 출결 3개월(90일) 보관 기준 날짜 계산
+    function getNinetyDaysAgoStr() {
+      const d = new Date();
+      d.setDate(d.getDate() - 90);
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
     window.loadAllData = async function () {
       setLoading(true);
       try {
-        const [auth, allMembers, schedules, newcomers, prayers, flashMeetings, bulletins, ads, updates] = await Promise.all([
+        const [auth, allMembers, schedules, newcomers, prayers, flashMeetings, bulletins, ads, links, updates] = await Promise.all([
           checkAuth(STATE.pw),
           fetchCol('Members'),
           fetchCol('Schedules'),
@@ -1074,6 +1383,7 @@
           fetchCol('FlashMeetings'),
           fetchCol('Bulletins'),
           fetchCol('Ads'),
+          fetchCol('Links'),
           fetchCol('Updates')
         ]);
 
@@ -1084,10 +1394,8 @@
         }
 
         STATE.allMembersRaw = allMembers;
-        // 홈 활동 청년 집계: S1, S2, S3, 입대까지 (S4 제외)
         STATE.activeMemberCount = allMembers.filter(m => ['S1', 'S2', 'S3', '입대'].includes(String(m['상태']).trim())).length;
 
-        // 1탭 기본 명단: S1, S2, 입대까지만 노출
         STATE.members = allMembers
           .filter(m => ['S1', 'S2', '입대'].includes(String(m['상태']).trim()))
           .map(m => {
@@ -1096,9 +1404,7 @@
             return copy;
           });
 
-        // 일정 필터링 (리더십전용 보호)
         STATE.schedules = schedules.filter(s => s['공개범위'] === '리더십전용' ? (auth.valid && auth.isLeader) : true);
-
         STATE.newcomers = newcomers.filter(n => n['상태'] !== '수료');
 
         const sevenDaysAgo = new Date();
@@ -1115,25 +1421,39 @@
           .filter(a => !a['마감일'] || String(a['마감일']) >= todayStr)
           .sort((a, b) => String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || '')));
 
+        STATE.links = links.sort((a, b) => String(a['등록일시'] || '').localeCompare(String(b['등록일시'] || '')));
         STATE.updates = updates.sort((a, b) => String(b['작성일시'] || '').localeCompare(String(a['작성일시'] || '')));
 
-        const ver = STATE.updates.length ? STATE.updates[0]['버전'] : 'v2.0.0';
+        const ver = STATE.updates.length ? STATE.updates[0]['버전'] : 'v2.1.0';
         document.getElementById('headerVersion').textContent = ver;
         document.getElementById('footerVersion').textContent = ver;
         document.getElementById('settingsVersionText').textContent = ver;
 
+        // 1. 출결 기록 최근 3개월(90일) 이내만 로드 + 리더십 인증 시 백그라운드 만료 정리
         if (auth.valid && auth.isLeader) {
           const [attRecs, visitations, leaderNotes] = await Promise.all([
             fetchCol('Attendance'),
             fetchCol('Visitations'),
             fetchCol('LeaderNotes')
           ]);
-          STATE.attendanceRecords = attRecs.sort((a, b) => String(b['날짜']).localeCompare(String(a['날짜'])));
+          const cutoff90 = getNinetyDaysAgoStr();
+          const validAtt = [];
+          for (const rec of attRecs) {
+            const dStr = normalizeYMD(rec['날짜']);
+            if (dStr && dStr < cutoff90) {
+              // 3개월 경과 출결 백그라운드 자동 만료 삭제
+              deleteDoc(doc(db, 'Attendance', rec['_docId'])).catch(() => {});
+            } else {
+              validAtt.push(rec);
+            }
+          }
+          STATE.attendanceRecords = validAtt.sort((a, b) => String(b['날짜']).localeCompare(String(a['날짜'])));
           STATE.visitations = visitations.sort((a, b) => String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || '')));
           STATE.leaderNotes = leaderNotes.sort((a, b) => String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || '')));
         }
 
         applyRoleUI();
+        updateScheduleRedDot();
         populateGroupSelects();
         renderHome();
         renderMembers();
@@ -1141,6 +1461,7 @@
         renderNewcomers();
         renderNews();
         renderPrayerAndFlash();
+        renderLinksTab();
         loadPlaygroundGroupMembers();
         initYouthWordle();
         initBombGame();
@@ -1168,6 +1489,7 @@
       document.getElementById('btnAddMember').style.display = (a.valid && a.level >= 2) ? 'inline-flex' : 'none';
       document.getElementById('btnAddSchedule').style.display = (a.valid && a.level >= 2) ? 'inline-flex' : 'none';
       document.getElementById('btnAddNewcomer').style.display = (a.valid && a.level >= 2) ? 'inline-flex' : 'none';
+      document.getElementById('btnAddLink').style.display = (a.valid && a.level >= 2) ? 'inline-flex' : 'none';
       document.getElementById('btnToggleAttMode').style.display = (a.valid && a.level >= 3) ? 'inline-flex' : 'none';
 
       const isLeader = a.valid && a.isLeader;
@@ -1180,12 +1502,35 @@
       document.getElementById('adminCleanupBox').style.display = (a.valid && a.isPastorOrAdmin) ? 'block' : 'none';
     }
 
+    // 6. 새 일정 등록 시 '일정·달력' 탭 빨간 점 알림 체크 & 해제
+    function updateScheduleRedDot() {
+      const dot = document.getElementById('calNewDot');
+      if (!dot) return;
+      const lastSeen = localStorage.getItem('vv_cal_last_seen') || '';
+      const hasUnread = STATE.schedules.some(s => {
+        const created = String(s['등록일시'] || '');
+        return created && created > lastSeen;
+      });
+      dot.style.display = hasUnread ? 'inline-block' : 'none';
+    }
+
+    function markCalendarAsSeen() {
+      localStorage.setItem('vv_cal_last_seen', nowFormatted());
+      const dot = document.getElementById('calNewDot');
+      if (dot) dot.style.display = 'none';
+    }
+
     window.switchTab = function (tabId) {
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + tabId).classList.add('active');
+      const panel = document.getElementById('tab-' + tabId);
+      if (panel) panel.classList.add('active');
       const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
       if (btn) btn.classList.add('active');
+
+      if (tabId === 'calendar') {
+        markCalendarAsSeen();
+      }
     };
 
     window.openModal = function (id) {
@@ -1194,6 +1539,50 @@
       document.getElementById(id).classList.add('open');
     };
     window.closeModal = function (id) { document.getElementById(id).classList.remove('open'); };
+
+    // 10. 기기별 실제 앱 설치(.apk / iOS 홈 화면 추가) 안내 모달
+    window.openAppInstallGuide = function () {
+      const ua = navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(ua);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      const box = document.getElementById('appInstallDynamicContent');
+
+      if (isStandalone) {
+        box.innerHTML = `
+          <div style="background:rgba(16,185,129,0.12); padding:14px; border-radius:12px; color:#059669; font-weight:700;">
+            ✅ 현재 비전마을 전용 앱 모드로 실행 중입니다!
+          </div>
+          <p style="margin-top:10px; color:var(--text-muted);">새 기능이나 공지가 업데이트되면 별도 재설치 없이 앱을 열 때마다 자동으로 최신 버전이 반영됩니다.</p>
+        `;
+      } else if (isIOS) {
+        box.innerHTML = `
+          <div style="background:var(--primary-soft); padding:14px; border-radius:12px; margin-bottom:10px;">
+            <strong style="color:var(--primary);">🍎 아이폰(iOS) 전용 앱 모드 설치 방법</strong><br>
+            애플 정책상 스토어 외 설치 파일(.ipa) 대신 Safari의 웹앱 기능을 통해 주소창 없는 실제 앱과 동일하게 설치할 수 있습니다.
+          </div>
+          <ol style="padding-left:18px; line-height:1.8;">
+            <li>반드시 <strong>Safari(사파리)</strong> 브라우저로 이 페이지를 열어주세요.</li>
+            <li>화면 하단 가운데 <strong>공유 버튼(□↑)</strong>을 누릅니다.</li>
+            <li>메뉴를 아래로 내려 <strong>[홈 화면에 추가]</strong>를 선택합니다.</li>
+            <li>우측 상단 <strong>[추가]</strong>를 누르면 바탕화면에 '비전마을' 앱이 설치됩니다!</li>
+          </ol>
+        `;
+      } else {
+        const apkLink = STATE.links.find(l => String(l['URL'] || '').toLowerCase().endsWith('.apk') || String(l['제목']).includes('APK'));
+        box.innerHTML = `
+          <div style="background:var(--primary-soft); padding:14px; border-radius:12px; margin-bottom:10px;">
+            <strong style="color:var(--primary);">🤖 갤럭시(안드로이드) 실제 앱 설치 안내</strong><br>
+            플레이스토어 없이도 스마트폰 앱 목록에 등록되는 실제 앱 형태로 설치할 수 있습니다.
+          </div>
+          ${apkLink ? `<a href="${apkLink['URL']}" target="_blank" class="btn btn-primary" style="width:100%; margin-bottom:12px;">📥 안드로이드 설치 파일(.apk) 직접 다운로드</a>` : ''}
+          <div style="background:var(--surface-sub); padding:12px; border-radius:10px; font-size:13px;">
+            <strong>⚡ 브라우저 즉시 앱 설치 (추천)</strong><br>
+            크롬 또는 삼성 인터넷 우측 상단 <strong>메뉴(⋮) → [앱 설치] 또는 [현재 페이지 추가 → 앱 화면]</strong>을 누르면 즉시 전용 앱으로 설치됩니다.
+          </div>
+        `;
+      }
+      openModal('appInstallModal');
+    };
 
     // 인증 & 비밀번호 변경
     window.handleLogin = async function () {
@@ -1243,13 +1632,8 @@
       const dupSnap = await getDocs(query(collection(db, 'Permissions'), where('비밀번호', '==', newPw)));
 
       if (isWeak || !dupSnap.empty) {
-        const bypassMessages = [
-          '보안 정책상 사용할 수 없는 비밀번호 조합입니다. 다른 숫자나 특수기호를 조합해 다시 입력해 주세요.',
-          '시스템 보안 기준을 충족하지 않는 비밀번호입니다. 예측하기 어려운 다른 조합으로 변경해 주세요.',
-          '안전한 계정 보호를 위해 해당 조합은 등록할 수 없습니다. 특수기호나 영문 대소문자를 다르게 구성해 주세요.'
-        ];
         msgEl.style.color = 'var(--danger)';
-        msgEl.textContent = bypassMessages[Math.floor(Math.random() * bypassMessages.length)];
+        msgEl.textContent = '보안 정책상 사용할 수 없는 비밀번호 조합입니다. 다른 조합으로 입력해 주세요.';
         return;
       }
 
@@ -1282,9 +1666,18 @@
     };
 
     window.runAdminCleanup = async function () {
-      if (!confirm('7일이 지난 기도제목과 마감일이 지난 광고를 일괄 정리할까요?')) return;
+      if (!confirm('3개월(90일) 지난 출결 기록, 7일 지난 기도제목, 마감일이 지난 광고를 일괄 정리할까요?')) return;
       setLoading(true);
       let count = 0;
+
+      // 1. 출결 3개월 만료 삭제
+      const cutoff90 = getNinetyDaysAgoStr();
+      const attSnap = await getDocs(collection(db, 'Attendance'));
+      for (const d of attSnap.docs) {
+        const dt = normalizeYMD(d.data()['날짜']);
+        if (dt && dt < cutoff90) { await deleteDoc(d.ref); count++; }
+      }
+
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const pSnap = await getDocs(collection(db, 'Prayers'));
@@ -1299,16 +1692,41 @@
         if (dl && String(dl) < todayStr) { await deleteDoc(d.ref); count++; }
       }
       setLoading(false);
-      alert(`만료된 데이터 ${count}건이 정리되었습니다.`);
+      alert(`만료된 데이터 ${count}건이 일괄 정리되었습니다.`);
       await loadAllData();
     };
 
-    // 홈 대시보드
+    // 4. 홈 대시보드 (새가족 · 복귀 청년 환영 배너 포함)
     function renderHome() {
       document.getElementById('statActiveMembers').textContent = STATE.activeMemberCount + '명';
       document.getElementById('statNewcomers').textContent = STATE.newcomers.length + '명';
       document.getElementById('statFlash').textContent = STATE.flashMeetings.length + '건';
       document.getElementById('statPrayers').textContent = STATE.prayers.length + '건';
+
+      // 새가족 & 최근 14일 이내 복귀 청년 배너
+      const welcomeBanner = document.getElementById('homeWelcomeBanner');
+      const welcomeList = document.getElementById('homeWelcomeList');
+      const fourteenDaysAgo = new Date();
+      fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+      const pad = n => String(n).padStart(2, '0');
+      const cutoffReturnStr = `${fourteenDaysAgo.getFullYear()}-${pad(fourteenDaysAgo.getMonth() + 1)}-${pad(fourteenDaysAgo.getDate())}`;
+
+      const returnees = STATE.members.filter(m => m['복귀일'] && normalizeYMD(m['복귀일']) >= cutoffReturnStr);
+      let wHtml = '';
+      if (STATE.newcomers.length) {
+        const ncNames = STATE.newcomers.map(n => `<strong>${n['이름']}</strong>(담당MD: ${n['담당MD']})`).join(', ');
+        wHtml += `<div>🌱 <strong>새가족 청년:</strong> ${ncNames} 지체가 함께하고 있습니다!</div>`;
+      }
+      if (returnees.length) {
+        const retNames = returnees.map(r => `<strong>${r['이름']}</strong>(${r['목장']})`).join(', ');
+        wHtml += `<div>💛 <strong>다시 돌아온 지체:</strong> ${retNames} 청년의 복귀를 진심으로 환영합니다!</div>`;
+      }
+      if (wHtml) {
+        welcomeBanner.style.display = 'block';
+        welcomeList.innerHTML = wHtml;
+      } else {
+        welcomeBanner.style.display = 'none';
+      }
 
       const curMonth = String(new Date().getMonth() + 1).padStart(2, '0');
       const bdays = STATE.members.filter(m => m['생년월일'] && String(m['생년월일']).includes(`-${curMonth}-`));
@@ -1324,7 +1742,6 @@
       document.getElementById('homeNewsPreview').innerHTML = previewHtml || '<span style="color:var(--text-muted); font-size:13px;">등록된 최신 소식이 없습니다.</span>';
     }
 
-    // 직분 우선순위(목자 -> 준목자 -> 목원) + 가나다순 정렬
     function sortMembersByRoleAndName(list) {
       const roleOrder = { '담당목사': 0, '디렉터': 1, '목자': 2, '준목자': 3, '목원': 4, '새가족': 5 };
       return [...list].sort((a, b) => {
@@ -1364,9 +1781,17 @@
       renderMembers();
     };
 
+    // 5 & 8. 명단 카드 렌더링 (2줄 고정, 직분 카드 배경색 구분, 2단계 이상일 때만 S1~S4 측면바 표시, 만 나이 표기)
     window.renderMembers = function () {
       const q = document.getElementById('memberSearchInput').value.trim().toLowerCase();
       const canSeeStatus = STATE.auth.valid && STATE.auth.level >= 2;
+
+      const legendEl = document.getElementById('memberColorLegend');
+      if (legendEl) {
+        legendEl.innerHTML = canSeeStatus
+          ? `<span>🟪 목자 카드</span><span>🟩 준목자 카드</span><span>|</span><span>좌측 바: <b style="color:#10b981;">■S1</b> <b style="color:#f59e0b;">■S2</b> <b style="color:#3b82f6;">■입대</b></span>`
+          : `<span>🟪 목자</span><span>🟩 준목자</span><span>⬜ 목원</span>`;
+      }
 
       const filtered = sortMembersByRoleAndName(
         STATE.members.filter(m => {
@@ -1377,31 +1802,37 @@
       );
 
       document.getElementById('membersGrid').innerHTML = filtered.map(m => {
-        let roleStatusText = m['직분'];
-        if (m['상태'] === '입대') roleStatusText = `${m['직분']} · 🪖 입대`;
-        else if (canSeeStatus) roleStatusText = `${m['직분']} · ${m['상태']}`;
+        const age = calculateInternationalAge(m['생년월일']);
+        const ageText = age !== null ? `(만 ${age}세)` : '';
 
-        let badgeClass = 'b-member-role';
-        if (m['상태'] === '입대') badgeClass = 'b-amber';
-        else if (['목자', '담당목사', '디렉터'].includes(m['직분'])) badgeClass = 'b-leader-role';
-        else if (m['직분'] === '준목자') badgeClass = 'b-subleader-role';
-        else if (m['직분'] === '새가족') badgeClass = 'b-green';
+        // 카드 배경색 (목자 vs 준목자)
+        let roleCardClass = '';
+        if (['목자', '담당목사', '디렉터'].includes(m['직분'])) roleCardClass = 'role-leader';
+        else if (m['직분'] === '준목자') roleCardClass = 'role-subleader';
+
+        // 2단계 이상 권한일 때만 S1~S4 측면 컬러 바 표시 (1단계 일반 모드에서는 비표시)
+        const statusBarClass = canSeeStatus && m['상태'] ? `status-bar-${m['상태']}` : '';
+
+        // 2줄째 핵심 정보 구성
+        const line2Parts = [];
+        if (m['상태'] === '입대') line2Parts.push('🪖 입대');
+        if (m['생년월일']) line2Parts.push(`🎂 ${normalizeYMD(m['생년월일']).slice(5)}`);
+        if (m['연락처']) line2Parts.push(`📞 ${m['연락처']}`);
+        if (m['친해지기정보']) line2Parts.push(m['친해지기정보']);
+        const line2Text = line2Parts.length ? line2Parts.join(' · ') : '함께 알아가는 중 ✨';
 
         return `
-          <div class="member-card">
+          <div class="member-card ${roleCardClass} ${statusBarClass}">
             <div class="avatar">${m['사진URL'] ? `<img src="${m['사진URL']}">` : String(m['이름']).slice(0,1)}</div>
             <div style="flex:1; min-width:0;">
-              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                <strong>${m['이름']}</strong>
-                <span class="badge b-blue">${m['목장']}</span>
-                <span class="badge ${badgeClass}">${roleStatusText}</span>
+              <div class="mem-line-1">
+                <span class="mem-name">${m['이름']}</span>
+                ${ageText ? `<span class="mem-age">${ageText}</span>` : ''}
+                <span class="mem-group-tag">${m['목장']}</span>
               </div>
-              <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
-                ${m['친해지기정보'] || '함께 알아가는 중입니다 ✨'}
-              </div>
-              ${m['연락처'] ? `<div style="font-size:12px; color:var(--primary); margin-top:2px;">📞 ${m['연락처']}</div>` : ''}
+              <div class="mem-line-2">${line2Text}</div>
             </div>
-            ${canSeeStatus ? `<button class="btn btn-outline btn-sm" onclick='openMemberModal(${JSON.stringify(m)})'>수정</button>` : ''}
+            ${canSeeStatus ? `<button class="btn btn-outline btn-sm" style="flex-shrink:0; padding:4px 8px; font-size:11.5px;" onclick='openMemberModal(${JSON.stringify(m)})'>수정</button>` : ''}
           </div>
         `;
       }).join('') || '<div style="color:var(--text-muted); font-size:13px;">조건에 맞는 청년이 없습니다.</div>';
@@ -1416,6 +1847,7 @@
       document.getElementById('memBirth').value = m ? (m['생년월일'] || '') : '';
       document.getElementById('memPhone').value = m ? (m['연락처'] || '') : '';
       document.getElementById('memBio').value = m ? (m['친해지기정보'] || '') : '';
+      document.getElementById('memIsReturnee').checked = false;
       toggleS4ReasonField();
       openModal('memberModal');
     };
@@ -1424,28 +1856,73 @@
       document.getElementById('s4ReasonWrap').style.display = document.getElementById('memStatus').value === 'S4' ? 'block' : 'none';
     };
 
+    // 7. 동명이인 자동 구분(이름A, 이름B, 이름C...) 부여 로직 포함 저장
     window.submitMemberSave = async function () {
       const existingId = document.getElementById('editMemberId').value;
+      let inputName = document.getElementById('memName').value.trim();
+      const group = document.getElementById('memGroup').value.trim();
       const status = document.getElementById('memStatus').value;
       const reasonBase = document.getElementById('memS4Reason').value;
       const reasonDetail = document.getElementById('memS4Detail').value.trim();
-      const docId = existingId || ('MEM_' + Date.now());
-      const memberObj = {
-        ID: docId,
-        이름: document.getElementById('memName').value.trim(),
-        목장: document.getElementById('memGroup').value.trim(),
-        직분: document.getElementById('memRole').value,
-        상태: status,
-        생년월일: document.getElementById('memBirth').value,
-        연락처: document.getElementById('memPhone').value.trim(),
-        친해지기정보: document.getElementById('memBio').value.trim(),
-        제적사유: status === 'S4' ? (reasonDetail ? `${reasonBase} (${reasonDetail})` : reasonBase) : ''
-      };
-      if (!memberObj.이름 || !memberObj.목장) return alert('이름과 목장을 입력해 주세요.');
-      await setDoc(doc(db, 'Members', docId), memberObj, { merge: true });
-      alert('청년 정보가 저장되었습니다.');
-      closeModal('memberModal');
-      await loadAllData();
+      const isReturnee = document.getElementById('memIsReturnee').checked;
+
+      if (!inputName || !group) return alert('이름과 목장을 입력해 주세요.');
+
+      setLoading(true);
+      try {
+        // 신규 등록 시 동명이인 확인 (교회 등록순 A, B, C...)
+        if (!existingId) {
+          const baseName = inputName.replace(/[A-Z]$/, '');
+          const sameNameDocs = STATE.allMembersRaw.filter(m => {
+            const mName = String(m['이름'] || '').trim();
+            return mName === baseName || new RegExp(`^${baseName}[A-Z]$`).test(mName);
+          });
+
+          if (sameNameDocs.length > 0) {
+            const plainDoc = sameNameDocs.find(m => String(m['이름']).trim() === baseName);
+            if (plainDoc) {
+              // 기존 등록자에게 'A' 부여
+              await updateDoc(doc(db, 'Members', plainDoc['_docId']), { 이름: `${baseName}A` });
+            }
+            const usedSuffixes = new Set(
+              sameNameDocs
+                .map(m => String(m['이름']).trim().slice(baseName.length))
+                .filter(Boolean)
+            );
+            usedSuffixes.add('A');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let nextSuffix = 'B';
+            for (const ch of alphabet) {
+              if (!usedSuffixes.has(ch)) { nextSuffix = ch; break; }
+            }
+            inputName = `${baseName}${nextSuffix}`;
+            alert(`동명이인이 확인되어 교회 등록순 규칙에 따라 기존 인원은 '${baseName}A', 신규 등록자는 '${inputName}'(으)로 자동 구분 저장됩니다.`);
+          }
+        }
+
+        const docId = existingId || ('MEM_' + Date.now());
+        const existingMember = STATE.allMembersRaw.find(m => (m['_docId'] || m['ID']) === docId);
+
+        const memberObj = {
+          ID: docId,
+          이름: inputName,
+          목장: group,
+          직분: document.getElementById('memRole').value,
+          상태: status,
+          생년월일: document.getElementById('memBirth').value,
+          연락처: document.getElementById('memPhone').value.trim(),
+          친해지기정보: document.getElementById('memBio').value.trim(),
+          제적사유: status === 'S4' ? (reasonDetail ? `${reasonBase} (${reasonDetail})` : reasonBase) : '',
+          복귀일: isReturnee ? todayFormatted() : (existingMember?.['복귀일'] || '')
+        };
+
+        await setDoc(doc(db, 'Members', docId), memberObj, { merge: true });
+        alert('청년 정보가 저장되었습니다.');
+        closeModal('memberModal');
+        await loadAllData();
+      } finally {
+        setLoading(false);
+      }
     };
 
     // 주일 출결 체크 (S1~S3)
@@ -1526,14 +2003,6 @@
       await loadAllData();
     };
 
-    // 날짜 문자열을 YYYY-MM-DD 형식으로 안전하게 정규화
-    function normalizeYMD(raw) {
-      if (!raw) return '';
-      const parts = String(raw).trim().split(/[-./\s]+/);
-      if (parts.length < 3) return String(raw).trim();
-      return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
-    }
-
     // 달력
     window.changeMonth = function (delta) {
       STATE.calMonth += delta;
@@ -1583,16 +2052,12 @@
       document.getElementById('calendarGrid').innerHTML = html;
     }
 
-    // 일정 등록 모달 열기 (선택된 날짜가 있으면 자동으로 날짜 칸에 채움)
     window.openScheduleModal = function () {
       const dateEl = document.getElementById('schDate');
-      if (dateEl) {
-        dateEl.value = STATE.selectedDate || todayFormatted();
-      }
-      if (typeof openModal === 'function') openModal('scheduleModal');
+      if (dateEl) dateEl.value = STATE.selectedDate || todayFormatted();
+      openModal('scheduleModal');
     };
 
-    // 일정 저장 실행 (전역 window에 명시적 등록)
     window.submitSchedule = async function () {
       const dateEl = document.getElementById('schDate');
       const titleEl = document.getElementById('schTitle');
@@ -1600,19 +2065,13 @@
       const locEl = document.getElementById('schLoc');
       const scopeEl = document.getElementById('schScope');
 
-      if (!dateEl || !titleEl) {
-        return alert('일정 입력 폼(schDate 또는 schTitle)을 찾을 수 없습니다.');
-      }
-
-      const date = typeof normalizeYMD === 'function' ? normalizeYMD(dateEl.value) : dateEl.value.trim();
+      const date = normalizeYMD(dateEl.value);
       const title = titleEl.value.trim();
       const time = timeEl ? timeEl.value.trim() : '';
       const loc = locEl ? locEl.value.trim() : '';
       const scope = scopeEl ? scopeEl.value : '전체공개';
 
-      if (!date || !title) {
-        return alert('날짜와 일정 제목을 모두 입력해 주세요.');
-      }
+      if (!date || !title) return alert('날짜와 일정 제목을 모두 입력해 주세요.');
 
       setLoading(true);
       try {
@@ -1629,11 +2088,10 @@
         });
 
         alert(`📅 [${title}] 일정이 달력에 등록되었습니다!`);
-
         titleEl.value = '';
         if (timeEl) timeEl.value = '';
         if (locEl) locEl.value = '';
-        if (typeof closeModal === 'function') closeModal('scheduleModal');
+        closeModal('scheduleModal');
 
         const [y, m] = date.split('-').map(Number);
         STATE.calYear = y;
@@ -1641,29 +2099,25 @@
         STATE.selectedDate = date;
 
         await loadAllData();
-        if (typeof selectCalDate === 'function') selectCalDate(date);
+        selectCalDate(date);
       } catch (e) {
-        console.error('일정 등록 오류:', e);
         alert('⚠️ 일정 등록 실패: ' + e.message);
       } finally {
         setLoading(false);
       }
     };
 
-    // 날짜 기준 D-day 문자열 계산 (오늘 자정 기준 일수 차이)
     function calcDDayLabel(targetDateStr) {
       const [ty, tm, td] = normalizeYMD(targetDateStr).split('-').map(Number);
       const target = new Date(ty, tm - 1, td);
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
-
       if (diffDays === 0) return 'D-Day';
       if (diffDays > 0) return `D-${diffDays}`;
       return `D+${Math.abs(diffDays)}`;
     }
 
-    // 요일 반환 헬퍼
     function getKoreanWeekday(dateStr) {
       const [y, m, d] = normalizeYMD(dateStr).split('-').map(Number);
       return ['일', '월', '화', '수', '목', '금', '토'][new Date(y, m - 1, d).getDay()];
@@ -1679,9 +2133,7 @@
       const copyAllBtn = document.getElementById('btnCopyDayAll');
       if (!titleEl || !listEl) return;
 
-      // 이전 날짜 표시 초기화
       listEl.innerHTML = '';
-
       const mmdd = normDate.slice(5);
       const bdays = STATE.members.filter(m => {
         const bNorm = normalizeYMD(m['생년월일']);
@@ -1699,11 +2151,7 @@
 
       let items = [];
       bdays.forEach(b => {
-        items.push(`
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-            <div>🎂 <strong>${b['이름']}</strong> (${b['목장']}) 생일입니다!</div>
-          </div>
-        `);
+        items.push(`<div>🎂 <strong>${b['이름']}</strong> (${b['목장']}) 생일입니다!</div>`);
       });
 
       events.forEach(ev => {
@@ -1714,7 +2162,8 @@
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 0; border-bottom:1px dashed var(--border);">
             <div>
               ${badge} <strong>${ev['제목']}</strong>
-              <span style="color:var(--text-muted); font-size:12.5px;">${ev['시간'] ? `(${ev['시간']})` : ''}</span>
+              <span style="color:var(--text-muted); font-size:12.5px;">${ev['시간'] ? `(${ev['시간']})` : ''} ${ev['장소'] ? `· 📍${ev['장소']}` : ''}</span>
+              ${ev['문의처'] ? `<div style="font-size:11.5px; color:var(--primary); margin-top:2px;">📞 문의: ${ev['문의처']}</div>` : ''}
             </div>
             ${!isLeaderOnly ? `<button class="btn btn-outline btn-sm" style="flex-shrink:0;" onclick="copySingleSchedule('${encodedEv}')">📋 D-day 복사</button>` : ''}
           </div>
@@ -1722,12 +2171,10 @@
       });
 
       buls.forEach(bu => {
-        const urls = typeof parseImageUrls === 'function' ? parseImageUrls(bu['이미지URL']) : (bu['이미지URL'] ? [bu['이미지URL']] : []);
-        const encoded = encodeURIComponent(JSON.stringify(urls));
         items.push(`
           <div style="padding-top:4px;">
             📖 <strong>${bu['제목']}</strong>
-            ${urls.length ? `<button class="badge b-red" style="border:none; cursor:pointer;" onclick="openImageViewer('📖 ${bu['제목']}', '${encoded}')">주보 보기 (${urls.length}장)</button>` : ''}
+            ${bu['이미지URL'] ? `<a href="${bu['이미지URL']}" target="_blank" class="badge b-red" style="text-decoration:none;">주보 열기 ↗</a>` : ''}
           </div>
         `);
       });
@@ -1737,7 +2184,6 @@
         : '등록된 일정이나 생일이 없습니다.';
     };
 
-    // 개별 일정 D-day 카톡 안내문 복사
     window.copySingleSchedule = async function (encodedEv) {
       const ev = JSON.parse(decodeURIComponent(encodedEv));
       const normDate = normalizeYMD(ev['날짜']);
@@ -1750,19 +2196,19 @@
         `📌 ${ev['제목']}`,
         `🗓️ 일시: ${normDate} (${weekday})${ev['시간'] ? ' ' + ev['시간'] : ''}`,
         ev['장소'] ? `📍 장소: ${ev['장소']}` : '',
+        ev['문의처'] ? `📞 문의: ${ev['문의처']}` : '',
         ``,
         `🔗 비전마을 달력 보기: ${baseUrl}?tab=calendar`
       ].filter(line => line !== '').join('\n');
 
       try {
         await navigator.clipboard.writeText(text);
-        alert(`📋 [${ev['제목']}] 일정 안내(${dday})가 복사되었습니다!\n단톡방에 바로 붙여넣어 주세요.`);
+        alert(`📋 [${ev['제목']}] 일정 안내(${dday})가 복사되었습니다!`);
       } catch (e) {
         prompt('아래 내용을 복사해서 공유해 주세요:', text);
       }
     };
 
-    // 선택한 날짜의 공개 일정 + 생일 전체 D-day 복사
     window.copySelectedDateAll = async function () {
       const dateStr = STATE.selectedDate;
       if (!dateStr) return;
@@ -1794,7 +2240,7 @@
         prompt('아래 내용을 복사해서 공유해 주세요:', text);
       }
     };
-    
+
     // 새가족
     function renderNewcomers() {
       const canManage = STATE.auth.valid && STATE.auth.level >= 2;
@@ -1846,16 +2292,7 @@
       await loadAllData();
     };
 
-    // 소식 · 주보 · 광고 · 업데이트 노트
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
+    // 소식 · 주보 · 광고(다회차 연동 & 문의처) · 업데이트 노트
     function renderNews() {
       document.getElementById('bulletinsList').innerHTML = STATE.bulletins.slice(0, 4).map(b => `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
@@ -1867,18 +2304,31 @@
         </div>
       `).join('') || '<div style="color:var(--text-muted); font-size:13px;">등록된 주보가 없습니다.</div>';
 
-      document.getElementById('adsGrid').innerHTML = STATE.ads.map(a => `
-        <div class="card" style="margin-bottom:0;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span class="badge b-blue">${a['말머리']}</span>
-            <button class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="promptDeleteAd('${a['_docId']}', '${a['삭제비밀번호']}')">삭제</button>
+      document.getElementById('adsGrid').innerHTML = STATE.ads.map(a => {
+        let schList = [];
+        try { schList = JSON.parse(a['일정목록JSON'] || '[]'); } catch (e) {}
+        const contactInfo = [a['문의담당자'], a['문의연락처']].filter(Boolean).join(' · ');
+
+        return `
+          <div class="card" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span class="badge b-blue">${a['말머리']}</span>
+              <button class="btn btn-outline btn-sm" style="padding:3px 7px; font-size:11px;" onclick="promptDeleteAd('${a['_docId']}', '${a['삭제비밀번호']}')">삭제</button>
+            </div>
+            <strong style="display:block; margin-bottom:4px;">${a['제목']}</strong>
+            <p style="font-size:13px; color:var(--text-muted); white-space:pre-line; margin-bottom:8px;">${a['내용']}</p>
+            ${schList.length ? `
+              <div style="background:var(--primary-soft); padding:7px 9px; border-radius:8px; font-size:11.5px; margin-bottom:8px; color:var(--primary);">
+                <strong>📅 연동 일정:</strong><br>
+                ${schList.map(s => `• ${s.date}${s.time ? ' ' + s.time : ''}${s.loc ? ' (' + s.loc + ')' : ''}`).join('<br>')}
+              </div>
+            ` : ''}
+            ${contactInfo ? `<div style="font-size:12px; font-weight:700; color:var(--accent); margin-bottom:6px;">📞 문의처: ${contactInfo}</div>` : ''}
+            ${a['이미지URL'] ? `<img src="${a['이미지URL']}" style="width:100%; border-radius:10px; margin-bottom:8px; max-height:220px; object-fit:cover;" />` : ''}
+            <div style="font-size:11.5px; color:var(--text-muted);">작성자: ${a['작성자']} ${a['마감일'] ? `· 마감: ${a['마감일']}` : ''}</div>
           </div>
-          <strong style="display:block; margin-bottom:4px;">${a['제목']}</strong>
-          <p style="font-size:13px; color:var(--text-muted); white-space:pre-line; margin-bottom:8px;">${a['내용']}</p>
-          ${a['이미지URL'] ? `<img src="${a['이미지URL']}" style="width:100%; border-radius:10px; margin-bottom:8px; max-height:220px; object-fit:cover;" />` : ''}
-          <div style="font-size:11.5px; color:var(--text-muted);">작성자: ${a['작성자']} ${a['마감일'] ? `· 마감: ${a['마감일']}` : ''}</div>
-        </div>
-      `).join('') || '<div style="color:var(--text-muted); font-size:13px;">게시된 청년부 광고가 없습니다.</div>';
+        `;
+      }).join('') || '<div style="color:var(--text-muted); font-size:13px;">게시된 청년부 광고가 없습니다.</div>';
 
       const upds = STATE.updates || [];
       if (!upds.length) { document.getElementById('updatesContainer').innerHTML = '<div style="color:var(--text-muted);">등록된 업데이트 노트가 없습니다.</div>'; return; }
@@ -1905,6 +2355,30 @@
       }
       document.getElementById('updatesContainer').innerHTML = updHtml;
     }
+
+    // 2. 광고 모달 열기 및 다회차 일정 행 관리
+    window.openAdModal = function () {
+      document.getElementById('adAuthor').value = localStorage.getItem('vv_pref_name') || '';
+      document.getElementById('adContactName').value = localStorage.getItem('vv_pref_name') || '';
+      document.getElementById('adContactPhone').value = '';
+      document.getElementById('adScheduleRows').innerHTML = '';
+      addAdScheduleRow();
+      openModal('adModal');
+    };
+
+    window.addAdScheduleRow = function () {
+      const container = document.getElementById('adScheduleRows');
+      const row = document.createElement('div');
+      row.className = 'ad-sch-row';
+      row.style.cssText = 'display:grid; grid-template-columns:1.2fr 1fr 1fr auto; gap:4px; margin-bottom:6px; align-items:center;';
+      row.innerHTML = `
+        <input type="date" class="ad-sch-date" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
+        <input type="text" class="ad-sch-time" placeholder="시간(예: 19시)" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
+        <input type="text" class="ad-sch-loc" placeholder="장소" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
+        <button type="button" class="icon-btn" style="padding:5px 8px;" onclick="this.parentElement.remove()">✕</button>
+      `;
+      container.appendChild(row);
+    };
 
     window.submitBulletin = async function () {
       const date = document.getElementById('bulDate').value;
@@ -1936,19 +2410,64 @@
       const content = document.getElementById('adContent').value.trim();
       const author = document.getElementById('adAuthor').value.trim();
       const deletePw = document.getElementById('adDelPw').value.trim();
-      if (!title || !content || !author || !deletePw) return alert('필수 항목을 모두 입력해 주세요.');
+      const contactName = document.getElementById('adContactName').value.trim();
+      const contactPhone = document.getElementById('adContactPhone').value.trim();
+
+      if (!title || !content || !author || !deletePw) return alert('제목, 내용, 작성자, 삭제 비밀번호를 모두 입력해 주세요.');
+
+      // 다회차 일정 수집
+      const schRows = Array.from(document.querySelectorAll('#adScheduleRows .ad-sch-row'));
+      const scheduleItems = [];
+      schRows.forEach(r => {
+        const d = normalizeYMD(r.querySelector('.ad-sch-date').value);
+        const t = r.querySelector('.ad-sch-time').value.trim();
+        const l = r.querySelector('.ad-sch-loc').value.trim();
+        if (d) scheduleItems.push({ date: d, time: t, loc: l });
+      });
+
+      let deadline = document.getElementById('adDeadline').value;
+      if (!deadline && scheduleItems.length > 0) {
+        const maxDate = scheduleItems.map(s => s.date).sort().pop();
+        deadline = maxDate;
+      }
+
       setLoading(true);
       try {
         const file = document.getElementById('adFile').files[0];
         const customName = `광고_${title}_${author}`;
         const fileUrl = file ? await uploadRenamedFileToDrive(file, 'ad', customName) : '';
         const id = 'ADS_' + Date.now();
+        const contactSummary = [contactName, contactPhone].filter(Boolean).join(' / ');
+
         await setDoc(doc(db, 'Ads', id), {
           광고ID: id, 말머리: tag, 제목: title, 내용: content,
+          일정목록JSON: JSON.stringify(scheduleItems),
+          문의담당자: contactName, 문의연락처: contactPhone,
           작성자: author, 삭제비밀번호: deletePw, 이미지URL: fileUrl,
-          마감일: document.getElementById('adDeadline').value, 등록일시: nowFormatted()
+          마감일: deadline, 등록일시: nowFormatted()
         });
-        alert('청년부 광고가 게시되었습니다!');
+
+        // 입력한 모든 회차를 Schedules 컬렉션에 자동 등록
+        for (let i = 0; i < scheduleItems.length; i++) {
+          const item = scheduleItems[i];
+          const schId = `SCH_AD_${id}_${i}`;
+          await setDoc(doc(db, 'Schedules', schId), {
+            일정ID: schId,
+            연동광고ID: id,
+            날짜: item.date,
+            제목: `📢 ${title}`,
+            시간: item.time,
+            장소: item.loc,
+            문의처: contactSummary,
+            공개범위: '전체공개',
+            등록자: author,
+            등록일시: nowFormatted()
+          });
+        }
+
+        alert(scheduleItems.length
+          ? `청년부 광고와 연동 일정 ${scheduleItems.length}건이 달력에 함께 등록되었습니다!`
+          : '청년부 광고가 게시되었습니다!');
         closeModal('adModal');
         await loadAllData();
       } catch (e) {
@@ -1964,11 +2483,22 @@
         if (inputPw === null) return;
         if (String(inputPw).trim() !== String(ownerPw).trim()) return alert('삭제 비밀번호가 일치하지 않습니다.');
       } else {
-        if (!confirm('교역자/관리자 권한으로 이 광고를 즉시 삭제할까요?')) return;
+        if (!confirm('교역자/관리자 권한으로 이 광고와 연동된 달력 일정을 함께 삭제할까요?')) return;
       }
-      await deleteDoc(doc(db, 'Ads', docId));
-      alert('게시글이 삭제되었습니다.');
-      await loadAllData();
+
+      setLoading(true);
+      try {
+        await deleteDoc(doc(db, 'Ads', docId));
+        // 연동된 Schedules 일정도 함께 삭제
+        const linkedSnap = await getDocs(query(collection(db, 'Schedules'), where('연동광고ID', '==', docId)));
+        for (const d of linkedSnap.docs) {
+          await deleteDoc(d.ref);
+        }
+        alert('게시글과 연동된 달력 일정이 함께 삭제되었습니다.');
+        await loadAllData();
+      } finally {
+        setLoading(false);
+      }
     };
 
     window.submitUpdateNote = async function () {
@@ -1985,20 +2515,54 @@
       await loadAllData();
     };
 
-    // 번개 & 기도
+    // 11. 번개 모임 (날짜 경과 자동 판별, 완료 표시, 신청 방어 및 기신청 상태 표시)
+    function isFlashExpired(f) {
+      if (f['마감여부'] === true || f['상태'] === '완료') return true;
+      const dStr = normalizeYMD(f['모임날짜'] || '');
+      if (!dStr || dStr.length < 10) return false;
+      const tStr = String(f['모임시간'] || '23:59').trim();
+      const [y, m, d] = dStr.split('-').map(Number);
+      const [hh, mm] = tStr.includes(':') ? tStr.split(':').map(Number) : [23, 59];
+      const eventDate = new Date(y, m - 1, d, hh || 23, mm || 59);
+      return new Date() > eventDate;
+    }
+
     function renderPrayerAndFlash() {
-      document.getElementById('flashGrid').innerHTML = STATE.flashMeetings.map(f => {
+      const myName = (localStorage.getItem('vv_pref_name') || '').trim();
+
+      // 진행 중 모임 우선, 완료 모임 하단 배치
+      const sortedFlash = [...STATE.flashMeetings].sort((a, b) => {
+        const expA = isFlashExpired(a) ? 1 : 0;
+        const expB = isFlashExpired(b) ? 1 : 0;
+        if (expA !== expB) return expA - expB;
+        return String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || ''));
+      });
+
+      document.getElementById('flashGrid').innerHTML = sortedFlash.map(f => {
         let parts = [];
         try { parts = JSON.parse(f['참여자목록'] || '[]'); } catch (e) {}
         const isUnlim = String(f['최대인원']) === '무제한';
-        const capText = isUnlim ? `참여 ${parts.length}명 / ∞ 인원 무제한` : `참여 ${parts.length} / ${f['최대인원']}명`;
+        const capText = isUnlim ? `참여 ${parts.length}명 / ∞` : `참여 ${parts.length}/${f['최대인원']}명`;
         const flashKey = f['ID'] || f['_docId'];
+        const expired = isFlashExpired(f);
+        const alreadyJoined = myName && parts.includes(myName);
+
+        let actionBtnHtml = '';
+        if (expired) {
+          actionBtnHtml = `<button class="btn btn-outline btn-sm" style="flex:1; opacity:0.75;" onclick="alert('이미 날짜와 시간이 지나 완료(마감)된 번개 모임입니다 😊')">✅ 모임 완료 (마감)</button>`;
+        } else if (alreadyJoined) {
+          actionBtnHtml = `<button class="btn btn-success btn-sm" style="flex:1;" onclick="handleJoinFlash('${f['_docId']}')">✅ 신청 완료 (추가/확인)</button>`;
+        } else {
+          actionBtnHtml = `<button class="btn btn-primary btn-sm" style="flex:1;" onclick="handleJoinFlash('${f['_docId']}')">🙋‍♂️ 참여 신청</button>`;
+        }
 
         return `
-          <div class="card" id="flash-card-${flashKey}" style="margin-bottom:0; transition: box-shadow 0.3s, border-color 0.3s;">
+          <div class="card" id="flash-card-${flashKey}" style="margin-bottom:0; ${expired ? 'opacity:0.68; background:var(--surface-sub);' : ''}">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:6px;">
               <strong>⚡ ${f['제목']}</strong>
-              <span class="badge ${isUnlim ? 'b-green' : 'b-blue'}">${capText}</span>
+              ${expired
+                ? `<span class="badge b-red">✅ 모임 완료</span>`
+                : `<span class="badge ${isUnlim ? 'b-green' : 'b-blue'}">${capText}</span>`}
             </div>
             <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">
               🕒 ${f['일시']} · 📍 ${f['장소']}<br>
@@ -2006,7 +2570,7 @@
               ${f['설명'] ? `<div style="margin-top:4px; color:var(--text);">💬 ${f['설명']}</div>` : ''}
             </div>
             <div style="display:flex; gap:6px;">
-              <button class="btn btn-primary btn-sm" style="flex:1;" onclick="handleJoinFlash('${f['_docId']}')">🙋‍♂️ 참여 신청</button>
+              ${actionBtnHtml}
               <button class="btn btn-outline btn-sm" onclick="copyFlashInvite('${f['_docId']}')">📋 복사</button>
             </div>
           </div>
@@ -2050,7 +2614,7 @@
 
       try {
         await navigator.clipboard.writeText(copyText);
-        alert('📋 번개모임 초대 문구와 바로가기 링크가 복사되었습니다!\n카톡방에 그대로 붙여넣어 주세요.');
+        alert('📋 번개모임 초대 문구와 바로가기 링크가 복사되었습니다!');
       } catch (err) {
         prompt('아래 내용을 복사해서 공유해 주세요:', copyText);
       }
@@ -2058,18 +2622,24 @@
 
     window.openFlashCreateModal = function () {
       document.getElementById('flHost').value = localStorage.getItem('vv_pref_name') || '';
+      document.getElementById('flDate').value = todayFormatted();
       openModal('flashCreateModal');
     };
 
     window.submitFlashCreate = async function () {
       const title = document.getElementById('flTitle').value.trim();
-      const dateTime = document.getElementById('flTime').value.trim();
+      const fDate = normalizeYMD(document.getElementById('flDate').value);
+      const fTime = document.getElementById('flTimeOnly').value;
       const host = document.getElementById('flHost').value.trim();
-      if (!title || !dateTime || !host) return alert('필수 항목을 입력해 주세요.');
+      if (!title || !fDate || !host) return alert('필수 항목을 입력해 주세요.');
       const isUnlim = document.getElementById('flUnlimited').checked;
       const id = 'FLS_' + Date.now();
+      const weekday = getKoreanWeekday(fDate);
+      const displayTime = `${fDate}(${weekday}) ${fTime}`;
+
       await setDoc(doc(db, 'FlashMeetings', id), {
-        ID: id, 제목: title, 일시: dateTime, 장소: document.getElementById('flLoc').value.trim(),
+        ID: id, 제목: title, 모임날짜: fDate, 모임시간: fTime, 일시: displayTime,
+        장소: document.getElementById('flLoc').value.trim(),
         최대인원: isUnlim ? '무제한' : (Number(document.getElementById('flMax').value) || 4),
         참여자목록: JSON.stringify([host]), 개설자: host,
         설명: document.getElementById('flDesc').value.trim(), 등록일시: nowFormatted()
@@ -2080,23 +2650,113 @@
     };
 
     window.handleJoinFlash = async function (docId) {
+      const target = STATE.flashMeetings.find(f => f['_docId'] === docId);
+      if (!target) return;
+
+      if (isFlashExpired(target)) {
+        return alert('이미 날짜가 지나 완료(마감)된 번개 모임입니다 😊');
+      }
+
       const defName = localStorage.getItem('vv_pref_name') || '';
       const applicantName = prompt('참여 신청할 본인의 이름을 입력해 주세요 (비전마을 명단 확인):', defName);
       if (applicantName === null) return;
       const cleanName = applicantName.trim();
       const exists = STATE.allMembersRaw.some(m => String(m['이름']).trim() === cleanName);
       if (!exists) {
-        return alert('⚠️ 비전마을 명단에 등록되지 않은 이름입니다. 본명을 정확히 입력하거나, 새가족의 경우 먼저 새가족 등록을 진행해 주세요.');
+        return alert('⚠️ 비전마을 명단에 등록되지 않은 이름입니다. 본명을 정확히 입력해 주세요.');
       }
-      const target = STATE.flashMeetings.find(f => f['_docId'] === docId);
+
       let parts = [];
       try { parts = JSON.parse(target['참여자목록'] || '[]'); } catch (e) {}
-      if (parts.includes(cleanName)) return alert('이미 참여 신청된 이름입니다.');
-      if (String(target['최대인원']) !== '무제한' && parts.length >= Number(target['최대인원'])) return alert('모집 인원이 마감되었습니다.');
+      if (parts.includes(cleanName)) {
+        return alert(`✅ ${cleanName}님은 이미 참여 신청이 완료된 모임입니다!`);
+      }
+      if (String(target['최대인원']) !== '무제한' && parts.length >= Number(target['최대인원'])) {
+        return alert('모집 인원이 마감되었습니다.');
+      }
 
       parts.push(cleanName);
       await updateDoc(doc(db, 'FlashMeetings', docId), { 참여자목록: JSON.stringify(parts) });
-      alert(`${cleanName}님, 번개모임 참여 신청이 완료되었습니다!`);
+      alert(`✅ ${cleanName}님, 번개모임 참여 신청이 완료되었습니다!`);
+      await loadAllData();
+    };
+
+    // 9. 🔗 바로가기 탭 (유튜브 빨간색 / 일반 초록색 / 확장 테마 맵)
+    const LINK_COLOR_THEMES = {
+      youtube: { className: 'link-theme-youtube', badgeClass: 'b-red', label: '▶️ 유튜브' },
+      general: { className: 'link-theme-general', badgeClass: 'b-green', label: '🌐 사이트' },
+      blue:    { className: 'link-theme-blue',    badgeClass: 'b-blue',  label: '📋 신청·폼' },
+      purple:  { className: 'link-theme-purple',  badgeClass: 'b-purple',label: '📚 자료·노션' }
+    };
+
+    window.autoDetectLinkTheme = function (urlStr) {
+      const u = String(urlStr || '').toLowerCase();
+      const sel = document.getElementById('lnkTheme');
+      if (!sel) return;
+      if (u.includes('youtube.com') || u.includes('youtu.be')) {
+        sel.value = 'youtube';
+      } else if (u.includes('forms.gle') || u.includes('docs.google.com/forms')) {
+        sel.value = 'blue';
+      } else if (u.includes('notion.site') || u.includes('notion.so')) {
+        sel.value = 'purple';
+      } else {
+        sel.value = 'general';
+      }
+    };
+
+    function renderLinksTab() {
+      const canManage = STATE.auth.valid && STATE.auth.level >= 2;
+      const grid = document.getElementById('linksGrid');
+      if (!grid) return;
+
+      grid.innerHTML = STATE.links.map(l => {
+        const urlLower = String(l['URL'] || '').toLowerCase();
+        const themeKey = l['테마'] || ((urlLower.includes('youtube.com') || urlLower.includes('youtu.be')) ? 'youtube' : 'general');
+        const theme = LINK_COLOR_THEMES[themeKey] || LINK_COLOR_THEMES.general;
+
+        return `
+          <div class="link-card ${theme.className}">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:6px;">
+                <span class="badge ${theme.badgeClass}">${theme.label}</span>
+                ${canManage ? `<button class="btn btn-outline btn-sm" style="padding:2px 7px; font-size:11px;" onclick="deleteLinkItem('${l['_docId']}')">삭제</button>` : ''}
+              </div>
+              <strong style="font-size:15.5px; display:block; margin-bottom:4px;">${l['제목']}</strong>
+              <p style="font-size:13px; color:var(--text-muted); white-space:pre-line;">${l['설명'] || ''}</p>
+            </div>
+            <a href="${l['URL']}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="width:100%; justify-content:center; font-weight:800;">
+              🔗 사이트 바로가기 ↗
+            </a>
+          </div>
+        `;
+      }).join('') || '<div style="color:var(--text-muted); font-size:13px;">등록된 바로가기 링크가 없습니다. 리더십 인증 후 보드게임 아카이브나 교회 유튜브 링크를 추가해 보세요!</div>';
+    }
+
+    window.submitLinkSave = async function () {
+      const title = document.getElementById('lnkTitle').value.trim();
+      let url = document.getElementById('lnkUrl').value.trim();
+      const theme = document.getElementById('lnkTheme').value;
+      const desc = document.getElementById('lnkDesc').value.trim();
+
+      if (!title || !url) return alert('사이트 제목과 URL 주소를 입력해 주세요.');
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+      const id = 'LNK_' + Date.now();
+      await setDoc(doc(db, 'Links', id), {
+        링크ID: id, 제목: title, URL: url, 테마: theme, 설명: desc,
+        등록자: STATE.auth.name || '리더십', 등록일시: nowFormatted()
+      });
+      alert('바로가기 카드가 추가되었습니다!');
+      document.getElementById('lnkTitle').value = '';
+      document.getElementById('lnkUrl').value = '';
+      document.getElementById('lnkDesc').value = '';
+      closeModal('linkModal');
+      await loadAllData();
+    };
+
+    window.deleteLinkItem = async function (docId) {
+      if (!confirm('이 바로가기 카드를 삭제할까요?')) return;
+      await deleteDoc(doc(db, 'Links', docId));
       await loadAllData();
     };
 
@@ -2338,7 +2998,7 @@
       } else { btn.classList.add('safe'); btn.textContent = '✅'; }
     };
 
-    // 리더십 전용 탭
+    // 리더십 전용 탭 & 3. 풀스크린 회의록 + 12. 일정 자동 추출·인라인 수정 등록
     function renderLeadershipTab() {
       const recs = STATE.attendanceRecords || [];
       document.getElementById('attReportDateSelect').innerHTML = recs.map((r, i) => `<option value="${i}">${r['날짜']} (${r['총인원']}명)</option>`).join('');
@@ -2402,20 +3062,23 @@
             </div>
             <strong style="display:block; margin-bottom:4px;">${n['제목']}</strong>
             <p style="font-size:13.5px; white-space:pre-line; margin-bottom:8px;">${n['내용']}</p>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
               <span style="font-size:12px; color:var(--text-muted);">✅ 확인: ${acks.length ? acks.join(', ') : '아직 없음'}</span>
-              ${!iChecked ? `<button class="btn btn-outline btn-sm" onclick="ackLeaderNote('${n['_docId']}')">✅ 확인했습니다</button>` : '<span class="badge b-green">확인 완료</span>'}
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-outline btn-sm" onclick="copySavedNoteKakao('${n['_docId']}')">📋 카톡 요약 복사</button>
+                ${!iChecked ? `<button class="btn btn-outline btn-sm" onclick="ackLeaderNote('${n['_docId']}')">✅ 확인했습니다</button>` : '<span class="badge b-green">확인 완료</span>'}
+              </div>
             </div>
           </div>
         `;
-      }).join('') || '<div style="font-size:13px; color:var(--text-muted);">작성된 리더십 노트가 없습니다.</div>';
+      }).join('') || '<div style="font-size:13px; color:var(--text-muted);">작성된 회의록·리더십 노트가 없습니다.</div>';
     }
 
     window.renderAttendanceReport = function () {
       const recs = STATE.attendanceRecords || [];
       const sumBox = document.getElementById('attReportSummary');
       const namesBox = document.getElementById('attReportNamesBox');
-      if (!recs.length) { sumBox.innerHTML = '<div style="font-size:13px; color:var(--text-muted);">저장된 주일 예배 출결 기록이 없습니다.</div>'; return; }
+      if (!recs.length) { sumBox.innerHTML = '<div style="font-size:13px; color:var(--text-muted);">최근 3개월 내 저장된 주일 예배 출결 기록이 없습니다.</div>'; return; }
       const idx = Number(document.getElementById('attReportDateSelect').value) || 0;
       const cur = recs[idx], prev = recs[idx + 1];
       const curCnt = Number(cur['총인원']) || 0, prevCnt = prev ? (Number(prev['총인원']) || 0) : null;
@@ -2429,11 +3092,11 @@
       try { names = JSON.parse(cur['출석자명단JSON'] || '[]'); } catch (e) {}
 
       sumBox.innerHTML = `
-        ${isRecordHigh ? '<div class="badge b-amber" style="margin-bottom:8px;">🏆 역대 최고 출석 인원 갱신!</div>' : ''}
+        ${isRecordHigh ? '<div class="badge b-amber" style="margin-bottom:8px;">🏆 최근 3개월 최고 출석 인원 갱신!</div>' : ''}
         <div style="font-size:18px; font-weight:800; margin-bottom:4px;">총 출석 인원: <span style="color:var(--primary);">${curCnt}명</span></div>
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
-          • 전주 대비: ${diff !== null ? `<strong>${diff >= 0 ? '▲ +' + diff : '▼ ' + diff}명</strong> (지난주 ${prevCnt}명)` : '첫 주차 기록'}<br>
-          • 전월 평균 대비: ${prevMonthAvg !== null ? `지난달 평균 ${prevMonthAvg}명 대비 <strong>${(curCnt - prevMonthAvg) >= 0 ? '▲ +' + (curCnt - prevMonthAvg).toFixed(1) : '▼ ' + (curCnt - prevMonthAvg).toFixed(1)}명</strong>` : '비교 데이터 누적 중'}
+          - 전주 대비: ${diff !== null ? `<strong>${diff >= 0 ? '▲ +' + diff : '▼ ' + diff}명</strong> (지난주 ${prevCnt}명)` : '첫 주차 기록'}<br>
+          - 전월 평균 대비: ${prevMonthAvg !== null ? `지난달 평균 ${prevMonthAvg}명 대비 <strong>${(curCnt - prevMonthAvg) >= 0 ? '▲ +' + (curCnt - prevMonthAvg).toFixed(1) : '▼ ' + (curCnt - prevMonthAvg).toFixed(1)}명</strong>` : '비교 데이터 누적 중'}
         </div>
         <button class="btn btn-outline btn-sm" onclick="const b=document.getElementById('attReportNamesBox'); b.style.display=b.style.display==='none'?'block':'none';">더보기 (출석자 명단 확인) ▾</button>
       `;
@@ -2467,18 +3130,265 @@
       await loadAllData();
     };
 
+    // 3. 풀스크린 회의록 에디터 열기 · 임시저장 · 카톡 요약 복사
+    window.openFullscreenMeetingEditor = function () {
+      const savedDraft = localStorage.getItem('vv_meeting_draft');
+      if (savedDraft) {
+        try {
+          const d = JSON.parse(savedDraft);
+          document.getElementById('lnCategory').value = d.cat || '📋 리더십 회의록';
+          document.getElementById('lnTitle').value = d.title || '';
+          document.getElementById('lnSec1').value = d.sec1 || '';
+          document.getElementById('lnSec2').value = d.sec2 || '';
+          document.getElementById('lnSec3').value = d.sec3 || '';
+          document.getElementById('lnSec4').value = d.sec4 || '';
+          document.getElementById('lnAutoSaveStatus').textContent = '임시저장 복원됨';
+        } catch (e) {}
+      } else {
+        document.getElementById('lnSec1').value = `${todayFormatted()}(${getKoreanWeekday(todayFormatted())}) / 참석: ${STATE.auth.name}`;
+        document.getElementById('lnAutoSaveStatus').textContent = '';
+      }
+      openModal('leaderNoteModal');
+    };
+
+    window.autoSaveMeetingDraft = function () {
+      const draft = {
+        cat: document.getElementById('lnCategory').value,
+        title: document.getElementById('lnTitle').value,
+        sec1: document.getElementById('lnSec1').value,
+        sec2: document.getElementById('lnSec2').value,
+        sec3: document.getElementById('lnSec3').value,
+        sec4: document.getElementById('lnSec4').value
+      };
+      localStorage.setItem('vv_meeting_draft', JSON.stringify(draft));
+      document.getElementById('lnAutoSaveStatus').textContent = '● 자동 임시저장됨';
+    };
+
+    window.clearMeetingDraft = function () {
+      if (!confirm('작성 중인 내용을 모두 지울까요?')) return;
+      localStorage.removeItem('vv_meeting_draft');
+      document.getElementById('lnTitle').value = '';
+      document.getElementById('lnSec1').value = '';
+      document.getElementById('lnSec2').value = '';
+      document.getElementById('lnSec3').value = '';
+      document.getElementById('lnSec4').value = '';
+      document.getElementById('lnAutoSaveStatus').textContent = '초기화됨';
+    };
+
+    function buildStructuredMeetingBody() {
+      const s1 = document.getElementById('lnSec1').value.trim();
+      const s2 = document.getElementById('lnSec2').value.trim();
+      const s3 = document.getElementById('lnSec3').value.trim();
+      const s4 = document.getElementById('lnSec4').value.trim();
+      const blocks = [];
+      if (s1) blocks.push(`① 일시·참석: ${s1}`);
+      if (s2) blocks.push(`② 예배·사역 피드백\n${s2}`);
+      if (s3) blocks.push(`③ 목장별 나눔 및 기도제목\n${s3}`);
+      if (s4) blocks.push(`④ 결정사항 및 향후 일정\n${s4}`);
+      return blocks.join('\n\n');
+    }
+
+    window.copyDraftKakaoSummary = async function () {
+      const title = document.getElementById('lnTitle').value.trim() || '비전마을 리더십 회의록';
+      const body = buildStructuredMeetingBody();
+      const text = `📝 [${title}]\n\n${body}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('📋 작성 중인 회의록 요약이 복사되었습니다!');
+      } catch (e) {
+        prompt('아래 내용을 복사해 주세요:', text);
+      }
+    };
+
+    window.copySavedNoteKakao = async function (docId) {
+      const n = STATE.leaderNotes.find(item => item['_docId'] === docId);
+      if (!n) return;
+      const text = `📝 [${n['제목']}]\n작성: ${n['작성자']} (${n['등록일시']})\n\n${n['내용']}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('📋 회의록 요약이 복사되었습니다! 리더십 단톡방에 붙여넣어 주세요.');
+      } catch (e) {
+        prompt('아래 내용을 복사해 주세요:', text);
+      }
+    };
+
+    // 12. 회의록 본문에서 날짜·시간·일정 후보 자동 추출 파서
+    function extractSchedulesFromText(fullText) {
+      const lines = fullText.split(/\n+/);
+      const curYear = new Date().getFullYear();
+      const curMonth = new Date().getMonth() + 1;
+      const results = [];
+
+      lines.forEach(rawLine => {
+        const line = rawLine.replace(/^[-•*]\s*/, '').trim();
+        if (!line) return;
+
+        let matchedDate = '';
+        let dateToken = '';
+
+        // 1) YYYY-MM-DD 또는 YYYY.MM.DD 또는 YYYY/MM/DD
+        const fullMatch = line.match(/(20\d{2})[-./](\d{1,2})[-./](\d{1,2})/);
+        if (fullMatch) {
+          matchedDate = `${fullMatch[1]}-${fullMatch[2].padStart(2, '0')}-${fullMatch[3].padStart(2, '0')}`;
+          dateToken = fullMatch[0];
+        } else {
+          // 2) M월 D일 또는 M/D
+          const mdMatch = line.match(/(\d{1,2})\s*월\s*(\d{1,2})\s*일/) || line.match(/(?:^|\s)(\d{1,2})\/(\d{1,2})(?:\s|\(|$)/);
+          if (mdMatch) {
+            const m = Number(mdMatch[1]);
+            const d = Number(mdMatch[2]);
+            if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+              // 현재 11~12월인데 1~2월 일정이 나오면 다음 해로 자동 추론
+              const targetYear = (curMonth >= 11 && m <= 2) ? curYear + 1 : curYear;
+              matchedDate = `${targetYear}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+              dateToken = mdMatch[0];
+            }
+          }
+        }
+
+        if (matchedDate) {
+          // 시간 추출 (오전/오후 N시, HH:MM)
+          const timeMatch = line.match(/(오전|오후)?\s*\d{1,2}\s*시(\s*\d{1,2}\s*분)?|\d{1,2}:\d{2}/);
+          const timeStr = timeMatch ? timeMatch[0].trim() : '';
+
+          // 날짜·요일·시간 토큰 제거 후 남은 문구를 제목 후보로 추출
+          let cleanTitle = line
+            .replace(dateToken, '')
+            .replace(/\([월화수목금토일]\)/g, '')
+            .replace(timeStr, '')
+            .replace(/^[:\-\s]+/, '')
+            .trim();
+
+          results.push({
+            checked: true,
+            date: matchedDate,
+            title: cleanTitle, // 비어있을 수 있음 -> 모달에서 직접 입력 유도
+            time: timeStr,
+            scope: '전체공개'
+          });
+        }
+      });
+      return results;
+    }
+
+    function openExtractedScheduleModal(candidates) {
+      const container = document.getElementById('extractedScheduleList');
+      container.innerHTML = '';
+      candidates.forEach(item => appendExtractedScheduleRow(item));
+      openModal('extractedScheduleModal');
+    }
+
+    function appendExtractedScheduleRow(item = { checked: true, date: todayFormatted(), title: '', time: '', scope: '전체공개' }) {
+      const container = document.getElementById('extractedScheduleList');
+      const div = document.createElement('div');
+      div.className = 'ext-sch-item';
+      div.style.cssText = 'border:1px solid var(--border); border-radius:12px; padding:10px 12px; background:var(--surface-sub);';
+      const emptyWarning = !item.title
+        ? `<div style="font-size:11.5px; color:var(--danger); font-weight:700; margin-bottom:4px;">⚠️ 날짜만 인식되었습니다. 아래 일정 제목을 직접 입력해 주세요!</div>`
+        : '';
+
+      div.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <label style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:13px; cursor:pointer;">
+            <input type="checkbox" class="ext-chk" ${item.checked ? 'checked' : ''} style="width:18px; height:18px; margin:0;" />
+            달력에 등록하기
+          </label>
+          <button type="button" class="icon-btn" style="padding:2px 7px; font-size:11px;" onclick="this.closest('.ext-sch-item').remove()">삭제</button>
+        </div>
+        ${emptyWarning}
+        <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:6px; margin-bottom:6px;">
+          <input type="date" class="ext-date" value="${item.date}" style="margin-bottom:0; padding:6px 8px; font-size:12.5px; background:var(--surface);" />
+          <input type="text" class="ext-time" value="${item.time || ''}" placeholder="시간(예: 오후 2시)" style="margin-bottom:0; padding:6px 8px; font-size:12.5px; background:var(--surface);" />
+          <select class="ext-scope" style="margin-bottom:0; padding:6px 8px; font-size:12.5px; background:var(--surface);">
+            <option value="전체공개" ${item.scope === '전체공개' ? 'selected' : ''}>🌐 전체공개</option>
+            <option value="리더십전용" ${item.scope === '리더십전용' ? 'selected' : ''}>🔒 리더십전용</option>
+          </select>
+        </div>
+        <input type="text" class="ext-title" value="${item.title || ''}" placeholder="일정 제목 입력 (인식 내용이 다르면 직접 수정하세요)" style="margin-bottom:0; padding:7px 10px; font-size:13px; background:var(--surface);" />
+      `;
+      container.appendChild(div);
+    }
+
+    window.addManualExtractedScheduleRow = function () {
+      appendExtractedScheduleRow({ checked: true, date: todayFormatted(), title: '', time: '', scope: '전체공개' });
+    };
+
+    window.confirmRegisterExtractedSchedules = async function () {
+      const rows = Array.from(document.querySelectorAll('#extractedScheduleList .ext-sch-item'));
+      const toSave = [];
+      for (const r of rows) {
+        if (!r.querySelector('.ext-chk').checked) continue;
+        const d = normalizeYMD(r.querySelector('.ext-date').value);
+        const t = r.querySelector('.ext-title').value.trim();
+        const tm = r.querySelector('.ext-time').value.trim();
+        const sc = r.querySelector('.ext-scope').value;
+        if (!d || !t) {
+          return alert('체크된 항목 중 날짜 또는 일정 제목이 비어 있는 칸이 있습니다. 내용을 입력하거나 체크를 해제해 주세요.');
+        }
+        toSave.push({ date: d, title: t, time: tm, scope: sc });
+      }
+
+      if (!toSave.length) {
+        closeModal('extractedScheduleModal');
+        return;
+      }
+
+      setLoading(true);
+      try {
+        for (let i = 0; i < toSave.length; i++) {
+          const it = toSave[i];
+          const id = `SCH_MTG_${Date.now()}_${i}`;
+          await setDoc(doc(db, 'Schedules', id), {
+            일정ID: id,
+            날짜: it.date,
+            제목: it.title,
+            시간: it.time,
+            장소: '',
+            공개범위: it.scope,
+            등록자: STATE.auth.name || '리더십',
+            등록일시: nowFormatted()
+          });
+        }
+        alert(`📅 선택한 ${toSave.length}건의 일정이 달력에 일괄 등록되었습니다!`);
+        closeModal('extractedScheduleModal');
+        await loadAllData();
+      } finally {
+        setLoading(false);
+      }
+    };
+
     window.submitLeaderNote = async function () {
       const title = document.getElementById('lnTitle').value.trim();
-      const content = document.getElementById('lnContent').value.trim();
-      if (!title || !content) return alert('제목과 내용을 입력해 주세요.');
-      const id = 'NOTE_' + Date.now();
-      await setDoc(doc(db, 'LeaderNotes', id), {
-        노트ID: id, 카테고리: document.getElementById('lnCategory').value,
-        제목: title, 내용: content, 작성자: STATE.auth.name, 확인목자목록: '[]', 등록일시: nowFormatted()
-      });
-      alert('리더십 노트가 등록되었습니다.');
-      closeModal('leaderNoteModal');
-      await loadAllData();
+      const body = buildStructuredMeetingBody();
+      if (!title || !body) return alert('제목과 회의록 내용을 최소 한 항목 이상 입력해 주세요.');
+
+      setLoading(true);
+      try {
+        const id = 'NOTE_' + Date.now();
+        await setDoc(doc(db, 'LeaderNotes', id), {
+          노트ID: id,
+          카테고리: document.getElementById('lnCategory').value,
+          제목: title,
+          내용: body,
+          작성자: STATE.auth.name,
+          확인목자목록: JSON.stringify([STATE.auth.name]),
+          등록일시: nowFormatted()
+        });
+
+        localStorage.removeItem('vv_meeting_draft');
+        closeModal('leaderNoteModal');
+        await loadAllData();
+
+        // ④ 결정사항 및 전체 본문에서 일정 후보 자동 감지
+        const extracted = extractSchedulesFromText(body);
+        if (extracted.length > 0) {
+          openExtractedScheduleModal(extracted);
+        } else {
+          alert('회의록이 저장되었습니다!');
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
     window.ackLeaderNote = async function (docId) {
