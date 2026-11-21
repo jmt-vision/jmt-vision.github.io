@@ -66,6 +66,50 @@
       color: #93c5fd;
     }
 
+    /* 리더십 탭 명단·목장·생일 일괄 수정 표 */
+    .bulk-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-height: 62vh;
+    }
+    .bulk-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 680px;
+    }
+    .bulk-table th {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--surface-sub);
+      color: var(--text-muted);
+      font-weight: 800;
+      padding: 9px 8px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    .bulk-table td {
+      padding: 6px 6px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .bulk-table tr.row-modified {
+      background: rgba(37, 99, 235, 0.08);
+    }
+    body.dark .bulk-table tr.row-modified {
+      background: rgba(59, 130, 246, 0.2);
+    }
+    .bulk-cell-input {
+      margin-bottom: 0 !important;
+      padding: 6px 8px !important;
+      font-size: 13px !important;
+      border-radius: 8px !important;
+      background: var(--surface) !important;
+    }
+
     body.font-large { --font-scale: 1.14; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -723,6 +767,47 @@
         <div style="margin-top:10px;">
           <button class="btn btn-outline btn-sm" onclick="toggleS3S4List()">📂 S3 · S4 대상자 및 제적 사유 명단 보기 ▾</button>
           <div id="s3s4DetailList" style="display:none; margin-top:10px;"></div>
+        </div>
+      </div>
+
+      <!-- 명단·목장 개편·생일 표 형태 일괄 수정 카드 -->
+      <div class="card" style="border-left:4px solid var(--accent);">
+        <div class="card-header">
+          <div class="card-title">📊 명단 · 내년 목장 개편 · 생일 일괄 수정</div>
+          <button class="btn btn-primary btn-sm" id="btnToggleBulkEditor" onclick="toggleBulkMemberEditor()">📝 표 열기 / 닫기</button>
+        </div>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">
+          구글 시트처럼 전체 청년의 <strong>소속 목장 · 직분 · 생년월일 · 상태 · 연락처</strong>를 한눈에 보고 수정한 뒤 한 번에 저장할 수 있습니다.
+        </p>
+
+        <div id="bulkMemberEditorArea" style="display:none; margin-top:10px;">
+          <div id="bulkGroupSummaryBar" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; font-size:12px;"></div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; align-items:center;">
+            <select id="bulkFilterGroup" style="width:auto; margin-bottom:0; padding:7px 10px;" onchange="renderBulkMemberTable()">
+              <option value="ALL">전체 목장 보기</option>
+            </select>
+            <input type="text" id="bulkSearchInput" placeholder="이름 검색..." style="max-width:180px; margin-bottom:0; padding:7px 10px;" oninput="renderBulkMemberTable()" />
+            <button class="btn btn-success btn-sm" id="btnSaveBulkMembers" style="margin-left:auto;" onclick="saveBulkMemberChanges()" disabled>
+              💾 변경사항 일괄 저장 (0명)
+            </button>
+          </div>
+
+          <div class="bulk-table-wrap">
+            <table class="bulk-table">
+              <thead>
+                <tr>
+                  <th style="width:95px;">이름</th>
+                  <th style="width:110px;">소속 목장</th>
+                  <th style="width:105px;">직분</th>
+                  <th style="width:145px;">생년월일</th>
+                  <th style="width:95px;">상태</th>
+                  <th style="width:135px;">연락처</th>
+                </tr>
+              </thead>
+              <tbody id="bulkMemberTableBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -3445,6 +3530,166 @@
       const startTab = localStorage.getItem('vv_pref_tab');
       if (startTab && document.getElementById('tab-' + startTab)) switchTab(startTab);
     });
+
+    // ==================== 명단·목장 개편·생일 표 형태 일괄 수정 ====================
+    let BULK_EDITS = {}; // { docId: { 이름, 목장, 직분, 생년월일, 상태, 연락처 } }
+
+    window.toggleBulkMemberEditor = function () {
+      const area = document.getElementById('bulkMemberEditorArea');
+      const isOpening = area.style.display === 'none';
+      area.style.display = isOpening ? 'block' : 'none';
+      if (isOpening) {
+        BULK_EDITS = {};
+        const groups = ['ALL', ...new Set(STATE.allMembersRaw.map(m => m['목장']).filter(Boolean))].sort((a, b) => a === 'ALL' ? -1 : a.localeCompare(b, 'ko'));
+        const sel = document.getElementById('bulkFilterGroup');
+        sel.innerHTML = groups.map(g => `<option value="${g}">${g === 'ALL' ? '전체 목장 보기' : g}</option>`).join('');
+        renderBulkMemberTable();
+      }
+    };
+
+    function updateBulkGroupSummary() {
+      const counts = {};
+      STATE.allMembersRaw.forEach(m => {
+        const docId = m['_docId'] || m['ID'];
+        const merged = { ...m, ...(BULK_EDITS[docId] || {}) };
+        if (!['S1', 'S2', 'S3', '입대'].includes(String(merged['상태']).trim())) return;
+        const grp = String(merged['목장'] || '미배정').trim();
+        counts[grp] = (counts[grp] || 0) + 1;
+      });
+
+      const summaryBar = document.getElementById('bulkGroupSummaryBar');
+      const sortedGrps = Object.keys(counts).sort((a, b) => a.localeCompare(b, 'ko'));
+      summaryBar.innerHTML = sortedGrps.map(g =>
+        `<span class="badge b-blue">${g}: ${counts[g]}명</span>`
+      ).join('');
+    }
+
+    window.renderBulkMemberTable = function () {
+      const filterGrp = document.getElementById('bulkFilterGroup').value;
+      const q = document.getElementById('bulkSearchInput').value.trim().toLowerCase();
+
+      // 기존 목장명 자동완성 목록 생성
+      const existingGroups = [...new Set(STATE.allMembersRaw.map(m => m['목장']).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ko'));
+      let datalistEl = document.getElementById('bulkGroupDatalist');
+      if (!datalistEl) {
+        datalistEl = document.createElement('datalist');
+        datalistEl.id = 'bulkGroupDatalist';
+        document.body.appendChild(datalistEl);
+      }
+      datalistEl.innerHTML = existingGroups.map(g => `<option value="${g}">`).join('');
+
+      const list = sortMembersByRoleAndName(
+        STATE.allMembersRaw.filter(m => {
+          const docId = m['_docId'] || m['ID'];
+          const currentGrp = (BULK_EDITS[docId]?.['목장'] ?? m['목장']) || '';
+          const matchGrp = filterGrp === 'ALL' || currentGrp === filterGrp;
+          const matchQ = !q || String(m['이름']).toLowerCase().includes(q);
+          return matchGrp && matchQ;
+        })
+      );
+
+      document.getElementById('bulkMemberTableBody').innerHTML = list.map(m => {
+        const docId = m['_docId'] || m['ID'];
+        const cur = { ...m, ...(BULK_EDITS[docId] || {}) };
+        const isModified = Boolean(BULK_EDITS[docId]);
+        const birthVal = normalizeYMD(cur['생년월일'] || '');
+
+        return `
+          <tr id="bulk-row-${docId}" class="${isModified ? 'row-modified' : ''}">
+            <td>
+              <input type="text" class="bulk-cell-input" value="${cur['이름'] || ''}"
+                onchange="onBulkCellChange('${docId}', '이름', this.value)" />
+            </td>
+            <td>
+              <input type="text" class="bulk-cell-input" list="bulkGroupDatalist" value="${cur['목장'] || ''}"
+                placeholder="예: 1목장"
+                onchange="onBulkCellChange('${docId}', '목장', this.value)" />
+            </td>
+            <td>
+              <select class="bulk-cell-input" onchange="onBulkCellChange('${docId}', '직분', this.value)">
+                ${['목원', '준목자', '목자', '새가족', '디렉터', '담당목사'].map(r =>
+                  `<option value="${r}" ${cur['직분'] === r ? 'selected' : ''}>${r}</option>`
+                ).join('')}
+              </select>
+            </td>
+            <td>
+              <input type="date" class="bulk-cell-input" value="${birthVal}"
+                onchange="onBulkCellChange('${docId}', '생년월일', this.value)" />
+            </td>
+            <td>
+              <select class="bulk-cell-input" onchange="onBulkCellChange('${docId}', '상태', this.value)">
+                ${['S1', 'S2', '입대', 'S3', 'S4'].map(st =>
+                  `<option value="${st}" ${cur['상태'] === st ? 'selected' : ''}>${st}</option>`
+                ).join('')}
+              </select>
+            </td>
+            <td>
+              <input type="text" class="bulk-cell-input" value="${cur['연락처'] || ''}"
+                placeholder="010-0000-0000"
+                onchange="onBulkCellChange('${docId}', '연락처', this.value)" />
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      updateBulkGroupSummary();
+      updateBulkSaveButton();
+    };
+
+    window.onBulkCellChange = function (docId, field, rawVal) {
+      const orig = STATE.allMembersRaw.find(m => (m['_docId'] || m['ID']) === docId);
+      if (!orig) return;
+      const val = field === '생년월일' ? normalizeYMD(rawVal) : String(rawVal).trim();
+
+      if (!BULK_EDITS[docId]) BULK_EDITS[docId] = {};
+      BULK_EDITS[docId][field] = val;
+
+      // 원래 값과 모두 동일해졌으면 수정 목록에서 제거
+      const hasAnyDiff = Object.keys(BULK_EDITS[docId]).some(k => {
+        const origVal = k === '생년월일' ? normalizeYMD(orig[k] || '') : String(orig[k] || '').trim();
+        return BULK_EDITS[docId][k] !== origVal;
+      });
+
+      if (!hasAnyDiff) {
+        delete BULK_EDITS[docId];
+      }
+
+      const rowEl = document.getElementById('bulk-row-' + docId);
+      if (rowEl) rowEl.classList.toggle('row-modified', Boolean(BULK_EDITS[docId]));
+
+      updateBulkGroupSummary();
+      updateBulkSaveButton();
+    };
+
+    function updateBulkSaveButton() {
+      const count = Object.keys(BULK_EDITS).length;
+      const btn = document.getElementById('btnSaveBulkMembers');
+      if (!btn) return;
+      btn.textContent = `💾 변경사항 일괄 저장 (${count}명)`;
+      btn.disabled = count === 0;
+    }
+
+    window.saveBulkMemberChanges = async function () {
+      const targetIds = Object.keys(BULK_EDITS);
+      if (!targetIds.length) return;
+      if (!confirm(`수정한 ${targetIds.length}명의 명단(목장·생년월일·직분 등)을 한 번에 저장할까요?`)) return;
+
+      setLoading(true);
+      try {
+        for (const docId of targetIds) {
+          await updateDoc(doc(db, 'Members', docId), BULK_EDITS[docId]);
+        }
+        BULK_EDITS = {};
+        alert(`✅ ${targetIds.length}명의 정보가 일괄 업데이트되었습니다!`);
+        await loadAllData();
+        document.getElementById('bulkMemberEditorArea').style.display = 'block';
+        renderBulkMemberTable();
+      } catch (e) {
+        alert('⚠️ 일괄 저장 중 오류가 발생했습니다: ' + e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
   </script>
 </body>
 </html>
