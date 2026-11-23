@@ -2314,11 +2314,17 @@
       }
 
       const curMonth = String(new Date().getMonth() + 1).padStart(2, '0');
-      const bdays = STATE.members.filter(m => m['생년월일'] && String(m['생년월일']).includes(`-${curMonth}-`));
+      const bdays = STATE.members
+        .filter(m => m['생년월일'] && String(m['생년월일']).includes(`-${curMonth}-`))
+        .sort((a, b) => {
+          const dayA = Number(String(a['생년월일']).split('-')[2]) || 0;
+          const dayB = Number(String(b['생년월일']).split('-')[2]) || 0;
+          return dayA !== dayB ? dayA - dayB : String(a['이름']).localeCompare(String(b['이름']), 'ko');
+        });
       document.getElementById('homeBirthdays').innerHTML = bdays.length
         ? bdays.map(b => `<span class="badge b-amber">🎂 ${b['이름']} (${b['목장']} · ${b['생년월일'].slice(5)})</span>`).join('')
         : '<span style="color:var(--text-muted); font-size:13px;">이번 달 생일자가 없습니다.</span>';
-
+      
       const latestBul = STATE.bulletins[0];
       const latestAd = STATE.ads[0];
       let previewHtml = '';
