@@ -535,7 +535,7 @@
       flex-direction: column;
       gap: 2px;
       width: 100%;
-      margin: 2px 0;
+      margin-top: 2px;
     }
     .cal-span-bar {
       height: 15px;
@@ -543,151 +543,33 @@
       font-size: 10px;
       font-weight: 800;
       color: #fff;
-      background: #2563eb;
-      padding: 0 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      box-sizing: border-box;
-    }
-    .cal-span-bar.is-leader { background: #7c3aed; }
-    .cal-span-bar.is-start {
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-      margin-left: 1px;
-    }
-    .cal-span-bar.is-end {
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-      margin-right: 1px;
-    }
-    .cal-span-bar.is-mid {
-      border-radius: 0;
-      margin-left: -4px;
-      margin-right: -4px;
-    }
-    .cal-span-bar.is-start:not(.is-end) { margin-right: -4px; }
-    .cal-span-bar.is-end:not(.is-start) { margin-left: -4px; }
-    @media (max-width: 640px) {
-      .cal-span-bar {
-        height: 12px;
-        line-height: 12px;
-        font-size: 9px;
-        padding: 0 2px;
-      }
-    }
-
-    /* ==================== [19. 익명건의함 탭 · 카드 · 댓글 스레드] ==================== */
-    .sug-tag-grid {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-    .sug-tag-pill {
-      padding: 7px 11px;
-      border-radius: 99px;
-      border: 1px solid var(--border);
-      background: var(--surface-sub);
-      color: var(--text-muted);
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .sug-tag-pill.active {
       background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-    .sug-desc-box {
-      background: var(--primary-soft);
-      border-left: 4px solid var(--primary);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-    .sug-item-card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-      background: var(--surface);
-    }
-    .sug-item-card.sug-unread {
-      border-left: 4px solid var(--primary);
-      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12);
-    }
-    .sug-comments-box {
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .sug-comment-row {
-      background: var(--surface-sub);
-      padding: 7px 10px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      line-height: 1.45;
-    }
-    .sug-comment-row.from-author {
-      border-left: 3px solid var(--accent);
-    }
-  </style>
-</head>
-<body>
-  <!-- 상단 비동기 통신 로딩 바 -->
-  <div id="loadingBar" class="loading-bar"></div>/* ==================== [18. 달력 2일 이상 연속 기간 일정 연결 바] ==================== */
-    .cal-span-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      width: 100%;
-      margin: 2px 0;
-    }
-    .cal-span-bar {
-      height: 15px;
-      line-height: 15px;
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-      background: #2563eb;
       padding: 0 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       box-sizing: border-box;
     }
-    .cal-span-bar.is-leader { background: #7c3aed; }
     .cal-span-bar.is-start {
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
-      margin-left: 1px;
+      margin-left: 2px;
     }
     .cal-span-bar.is-end {
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
-      margin-right: 1px;
+      margin-right: 2px;
     }
     .cal-span-bar.is-mid {
       border-radius: 0;
-      margin-left: -4px;
-      margin-right: -4px;
+      margin-left: -3px;
+      margin-right: -3px;
     }
-    .cal-span-bar.is-start:not(.is-end) { margin-right: -4px; }
-    .cal-span-bar.is-end:not(.is-start) { margin-left: -4px; }
-    @media (max-width: 640px) {
-      .cal-span-bar {
-        height: 12px;
-        line-height: 12px;
-        font-size: 9px;
-        padding: 0 2px;
-      }
+    .cal-span-bar.is-start:not(.is-end) { margin-right: -3px; }
+    .cal-span-bar.is-end:not(.is-start) { margin-left: -3px; }
+    body.dark .cal-span-bar {
+      background: #3b82f6;
+      color: #f8fafc;
     }
 
     /* ==================== [19. 익명건의함 탭 · 카드 · 댓글 스레드] ==================== */
