@@ -2495,29 +2495,24 @@
       listView.style.display = showCheck ? 'none' : 'block';
 
       if (showCheck) {
-        const now = new Date();
         document.getElementById('attDateInput').value = todayFormatted();
-        const isClosed = now.getDay() !== 0 || now.getHours() >= 18;
-        const canOverride = STATE.auth.isPastorOrAdmin;
         const notice = document.getElementById('attDeadlineNotice');
         const saveBtn = document.getElementById('btnSaveAttendance');
 
-        if (isClosed && !canOverride) {
-          notice.textContent = '🔒 현재 입력 시간이 마감되었습니다. (매주 일요일 00:00 ~ 18:00 입력 가능)';
-          saveBtn.disabled = true; saveBtn.style.opacity = '0.5';
-        } else {
-          notice.textContent = canOverride
-            ? '👑 관리자/교역자 권한으로 시간 제한 없이 출결 수정이 가능합니다.'
-            : '⏰ 매주 일요일 저녁 6시(18:00)에 입력이 자동 마감됩니다.';
-          saveBtn.disabled = false; saveBtn.style.opacity = '1';
+        if (notice) {
+          notice.textContent = '✏️ 시간 제한 없이 언제든 출결을 입력·수정할 수 있으며, 저장 시 해당 주 출결 보고서도 자동 업데이트됩니다.';
+        }
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.style.opacity = '1';
         }
         loadExistingAttendanceForDate();
       }
     };
 
     window.loadExistingAttendanceForDate = function () {
-      const dateStr = document.getElementById('attDateInput').value;
-      const found = STATE.attendanceRecords.find(r => String(r['날짜']) === dateStr);
+      const dateStr = normalizeYMD(document.getElementById('attDateInput').value);
+      const found = (STATE.attendanceRecords || []).find(r => normalizeYMD(r['날짜']) === dateStr);
       let checkedNames = [];
       if (found) {
         try { checkedNames = JSON.parse(found['출석자명단JSON'] || '[]'); } catch (e) {}
@@ -2544,7 +2539,9 @@
     };
 
     window.submitSundayAttendance = async function () {
-      const dateStr = document.getElementById('attDateInput').value;
+      const dateStr = normalizeYMD(document.getElementById('attDateInput').value);
+      if (!dateStr) return alert('날짜를 선택해 주세요.');
+
       const attendedNames = Array.from(document.querySelectorAll('.att-chk:checked')).map(el => el.value);
       const groupStats = {};
       attendedNames.forEach(name => {
@@ -2552,18 +2549,29 @@
         const grp = m ? (m['목장'] || '기타') : '새가족/기타';
         groupStats[grp] = (groupStats[grp] || 0) + 1;
       });
-      await setDoc(doc(db, 'Attendance', dateStr), {
-        날짜: dateStr,
-        출석자명단JSON: JSON.stringify(attendedNames),
-        총인원: attendedNames.length,
-        목장별통계JSON: JSON.stringify(groupStats),
-        마감여부: new Date().getHours() >= 18 ? '마감' : '진행중',
-        최종수정일시: nowFormatted()
-      });
-      alert(`${dateStr} 예배 출결(${attendedNames.length}명)이 저장되었습니다.`);
-      await loadAllData();
-    };
 
+      setLoading(true);
+      try {
+        await setDoc(doc(db, 'Attendance', dateStr), {
+          날짜: dateStr,
+          출석자명단JSON: JSON.stringify(attendedNames),
+          총인원: attendedNames.length,
+          목장별통계JSON: JSON.stringify(groupStats),
+          마감여부: '수정가능',
+          최종수정일시: nowFormatted()
+        });
+
+        await loadAllData();
+        // 출결 보고서 렌더링 함수가 있다면 즉시 최신 데이터로 재렌더링
+        if (typeof renderAttendanceReport === 'function') renderAttendanceReport();
+        alert(`✅ ${dateStr} 예배 출결(${attendedNames.length}명)이 저장되었으며, 출결 보고서에도 즉시 반영되었습니다.`);
+      } catch (e) {
+        alert('출결 저장 중 오류가 발생했습니다: ' + e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     // 달력
     window.changeMonth = function (delta) {
       STATE.calMonth += delta;
