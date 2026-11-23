@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>비전마을 청년부 포털</title>
 
-  <!-- 10. PWA 및 아이폰(iOS) 전용 앱 모드 대응 -->
+  <!-- ==================== [PWA 및 iOS 홈 화면 앱 모드 설정] ==================== -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#2563eb" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -13,9 +13,12 @@
   <meta name="apple-mobile-web-app-title" content="비전마을" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
 
+  <!-- 웹폰트: Pretendard -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
+    /* ==================== [1. 기본 컬러 테마 및 폰트 배율 변수] ==================== */
     :root {
       --bg: #f8fafc;
       --surface: #ffffff;
@@ -36,6 +39,7 @@
       --font-scale: 1;
     }
 
+    /* 다크 모드 */
     body.dark {
       --bg: #0b1120;
       --surface: #1e293b;
@@ -50,7 +54,7 @@
       --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
 
-    /* ==================== 추가 감성 테마 3종 (묵상 세피아 / 포레스트 그린 / 선셋 코랄) ==================== */
+    /* 감성 테마 3종 (묵상 세피아 / 포레스트 그린 / 선셋 코랄) */
     body.theme-sepia {
       --bg: #faf6ee;
       --surface: #fffdf9;
@@ -93,7 +97,51 @@
       --leader-soft: #f9e3ea;
     }
 
-    /* 설정창 5종 테마 선택 그리드 */
+    /* 큰 글씨 모드 배율 */
+    body.font-large { --font-scale: 1.14; }
+
+    /* ==================== [2. 전역 리셋 및 기본 레이아웃] ==================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: calc(15px * var(--font-scale));
+      line-height: 1.55;
+      padding-bottom: 84px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    /* ==================== [3. 상단 고정 헤더 (모바일 한 줄 유지)] ==================== */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      box-shadow: var(--shadow);
+    }
+    .brand { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1; }
+    .brand h1 { font-size: calc(18px * var(--font-scale)); font-weight: 800; letter-spacing: -0.4px; white-space: nowrap; }
+    .ver-badge {
+      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 99px;
+      background: var(--primary-soft); color: var(--primary);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .role-chip {
+      font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 99px;
+      background: var(--leader-soft); color: var(--leader);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 135px;
+    }
+    .header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .icon-btn {
+      border: 1px solid var(--border); background: var(--surface-sub); color: var(--text);
+      border-radius: 10px; padding: 7px 10px; font-size: 13px; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+      white-space: nowrap;
+    }
+
+    /* ==================== [4. 설정창 5종 테마 선택 그리드] ==================== */
     .theme-selector-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -128,23 +176,19 @@
       border: 1.5px solid rgba(0, 0, 0, 0.15);
     }
 
-    /* 메인 화면 환영·축복 배너 (라이트/다크모드 대응) */
+    /* ==================== [5. 메인 환영·축복 배너] ==================== */
     .welcome-banner {
       background: linear-gradient(135deg, #eff6ff 0%, #f0fdfa 100%);
       border-color: #bfdbfe;
     }
-    .welcome-banner-title {
-      color: #1d4ed8;
-    }
+    .welcome-banner-title { color: #1d4ed8; }
     body.dark .welcome-banner {
       background: linear-gradient(135deg, rgba(37, 99, 235, 0.22) 0%, rgba(13, 148, 136, 0.2) 100%);
       border-color: rgba(96, 165, 250, 0.4);
     }
-    body.dark .welcome-banner-title {
-      color: #93c5fd;
-    }
+    body.dark .welcome-banner-title { color: #93c5fd; }
 
-    /* 리더십 탭 명단·목장·생일 일괄 수정 표 */
+    /* ==================== [6. 리더십 명단·목장·생일 일괄 수정 표] ==================== */
     .bulk-table-wrap {
       overflow-x: auto;
       border: 1px solid var(--border);
@@ -174,12 +218,8 @@
       border-bottom: 1px solid var(--border);
       vertical-align: middle;
     }
-    .bulk-table tr.row-modified {
-      background: rgba(37, 99, 235, 0.08);
-    }
-    body.dark .bulk-table tr.row-modified {
-      background: rgba(59, 130, 246, 0.2);
-    }
+    .bulk-table tr.row-modified { background: rgba(37, 99, 235, 0.08); }
+    body.dark .bulk-table tr.row-modified { background: rgba(59, 130, 246, 0.2); }
     .bulk-cell-input {
       margin-bottom: 0 !important;
       padding: 6px 8px !important;
@@ -188,44 +228,7 @@
       background: var(--surface) !important;
     }
 
-    body.font-large { --font-scale: 1.14; }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: calc(15px * var(--font-scale));
-      line-height: 1.55;
-      padding-bottom: 84px;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    header {
-      position: sticky; top: 0; z-index: 50;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: var(--shadow);
-    }
-    .brand { display: flex; align-items: center; gap: 8px; }
-    .brand h1 { font-size: calc(18px * var(--font-scale)); font-weight: 800; letter-spacing: -0.4px; }
-    .ver-badge {
-      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 99px;
-      background: var(--primary-soft); color: var(--primary);
-    }
-    .role-chip {
-      font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 99px;
-      background: var(--leader-soft); color: var(--leader);
-    }
-    .header-actions { display: flex; align-items: center; gap: 6px; }
-    .icon-btn {
-      border: 1px solid var(--border); background: var(--surface-sub); color: var(--text);
-      border-radius: 10px; padding: 7px 10px; font-size: 13px; font-weight: 600;
-      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
-    }
-
+/* ==================== [7. 상단 탭 네비게이션 및 새 일정 알림 도트] ==================== */
     nav.tabs {
       position: sticky; top: 57px; z-index: 45;
       background: var(--surface);
@@ -244,7 +247,7 @@
     .tab-btn.leader-tab { color: var(--leader); }
     .tab-btn.leader-tab.active { border-bottom-color: var(--leader); }
 
-    /* 6. 새 일정 등록 시 일정·달력 탭 깜박이는 빨간 점 알림 */
+    /* 새 일정 등록 시 일정·달력 탭 우측 상단 알림 점 */
     .tab-notify-dot {
       position: absolute;
       top: 8px;
@@ -262,11 +265,13 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
 
+    /* ==================== [8. 메인 컨테이너 및 탭 패널 전환] ==================== */
     main { max-width: 960px; margin: 0 auto; padding: 16px; }
     .tab-panel { display: none; animation: fadeIn 0.18s ease; }
     .tab-panel.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* ==================== [9. 공통 카드 · 버튼 · 입력 폼] ==================== */
     .card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
@@ -300,6 +305,7 @@
     }
     label.field-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
 
+    /* ==================== [10. 그리드 · 통계 박스 · 상태 배지 · 필터 필] ==================== */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .stat-box {
@@ -324,14 +330,14 @@
     }
     .pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* 5 & 8. 명단 카드 2줄 고정 레이아웃 + 권한별 카드 배경색 및 측면 S1~S4 컬러 포인트 */
+    /* ==================== [11. 청년부 명단 카드 및 직분별 강조 배경] ==================== */
     .member-card {
       display: flex; align-items: center; gap: 10px;
       padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px;
       background: var(--surface);
       transition: transform 0.12s;
     }
-    /* 직분별 카드 배경색 (1단계 일반 및 2단계 리더십 공통) */
+    /* 목자 카드 배경색 */
     .member-card.role-leader {
       background: #f5f3ff;
       border-color: #ddd6fe;
@@ -340,6 +346,7 @@
       background: rgba(124, 58, 237, 0.18);
       border-color: rgba(167, 139, 250, 0.35);
     }
+    /* 부목자 카드 배경색 */
     .member-card.role-subleader {
       background: #f0fdfa;
       border-color: #99f6e4;
@@ -349,13 +356,14 @@
       border-color: rgba(45, 212, 191, 0.35);
     }
 
-    /* 2단계 이상 리더십 권한일 때만 보이는 S1~S4 카드 측면 컬러 포인트 */
+    /* 리더십 권한 전용: 청년 상태(S1~S4 · 입대) 측면 컬러 바 */
     .member-card.status-bar-S1 { border-left: 5px solid #10b981; }
     .member-card.status-bar-S2 { border-left: 5px solid #f59e0b; }
     .member-card.status-bar-S3 { border-left: 5px solid #ef4444; }
     .member-card.status-bar-S4 { border-left: 5px solid #64748b; }
     .member-card.status-bar-입대 { border-left: 5px solid #3b82f6; }
 
+    /* 아바타 및 명단 카드 내부 2줄 텍스트 */
     .avatar {
       width: 38px; height: 38px; border-radius: 50%; background: var(--primary-soft);
       color: var(--primary); font-weight: 800; font-size: 14px;
@@ -382,13 +390,14 @@
       margin-top: 2px;
     }
 
+    /* ==================== [12. 주일 출결 체크 리스트 행] ==================== */
     .att-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 10px 12px; border-bottom: 1px solid var(--border);
     }
     .att-row input[type="checkbox"] { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); }
 
-    /* 달력 */
+    /* ==================== [13. 일정 · 달력 그리드 및 모바일 반응형] ==================== */
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
     .cal-head { text-align: center; font-size: 12px; font-weight: 700; color: var(--text-muted); padding: 6px 0; }
     .cal-cell {
@@ -419,7 +428,7 @@
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
     }
 
-    /* 9. 바로가기 카드 테마 스타일 (유형별 좌측 은은한 컬러 바) */
+    /* ==================== [14. 바로가기 카드 및 유형별 테마 바] ==================== */
     .link-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -449,7 +458,7 @@
       background: linear-gradient(90deg, rgba(139, 92, 246, 0.04) 0%, var(--surface) 28%);
     }
 
-    /* 모달 & 3. 풀스크린 회의록 에디터 */
+    /* ==================== [15. 팝업 모달 및 풀스크린 회의록 에디터] ==================== */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
       display: none; align-items: center; justify-content: center;
@@ -470,7 +479,7 @@
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; }
     .modal-head h3 { font-size: 17px; font-weight: 800; }
 
-    /* 놀이터 */
+    /* ==================== [16. 놀이터 미니게임 (룰렛 · 제비뽑기 · 워들 · 폭탄 피하기)] ==================== */
     .roulette-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 12px 0; }
     .pointer { font-size: 24px; color: var(--danger); line-height: 1; }
     .lot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 8px; margin-top: 10px; }
@@ -508,6 +517,7 @@
     .bomb-btn.boom { background: #ef4444; color: #fff; animation: shake 0.4s; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
 
+    /* ==================== [17. 하단 푸터 및 상단 로딩 프로그레스 바] ==================== */
     footer {
       text-align: center; padding: 20px 16px; color: var(--text-muted); font-size: 12px;
       border-top: 1px solid var(--border); margin-top: 24px;
@@ -519,54 +529,7 @@
     }
     .loading-bar.active { display: block; }
 
-    /* ==================== 달력 기간 일정(2일 이상 라인 바) 스타일 ==================== */
-    .cal-span-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      width: 100%;
-      margin-top: 2px;
-    }
-    .cal-span-bar {
-      height: 15px;
-      line-height: 15px;
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-      background: var(--primary);
-      padding: 0 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      box-sizing: border-box;
-    }
-    .cal-span-bar.is-start {
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-      margin-left: 2px;
-    }
-    .cal-span-bar.is-end {
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-      margin-right: 2px;
-    }
-    .cal-span-bar.is-mid {
-      border-radius: 0;
-      margin-left: -3px;
-      margin-right: -3px;
-    }
-    .cal-span-bar.is-start:not(.is-end) {
-      margin-right: -3px;
-    }
-    .cal-span-bar.is-end:not(.is-start) {
-      margin-left: -3px;
-    }
-    body.dark .cal-span-bar {
-      background: #3b82f6;
-      color: #f8fafc;
-    }
-
-    /* ==================== 달력 2일 이상 기간 일정(라인 바) 스타일 ==================== */
+    /* ==================== [18. 달력 2일 이상 연속 기간 일정 연결 바] ==================== */
     .cal-span-stack {
       display: flex;
       flex-direction: column;
@@ -587,9 +550,7 @@
       text-overflow: ellipsis;
       box-sizing: border-box;
     }
-    .cal-span-bar.is-leader {
-      background: #7c3aed;
-    }
+    .cal-span-bar.is-leader { background: #7c3aed; }
     .cal-span-bar.is-start {
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
@@ -605,12 +566,8 @@
       margin-left: -4px;
       margin-right: -4px;
     }
-    .cal-span-bar.is-start:not(.is-end) {
-      margin-right: -4px;
-    }
-    .cal-span-bar.is-end:not(.is-start) {
-      margin-left: -4px;
-    }
+    .cal-span-bar.is-start:not(.is-end) { margin-right: -4px; }
+    .cal-span-bar.is-end:not(.is-start) { margin-left: -4px; }
     @media (max-width: 640px) {
       .cal-span-bar {
         height: 12px;
@@ -620,7 +577,7 @@
       }
     }
 
-    /* ==================== 익명건의함 시스템 스타일 ==================== */
+    /* ==================== [19. 익명건의함 탭 · 카드 · 댓글 스레드] ==================== */
     .sug-tag-grid {
       display: flex;
       gap: 6px;
@@ -684,8 +641,123 @@
   </style>
 </head>
 <body>
+  <!-- 상단 비동기 통신 로딩 바 -->
+  <div id="loadingBar" class="loading-bar"></div>/* ==================== [18. 달력 2일 이상 연속 기간 일정 연결 바] ==================== */
+    .cal-span-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 100%;
+      margin: 2px 0;
+    }
+    .cal-span-bar {
+      height: 15px;
+      line-height: 15px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+      background: #2563eb;
+      padding: 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+    }
+    .cal-span-bar.is-leader { background: #7c3aed; }
+    .cal-span-bar.is-start {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+      margin-left: 1px;
+    }
+    .cal-span-bar.is-end {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      margin-right: 1px;
+    }
+    .cal-span-bar.is-mid {
+      border-radius: 0;
+      margin-left: -4px;
+      margin-right: -4px;
+    }
+    .cal-span-bar.is-start:not(.is-end) { margin-right: -4px; }
+    .cal-span-bar.is-end:not(.is-start) { margin-left: -4px; }
+    @media (max-width: 640px) {
+      .cal-span-bar {
+        height: 12px;
+        line-height: 12px;
+        font-size: 9px;
+        padding: 0 2px;
+      }
+    }
+
+    /* ==================== [19. 익명건의함 탭 · 카드 · 댓글 스레드] ==================== */
+    .sug-tag-grid {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .sug-tag-pill {
+      padding: 7px 11px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--surface-sub);
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .sug-tag-pill.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .sug-desc-box {
+      background: var(--primary-soft);
+      border-left: 4px solid var(--primary);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .sug-item-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      background: var(--surface);
+    }
+    .sug-item-card.sug-unread {
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12);
+    }
+    .sug-comments-box {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sug-comment-row {
+      background: var(--surface-sub);
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .sug-comment-row.from-author {
+      border-left: 3px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <!-- 상단 비동기 통신 로딩 바 -->
   <div id="loadingBar" class="loading-bar"></div>
 
+  <!-- ==================== [상단 고정 헤더] ==================== -->
   <header>
     <div class="brand" style="display:flex; align-items:center; gap:6px; min-width:0; flex:1;">
       <h1 style="white-space:nowrap; margin:0;">⛪ 비전마을</h1>
@@ -697,6 +769,7 @@
     </div>
   </header>
 
+  <!-- ==================== [상단 메인 탭 네비게이션] ==================== -->
   <nav class="tabs" id="mainNav">
     <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">🏠 홈</button>
     <button class="tab-btn" data-tab="members" onclick="switchTab('members')">👥 명단·출결</button>
@@ -713,9 +786,9 @@
   </nav>
 
   <main>
-    <!-- 0. 홈 대시보드 -->
+    <!-- ==================== [탭 0: 홈 대시보드] ==================== -->
     <section id="tab-home" class="tab-panel active">
-      <!-- 4. 메인 화면 새가족 · 복귀 청년 환영 알림 배너 -->
+      <!-- 새가족 · 복귀 청년 환영 알림 배너 -->
       <div id="homeWelcomeBanner" class="card welcome-banner" style="display:none;">
         <div class="card-header" style="margin-bottom:8px;">
           <div class="card-title welcome-banner-title">🎉 반가워요! 함께 축복해 주세요</div>
@@ -723,6 +796,7 @@
         <div id="homeWelcomeList" style="display:flex; flex-direction:column; gap:6px; font-size:13.5px;"></div>
       </div>
 
+      <!-- 주요 지표 요약 -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">✨ 오늘의 비전마을 한눈에 보기</div>
@@ -736,11 +810,13 @@
         </div>
       </div>
 
+      <!-- 이번 달 생일자 명단 (일자순 정렬) -->
       <div class="card">
         <div class="card-header"><div class="card-title">🎂 이번 달 생일 축하 청년</div></div>
         <div id="homeBirthdays" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
       </div>
 
+      <!-- 최신 주보 & 광고 미리보기 -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">📰 최신 주간 주보 & 청년부 광고</div>
@@ -749,7 +825,7 @@
         <div id="homeNewsPreview"></div>
       </div>
 
-      <!-- 익명건의함 진입 카드 -->
+      <!-- 비전마을 익명건의함 진입 및 내 건의 현황 -->
       <div class="card" style="border-left:4px solid var(--primary);">
         <div class="card-header" style="margin-bottom:6px;">
           <div class="card-title">📮 비전마을 익명건의함</div>
@@ -766,7 +842,7 @@
       </div>
     </section>
 
-    <!-- 1. 명단 및 주일 출결 체크 -->
+    <!-- ==================== [탭 1: 목장 명단 및 주일 출결 체크] ==================== -->
     <section id="tab-members" class="tab-panel">
       <div class="card">
         <div class="card-header">
@@ -777,14 +853,15 @@
           </div>
         </div>
 
+        <!-- 일반/리더십 명단 조회 화면 -->
         <div id="memberListView">
           <div class="filter-pills" id="groupFilterPills"></div>
-          <!-- 색상 안내 범례 (일반 모드: 직분 배경색 / 리더십 모드: 직분 배경색 + S1~S4 측면바) -->
           <div id="memberColorLegend" style="display:flex; gap:10px; flex-wrap:wrap; font-size:11.5px; color:var(--text-muted); margin-bottom:8px;"></div>
           <input type="text" id="memberSearchInput" placeholder="이름 또는 친해지기 키워드 검색..." oninput="renderMembers()" />
           <div class="grid-2" id="membersGrid"></div>
         </div>
 
+        <!-- 리더십 전용: 주일 출결 체크 및 미등록 방문자 입력 화면 -->
         <div id="attendanceCheckView" style="display:none;">
           <div style="background:var(--primary-soft); padding:12px; border-radius:12px; margin-bottom:12px;">
             <div style="font-weight:800; color:var(--primary); margin-bottom:4px;">📋 주일 예배 출결 체크 (S1 · S2 · S3 대상)</div>
@@ -796,7 +873,7 @@
           </div>
           <div id="attendanceChecklist" style="max-height:420px; overflow-y:auto; border:1px solid var(--border); border-radius:12px;"></div>
 
-          <!-- 미등록 방문자(지인 초청 · 일시 방문) 수기 입력 영역 -->
+          <!-- 미등록 방문자(지인 초청 · 일시 방문) 수기 입력 -->
           <div style="margin-top:12px; padding:12px; border-radius:12px; background:var(--surface-sub); border:1px solid var(--border);">
             <div style="font-size:13px; font-weight:800; margin-bottom:4px;">🌱 미등록 방문자 수기 입력 (지인 초청 · 일시 방문)</div>
             <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">
@@ -820,7 +897,7 @@
       </div>
     </section>
 
-    <!-- 2. 일정 및 모바일 달력 -->
+    <!-- ==================== [탭 2: 공동체 일정 및 모바일 달력] ==================== -->
     <section id="tab-calendar" class="tab-panel">
       <div class="card">
         <div class="card-header">
@@ -846,6 +923,7 @@
         <div class="cal-grid" id="calendarGrid"></div>
       </div>
 
+      <!-- 선택한 날짜 상세 일정 및 하루 일정 복사 -->
       <div class="card" id="calDayDetailCard">
         <div class="card-header" style="margin-bottom:8px;">
           <div class="card-title" id="calSelectedDateTitle">날짜를 선택해 주세요</div>
@@ -855,7 +933,7 @@
       </div>
     </section>
 
-    <!-- 3. 새가족 -->
+    <!-- ==================== [탭 3: 새가족 현황 및 양육 진행] ==================== -->
     <section id="tab-newcomers" class="tab-panel">
       <div class="card">
         <div class="card-header">
@@ -869,8 +947,9 @@
       </div>
     </section>
 
-    <!-- 4. 소식 · 주보 · 광고 · 업데이트 노트 -->
+    <!-- ==================== [탭 4: 주간 주보 · 자유 광고 · 업데이트 노트] ==================== -->
     <section id="tab-news" class="tab-panel">
+      <!-- 주간 주보 카드 (리더십 삭제 기능 연동 대상) -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">📖 주간 주보</div>
@@ -879,6 +958,7 @@
         <div id="bulletinsList"></div>
       </div>
 
+      <!-- 청년부 자유 광고 -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">📢 청년부 자유 광고</div>
@@ -890,6 +970,7 @@
         <div class="grid-2" id="adsGrid"></div>
       </div>
 
+      <!-- 포털 업데이트 노트 -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">🔄 포털 업데이트 노트</div>
@@ -899,7 +980,7 @@
       </div>
     </section>
 
-    <!-- 5. 기도 · 번개 -->
+    <!-- ==================== [탭 5: 소소한 번개모임 및 주간 중보기도] ==================== -->
     <section id="tab-prayer" class="tab-panel">
       <div class="card">
         <div class="card-header">
@@ -918,7 +999,7 @@
       </div>
     </section>
 
-    <!-- 9. 바로가기 탭 -->
+    <!-- ==================== [탭 6: 유용한 사이트 바로가기] ==================== -->
     <section id="tab-links" class="tab-panel">
       <div class="card">
         <div class="card-header">
@@ -932,13 +1013,14 @@
       </div>
     </section>
 
-    <!-- 6. 놀이터 -->
+    <!-- ==================== [탭 7: 놀이터 (목장별 게임 · 전체 미니게임)] ==================== -->
     <section id="tab-playground" class="tab-panel">
       <div style="display:flex; gap:8px; margin-bottom:12px;">
         <button class="btn btn-primary" id="pgTabGroupBtn" style="flex:1;" onclick="switchPlaygroundMode('group')">🏠 목장별 게임</button>
         <button class="btn btn-outline" id="pgTabAllBtn" style="flex:1;" onclick="switchPlaygroundMode('all')">🧸 전체 게임 (장난감 상자)</button>
       </div>
 
+      <!-- 목장별 게임 (원판 룰렛 · 제비뽑기 · 발표순서 섞기) -->
       <div id="pg-group" class="card">
         <div class="card-title" style="margin-bottom:10px;">🎲 우리 목장 순서 · 벌칙 · 대표기도 정하기</div>
         <label class="field-label">목장 선택 (활동 인원 자동 연동)</label>
@@ -955,6 +1037,7 @@
         <div id="pgGroupGameArea"></div>
       </div>
 
+      <!-- 전체 미니게임 (청년 워들 · 블라인드 스톱워치 · 번개 반응속도 · 시한폭탄) -->
       <div id="pg-all" style="display:none;">
         <div class="filter-pills">
           <button class="pill active" onclick="selectToyGame('wordle', this)">🧩 청년 워들</button>
@@ -963,6 +1046,7 @@
           <button class="pill" onclick="selectToyGame('bomb', this)">💣 시한폭탄 돌리기</button>
         </div>
 
+        <!-- 미니게임 1: 비전마을 청년 워들 -->
         <div id="toy-wordle" class="card">
           <div class="card-header">
             <div class="card-title">🧩 비전마을 청년 워들</div>
@@ -986,6 +1070,7 @@
           <div id="wordleResultMsg" style="margin-top:10px; font-weight:800;"></div>
         </div>
 
+        <!-- 미니게임 2: 눈감고 목표 시간 맞추기 -->
         <div id="toy-stopwatch" class="card" style="display:none;">
           <div class="card-title" style="margin-bottom:8px;">⏱️ 눈감고 목표 시간 맞추기</div>
           <div style="display:flex; gap:6px; margin-bottom:10px;">
@@ -999,6 +1084,7 @@
           </div>
         </div>
 
+        <!-- 미니게임 3: 번개 반응속도 테스트 -->
         <div id="toy-reaction" class="card" style="display:none;">
           <div class="card-title" style="margin-bottom:8px;">⚡ 번개 반응속도 테스트</div>
           <div class="big-game-pad" id="rxPad" onclick="handleReactionClick()" style="background:#fee2e2; border-color:#ef4444;">
@@ -1007,6 +1093,7 @@
           </div>
         </div>
 
+        <!-- 미니게임 4: 시한폭탄 돌리기 -->
         <div id="toy-bomb" class="card" style="display:none;">
           <div class="card-header">
             <div class="card-title">💣 시한폭탄 돌리기 (한 폰 공용)</div>
@@ -1019,8 +1106,9 @@
       </div>
     </section>
 
-    <!-- 7. 🔒 리더십 전용 탭 -->
+    <!-- ==================== [탭 8: 리더십 전용 관리 탭] ==================== -->
     <section id="tab-leader" class="tab-panel">
+      <!-- 1) 주일 예배 출결 브리핑 -->
       <div class="card" style="border-left:4px solid var(--primary);">
         <div class="card-header">
           <div class="card-title">📊 주일 예배 출결 브리핑 <span class="badge b-blue" style="font-size:10.5px;">최근 3개월 보관</span></div>
@@ -1030,6 +1118,7 @@
         <div id="attReportNamesBox" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);"></div>
       </div>
 
+      <!-- 2) 목양 현황 & 관심 필요(S3·S4) 통계 -->
       <div class="card" style="border-left:4px solid var(--leader);">
         <div class="card-header">
           <div class="card-title">🧭 목양 현황 & 관심 필요(S3·S4) 통계</div>
@@ -1042,7 +1131,7 @@
         </div>
       </div>
 
-      <!-- 명단·목장 개편·생일 표 형태 일괄 수정 카드 -->
+      <!-- 3) 명단 · 내년 목장 개편 · 생일 일괄 수정 표 -->
       <div class="card" style="border-left:4px solid var(--accent);">
         <div class="card-header">
           <div class="card-title">📊 명단 · 내년 목장 개편 · 생일 일괄 수정</div>
@@ -1083,6 +1172,7 @@
         </div>
       </div>
 
+      <!-- 4) 상담 · 심방 요청 및 진행 현황 -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">🙏 상담 · 심방 요청 및 진행 현황</div>
@@ -1091,6 +1181,7 @@
         <div id="visitationsList"></div>
       </div>
 
+      <!-- 5) 담당 목사님 · 리더십 회의록 & 사역 노트 -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">📝 담당 목사님 · 리더십 회의록 & 사역 노트</div>
@@ -1099,7 +1190,7 @@
         <div id="leaderNotesList"></div>
       </div>
 
-      <!-- 리더십 전용 익명건의함 관리 카드 -->
+      <!-- 6) 리더십 전용 익명건의함 관리 -->
       <div class="card" style="border-left:4px solid var(--primary);">
         <div class="card-header">
           <div class="card-title">
@@ -1116,32 +1207,23 @@
           </select>
         </div>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.5;">
-          • <strong>🙏 목사님께</strong>는 담당목사님만 열람하며 수동 삭제 전까지 영구 보관됩니다. (<strong>📝 노트에 추가</strong> 지원)<br>
-          • <strong>🛠️ 사이트 개선</strong>은 관리자만 열람하며, 완료(반영/미반영) 내역은 그룹별 최신 5건까지 유지됩니다.
+          - <strong>🙏 목사님께</strong>는 담당목사님만 열람하며 수동 삭제 전까지 영구 보관됩니다. (<strong>📝 노트에 추가</strong> 지원)<br>
+          - <strong>🛠️ 사이트 개선</strong>은 관리자만 열람하며, 완료(반영/미반영) 내역은 그룹별 최신 5건까지 유지됩니다.
         </p>
         <div id="leaderSuggestionsList"></div>
       </div>
     </section>
   </main>
 
+  <!-- ==================== [하단 푸터] ==================== -->
   <footer>
     비전마을 청년부 통합 포털 · <span id="footerVersion">v2.2.0</span><br>
     함께 세워가는 믿음의 공동체
   </footer>
 
-  <!-- ==================== 모달 영역 ==================== -->
-  <!-- 10. 실제 앱 설치(.apk) 및 아이폰(iOS) 설치 안내 모달 -->
-  <div id="appInstallModal" class="modal-backdrop">
-    <div class="modal-box">
-      <div class="modal-head">
-        <h3>📲 비전마을 앱으로 설치하기</h3>
-        <button class="icon-btn" onclick="closeModal('appInstallModal')">✕</button>
-      </div>
-      <div id="appInstallDynamicContent" style="font-size:13.5px; line-height:1.6;"></div>
-    </div>
-  </div>
+  <!-- ==================== [팝업 모달 영역] ==================== -->
 
-  <!-- 익명건의함 작성 및 수정 모달 -->
+  <!-- [모달 1] 익명건의함 작성 및 수정 -->
   <div id="suggestionModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1167,6 +1249,7 @@
     </div>
   </div>
 
+  <!-- [모달 2] 비전마을 종합 설정 (권한 인증 · 비밀번호 변경 · 기기 맞춤 설정 · 테마) -->
   <div id="settingsModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1174,6 +1257,7 @@
         <button class="icon-btn" onclick="closeModal('settingsModal')">✕</button>
       </div>
 
+      <!-- 권한 인증 및 비밀번호 관리 -->
       <div style="margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border);">
         <div style="font-weight:800; margin-bottom:8px;">🔐 권한 인증 및 비밀번호 관리</div>
         <div id="authLoggedOutBox">
@@ -1203,6 +1287,7 @@
         </div>
       </div>
 
+      <!-- 내 화면 맞춤 설정 (기기 로컬 저장) -->
       <div style="margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border);">
         <div style="font-weight:800; margin-bottom:8px;">🎨 내 화면 맞춤 설정 (기기 저장)</div>
         <label class="field-label">내 소속 목장 즐겨찾기 (명단·게임 자동 선택)</label>
@@ -1249,15 +1334,15 @@
           </div>
         </div>
 
-        <!-- 글자 크기 전환 버튼 (기존 기능 유지) -->
+        <!-- 글자 크기 전환 버튼 -->
         <div style="display:flex; gap:8px; margin-top:4px;">
           <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleFontSize()">🔠 글자크기 전환</button>
         </div>
       </div>
-      
+
+      <!-- 관리자 데이터 정리 및 시스템 버전 정보 -->
       <div>
-        <div style="font-weight:800; margin-bottom:8px;">📖 도움말 및 시스템 정보</div>
-        <button class="btn btn-outline btn-sm" style="width:100%; margin-bottom:8px;" onclick="closeModal('settingsModal'); openModal('guideModal');">❓ 사이트 이용 안내 & 권한 표 보기</button>
+        <div style="font-weight:800; margin-bottom:8px;">🛠️ 시스템 관리 및 버전 정보</div>
         <div id="adminCleanupBox" style="display:none; margin-top:8px;">
           <button class="btn btn-outline btn-sm" style="width:100%; border-color:var(--warning); color:#d97706;" onclick="runAdminCleanup()">🧹 기간 만료 데이터 일괄 정리 (출결 3개월·기도 7일·마감 광고)</button>
         </div>
@@ -1268,32 +1353,7 @@
     </div>
   </div>
 
-  <div id="guideModal" class="modal-backdrop">
-    <div class="modal-box">
-      <div class="modal-head">
-        <h3>❓ 비전마을 포털 이용 및 권한 안내</h3>
-        <button class="icon-btn" onclick="closeModal('guideModal')">✕</button>
-      </div>
-      <div style="font-size:13.5px; line-height:1.6;">
-        <p style="margin-bottom:10px;">비전마을 포털은 개인정보를 안전하게 보호하기 위해 <strong>역할별 3단계 권한 체계</strong>로 운영됩니다.</p>
-        <div style="background:var(--surface-sub); padding:12px; border-radius:12px; margin-bottom:10px;">
-          <strong>1️⃣ 일반 청년 (로그인 불필요)</strong><br>
-          - 활동 목원 편성표(목자·준목자 카드 색상 구분), 달력(생일·일정·주보), 새가족 진행 현황, 유용한 링크 바로가기 열람<br>
-          - 번개모임 개설/참여, 기도제목 나눔, 청년부 자유 광고 등록(일정 자동 연동), 놀이터 게임
-        </div>
-        <div style="background:var(--surface-sub); padding:12px; border-radius:12px; margin-bottom:10px;">
-          <strong>2️⃣ 준목자 · MD (2단계 인증)</strong><br>
-          - 청년 연락처 및 목양 상태(S1~S4 측면 색상) 열람, 명단 추가/수정(동명이인 A·B 자동 구분), 새가족 만남 횟수 체크 및 수료 처리, 일반 일정·바로가기 등록
-        </div>
-        <div style="background:var(--leader-soft); padding:12px; border-radius:12px;">
-          <strong>3️⃣ 목자 · 디렉터 · 담당목사 (3단계 및 리더십 인증)</strong><br>
-          - 주일 예배 출결 체크(일요일 18:00 자동 마감)<br>
-          - <strong>🔒 리더십노트 탭</strong> 개방: 주일 출결 브리핑(최근 3개월), S3·S4 목양 통계, 상담·심방 요청 및 회의록(일정 자동 추출·등록) 관리
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <!-- [모달 3] 청년 정보 등록 및 수정 -->
   <div id="memberModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1347,6 +1407,7 @@
     </div>
   </div>
 
+  <!-- [모달 4] 새 일정 등록 -->
   <div id="scheduleModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1378,6 +1439,7 @@
     </div>
   </div>
 
+  <!-- [모달 5] 새가족 등록 -->
   <div id="newcomerModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1394,6 +1456,7 @@
     </div>
   </div>
 
+  <!-- [모달 6] 주간 주보 업로드 -->
   <div id="bulletinModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1410,7 +1473,7 @@
     </div>
   </div>
 
-  <!-- 2. 광고 모달 (다회차 일정 자동 연동 + 문의처 추가) -->
+  <!-- [모달 7] 청년부 자유 광고 등록 (다회차 달력 연동 및 문의처 포함) -->
   <div id="adModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1428,7 +1491,7 @@
       <label class="field-label">내용 *</label>
       <textarea id="adContent" rows="3" placeholder="상세 안내 내용을 적어주세요."></textarea>
 
-      <!-- 다회차 달력 연동 입력 영역 -->
+      <!-- 다회차 달력 자동 연동 입력 -->
       <div style="background:var(--primary-soft); padding:10px 12px; border-radius:10px; margin-bottom:10px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
           <span style="font-size:12.5px; font-weight:800; color:var(--primary);">📅 달력 자동 연동 일정 (다회차 가능)</span>
@@ -1468,6 +1531,7 @@
     </div>
   </div>
 
+  <!-- [모달 8] 포털 업데이트 노트 작성 -->
   <div id="updateModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1484,7 +1548,7 @@
     </div>
   </div>
 
-  <!-- 11. 번개모임 개설 모달 (정확한 날짜+시간 조합 지원) -->
+  <!-- [모달 9] 번개모임 개설 (정확한 날짜+시간 조합 지원) -->
   <div id="flashCreateModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1521,7 +1585,7 @@
     </div>
   </div>
 
-  <!-- 9. 바로가기 등록 모달 -->
+  <!-- [모달 10] 바로가기 링크 추가 -->
   <div id="linkModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1545,6 +1609,7 @@
     </div>
   </div>
 
+  <!-- [모달 11] 중보기도 나누기 -->
   <div id="prayerModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1559,6 +1624,7 @@
     </div>
   </div>
 
+  <!-- [모달 12] 상담 · 심방 요청 등록 -->
   <div id="visitationModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-head">
@@ -1581,7 +1647,7 @@
     </div>
   </div>
 
-  <!-- 3. 풀스크린 리더십 회의록 & 노트 에디터 -->
+  <!-- [모달 13] 풀스크린 리더십 회의록 & 사역 노트 에디터 -->
   <div id="leaderNoteModal" class="modal-backdrop fullscreen">
     <div class="modal-box">
       <div class="fullscreen-inner">
@@ -1633,7 +1699,7 @@
     </div>
   </div>
 
-  <!-- 12. 회의록 내 일정 자동 추출 · 인라인 수정 · 달력 일괄 등록 모달 -->
+  <!-- [모달 14] 회의록 내 일정 자동 추출 · 인라인 수정 · 달력 일괄 등록 -->
   <div id="extractedScheduleModal" class="modal-backdrop">
     <div class="modal-box" style="max-width:600px;">
       <div class="modal-head">
@@ -1654,8 +1720,9 @@
     </div>
   </div>
 
-  <!-- Firebase v10 Modular SDK -->
+  <!-- ==================== [JavaScript: Firebase v10 Modular SDK] ==================== -->
   <script type="module">
+    /* ==================== [JS 1. Firebase 및 외부 API 설정] ==================== */
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import {
       getFirestore, collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, query, where
@@ -1672,8 +1739,10 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    // Google Apps Script 이미지 업로드 엔드포인트
     const GAS_IMAGE_URL = 'https://script.google.com/macros/s/AKfycbwTxyn39zCE35hM2yaZpN8udZ3RrIiMXQXht66cMlsPRVbhOz8RyF5gGimCUR8YCZej/exec';
 
+    /* ==================== [JS 2. 전역 상태(STATE) 및 기기 자동 로그인 복구] ==================== */
     const initialSavedPw = sessionStorage.getItem('vv_pw') || getSavedLoginPasswordFromDevice() || '';
     if (initialSavedPw) {
       sessionStorage.setItem('vv_pw', initialSavedPw);
@@ -1703,16 +1772,17 @@
       selectedGroupFilter: localStorage.getItem('vv_pref_group') || '전체'
     };
 
-    // 10. 서비스 워커 등록 (PWA 설치 지원)
+    // PWA 오프라인/홈 화면 설치 지원을 위한 서비스 워커 등록
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 
+    // 상단 로딩 프로그레스 바 제어
     function setLoading(flag) {
       document.getElementById('loadingBar').classList.toggle('active', flag);
     }
-
-    // ==================== 기기 비밀번호 저장(자동 로그인) 헬퍼 ====================
+    
+    /* ==================== [JS 3. 기기 비밀번호 저장(자동 로그인) 헬퍼] ==================== */
     const SAVED_LOGIN_STORAGE_KEY = 'vv_saved_login_token_v1';
 
     function saveLoginPasswordToDevice(password) {
@@ -1739,6 +1809,7 @@
       } catch (e) {}
     }
 
+    /* ==================== [JS 4. 날짜 포맷 및 실시간 만 나이 유틸리티] ==================== */
     function nowFormatted() {
       const d = new Date();
       const pad = n => String(n).padStart(2, '0');
@@ -1758,7 +1829,7 @@
       return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
     }
 
-    // 8. 생년월일(YYYY-MM-DD) 기준 실시간 만 나이 계산
+    // 생년월일(YYYY-MM-DD) 기준 실시간 만 나이 계산
     function calculateInternationalAge(birthStr) {
       const norm = normalizeYMD(birthStr);
       if (!norm || norm.length < 10) return null;
@@ -1774,6 +1845,7 @@
       return age >= 0 ? age : null;
     }
 
+    /* ==================== [JS 5. 이미지 리사이즈 및 Google Drive 다중 업로드] ==================== */
     function prepareFilePayload(file, maxWidth = 1200) {
       return new Promise((resolve, reject) => {
         const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
@@ -1822,7 +1894,7 @@
       return json.url;
     }
 
-    // 이미지URL 필드가 단일 문자열이든 JSON 배열이든 항상 배열로 변환
+    // 이미지URL 필드가 단일 문자열이든 JSON 배열이든 항상 배열로 정규화
     function parseImageUrls(rawUrl) {
       if (!rawUrl) return [];
       const str = String(rawUrl).trim();
@@ -1851,6 +1923,8 @@
       return urls;
     }
 
+    /* ==================== [JS 6. Firestore 공통 조회 및 권한 인증] ==================== */
+    // 컬렉션 전체 문서를 조회하며 문서 고유 ID(_docId)를 함께 포함
     async function fetchCol(colName) {
       try {
         const snap = await getDocs(collection(db, colName));
@@ -1861,6 +1935,7 @@
       }
     }
 
+    // 입력 비밀번호로 Permissions 컬렉션에서 직분 및 3단계 권한 판별
     async function checkAuth(pw) {
       if (!pw) return { valid: false };
       const q = query(collection(db, 'Permissions'), where('비밀번호', '==', String(pw).trim()));
@@ -1886,7 +1961,8 @@
       };
     }
 
-    // 1. 주일 출결 3개월(90일) 보관 기준 날짜 계산
+    /* ==================== [JS 7. 전체 데이터 동기화(loadAllData) 및 권한별 UI 분기] ==================== */
+    // 주일 출결 3개월(90일) 보관 기준 날짜 계산
     function getNinetyDaysAgoStr() {
       const d = new Date();
       d.setDate(d.getDate() - 90);
@@ -1894,6 +1970,7 @@
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     }
 
+    // 앱 최초 진입 및 새로고침 시 모든 컬렉션 병렬 로드 & 렌더링
     window.loadAllData = async function () {
       // 브라우저 재시작 등으로 sessionStorage가 비어 있으면 localStorage에 저장된 비밀번호 자동 복원
       if (!STATE.pw) {
@@ -1926,7 +2003,8 @@
           sessionStorage.removeItem('vv_pw');
           clearSavedLoginPasswordFromDevice();
         }
-        
+
+        // 활동 청년 수(S1·S2·S3·입대) 및 일반 공개용 명단(Lv.2 미만 연락처 마스킹)
         STATE.allMembersRaw = allMembers;
         STATE.activeMemberCount = allMembers.filter(m => ['S1', 'S2', 'S3', '입대'].includes(String(m['상태']).trim())).length;
 
@@ -1941,6 +2019,7 @@
         STATE.schedules = schedules.filter(s => s['공개범위'] === '리더십전용' ? (auth.valid && auth.isLeader) : true);
         STATE.newcomers = newcomers.filter(n => n['상태'] !== '수료');
 
+        // 최근 7일 이내 기도제목만 필터링
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         STATE.prayers = prayers
@@ -1957,17 +2036,15 @@
 
         STATE.links = links.sort((a, b) => String(a['등록일시'] || '').localeCompare(String(b['등록일시'] || '')));
         STATE.updates = updates.sort((a, b) => String(b['작성일시'] || '').localeCompare(String(a['작성일시'] || '')));
+        STATE.suggestions = (suggestions || []).sort((a, b) => String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || '')));
 
-        STATE.suggestions = (suggestions || []).sort((a, b) =>
-        String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || ''))
-        );
-
+        // 최신 배포 버전 표기 동기화
         const ver = STATE.updates.length ? STATE.updates[0]['버전'] : 'v2.2.0';
         document.getElementById('headerVersion').textContent = ver;
         document.getElementById('footerVersion').textContent = ver;
         document.getElementById('settingsVersionText').textContent = ver;
 
-        // 1. 출결 기록 최근 3개월(90일) 이내만 로드 + 리더십 인증 시 백그라운드 만료 정리
+        // 리더십 권한 인증 시 출결(최근 3개월)·심방·회의록 추가 로드 및 만료 출결 자동 정리
         if (auth.valid && auth.isLeader) {
           const [attRecs, visitations, leaderNotes] = await Promise.all([
             fetchCol('Attendance'),
@@ -1979,7 +2056,6 @@
           for (const rec of attRecs) {
             const dStr = normalizeYMD(rec['날짜']);
             if (dStr && dStr < cutoff90) {
-              // 3개월 경과 출결 백그라운드 자동 만료 삭제
               deleteDoc(doc(db, 'Attendance', rec['_docId'])).catch(() => {});
             } else {
               validAtt.push(rec);
@@ -1990,6 +2066,7 @@
           STATE.leaderNotes = leaderNotes.sort((a, b) => String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || '')));
         }
 
+        // 전체 UI 렌더링 실행
         applyRoleUI();
         updateScheduleRedDot();
         populateGroupSelects();
@@ -2005,12 +2082,14 @@
         initYouthWordle();
         initBombGame();
         if (auth.valid && auth.isLeader) renderLeadershipTab();
-        renderLeaderSuggestions(); updateLeaderTabAlertBadge();
+        renderLeaderSuggestions();
+        updateLeaderTabAlertBadge();
       } finally {
         setLoading(false);
       }
     };
 
+    // 현재 로그인 권한(Lv.1~3 / 리더십 / 관리자)에 따라 버튼 및 탭 노출 제어
     function applyRoleUI() {
       const a = STATE.auth;
       const roleBadge = document.getElementById('headerRoleBadge');
@@ -2042,7 +2121,7 @@
       document.getElementById('adminCleanupBox').style.display = (a.valid && a.isPastorOrAdmin) ? 'block' : 'none';
     }
 
-    // 6. 새 일정 등록 시 '일정·달력' 탭 빨간 점 알림 체크 & 해제
+    /* ==================== [JS 8. 상단 탭 전환 및 새 일정 알림 도트] ==================== */
     function updateScheduleRedDot() {
       const dot = document.getElementById('calNewDot');
       if (!dot) return;
@@ -2073,6 +2152,7 @@
       }
     };
 
+    /* ==================== [JS 9. 팝업 모달 열기/닫기] ==================== */
     window.openModal = function (id) {
       const defName = localStorage.getItem('vv_pref_name') || '';
       if (id === 'adModal') document.getElementById('adAuthor').value = defName;
@@ -2080,51 +2160,7 @@
     };
     window.closeModal = function (id) { document.getElementById(id).classList.remove('open'); };
 
-    // 10. 기기별 실제 앱 설치(.apk / iOS 홈 화면 추가) 안내 모달
-    window.openAppInstallGuide = function () {
-      const ua = navigator.userAgent.toLowerCase();
-      const isIOS = /iphone|ipad|ipod/.test(ua);
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      const box = document.getElementById('appInstallDynamicContent');
-
-      if (isStandalone) {
-        box.innerHTML = `
-          <div style="background:rgba(16,185,129,0.12); padding:14px; border-radius:12px; color:#059669; font-weight:700;">
-            ✅ 현재 비전마을 전용 앱 모드로 실행 중입니다!
-          </div>
-          <p style="margin-top:10px; color:var(--text-muted);">새 기능이나 공지가 업데이트되면 별도 재설치 없이 앱을 열 때마다 자동으로 최신 버전이 반영됩니다.</p>
-        `;
-      } else if (isIOS) {
-        box.innerHTML = `
-          <div style="background:var(--primary-soft); padding:14px; border-radius:12px; margin-bottom:10px;">
-            <strong style="color:var(--primary);">🍎 아이폰(iOS) 전용 앱 모드 설치 방법</strong><br>
-            애플 정책상 스토어 외 설치 파일(.ipa) 대신 Safari의 웹앱 기능을 통해 주소창 없는 실제 앱과 동일하게 설치할 수 있습니다.
-          </div>
-          <ol style="padding-left:18px; line-height:1.8;">
-            <li>반드시 <strong>Safari(사파리)</strong> 브라우저로 이 페이지를 열어주세요.</li>
-            <li>화면 하단 가운데 <strong>공유 버튼(□↑)</strong>을 누릅니다.</li>
-            <li>메뉴를 아래로 내려 <strong>[홈 화면에 추가]</strong>를 선택합니다.</li>
-            <li>우측 상단 <strong>[추가]</strong>를 누르면 바탕화면에 '비전마을' 앱이 설치됩니다!</li>
-          </ol>
-        `;
-      } else {
-        const apkLink = STATE.links.find(l => String(l['URL'] || '').toLowerCase().endsWith('.apk') || String(l['제목']).includes('APK'));
-        box.innerHTML = `
-          <div style="background:var(--primary-soft); padding:14px; border-radius:12px; margin-bottom:10px;">
-            <strong style="color:var(--primary);">🤖 갤럭시(안드로이드) 실제 앱 설치 안내</strong><br>
-            플레이스토어 없이도 스마트폰 앱 목록에 등록되는 실제 앱 형태로 설치할 수 있습니다.
-          </div>
-          ${apkLink ? `<a href="${apkLink['URL']}" target="_blank" class="btn btn-primary" style="width:100%; margin-bottom:12px;">📥 안드로이드 설치 파일(.apk) 직접 다운로드</a>` : ''}
-          <div style="background:var(--surface-sub); padding:12px; border-radius:10px; font-size:13px;">
-            <strong>⚡ 브라우저 즉시 앱 설치 (추천)</strong><br>
-            크롬 또는 삼성 인터넷 우측 상단 <strong>메뉴(⋮) → [앱 설치] 또는 [현재 페이지 추가 → 앱 화면]</strong>을 누르면 즉시 전용 앱으로 설치됩니다.
-          </div>
-        `;
-      }
-      openModal('appInstallModal');
-    };
-
-    // 인증 & 비밀번호 변경
+    /* ==================== [JS 10. 권한 인증 · 비밀번호 변경 · 기기 맞춤 설정] ==================== */
     window.handleLogin = async function () {
       const pw = document.getElementById('loginPwInput').value.trim();
       if (!pw) return alert('비밀번호를 입력해 주세요.');
@@ -2191,6 +2227,11 @@
       await updateDoc(doc(db, 'Permissions', STATE.auth.docId), { '비밀번호': newPw });
       STATE.pw = newPw;
       sessionStorage.setItem('vv_pw', newPw);
+      // 기기 자동 로그인이 저장되어 있던 경우 새 비밀번호로 동기화
+      if (getSavedLoginPasswordFromDevice()) {
+        saveLoginPasswordToDevice(newPw);
+      }
+
       msgEl.style.color = 'var(--success)';
       msgEl.textContent = '비밀번호가 안전하게 변경되었습니다!';
       document.getElementById('chgPwName').value = '';
@@ -2206,7 +2247,7 @@
       renderMembers();
     };
 
-    // ==================== 5종 테마 전환 및 기기 저장 ====================
+    /* ==================== [JS 11. 5종 화면 테마 및 글자 크기 제어] ==================== */
     const APP_THEMES = ['light', 'dark', 'sepia', 'forest', 'sunset'];
 
     window.setAppTheme = function (themeName) {
@@ -2229,13 +2270,6 @@
       });
     }
 
-    // 상단 헤더 등에 기존 toggleDarkMode() 버튼이 남아 있어도 5종 테마가 순서대로 전환되도록 유지
-    window.toggleDarkMode = function () {
-      const current = localStorage.getItem('vv_theme') || (document.body.classList.contains('dark') ? 'dark' : 'light');
-      const nextIdx = (APP_THEMES.indexOf(current) + 1) % APP_THEMES.length;
-      setAppTheme(APP_THEMES[nextIdx]);
-    };
-
     // 페이지 로드 시 저장된 테마 즉시 복원 (기존 vv_dark 기록도 자동 호환)
     (function initSavedTheme() {
       let savedTheme = localStorage.getItem('vv_theme');
@@ -2250,6 +2284,7 @@
       localStorage.setItem('vv_font_lg', document.body.classList.contains('font-large') ? '1' : '0');
     };
 
+    /* ==================== [JS 12. 관리자 만료 데이터 일괄 정리] ==================== */
     window.runAdminCleanup = async function () {
       if (!confirm('3개월(90일) 지난 출결 기록, 7일 지난 기도제목, 마감일이 지난 광고를 일괄 정리할까요?')) return;
       setLoading(true);
@@ -2263,6 +2298,7 @@
         if (dt && dt < cutoff90) { await deleteDoc(d.ref); count++; }
       }
 
+      // 2. 기도제목 7일 만료 삭제
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const pSnap = await getDocs(collection(db, 'Prayers'));
@@ -2270,18 +2306,21 @@
         const dt = d.data()['등록일시'];
         if (dt && new Date(dt.replace(' ', 'T')) < sevenDaysAgo) { await deleteDoc(d.ref); count++; }
       }
+
+      // 3. 마감일 지난 광고 삭제
       const todayStr = todayFormatted();
       const aSnap = await getDocs(collection(db, 'Ads'));
       for (const d of aSnap.docs) {
         const dl = d.data()['마감일'];
         if (dl && String(dl) < todayStr) { await deleteDoc(d.ref); count++; }
       }
+
       setLoading(false);
       alert(`만료된 데이터 ${count}건이 일괄 정리되었습니다.`);
       await loadAllData();
     };
 
-    // 4. 홈 대시보드 (새가족 · 복귀 청년 환영 배너 포함)
+    /* ==================== [JS 13. 홈 대시보드 렌더링] ==================== */
     function renderHome() {
       document.getElementById('statActiveMembers').textContent = STATE.activeMemberCount + '명';
       document.getElementById('statNewcomers').textContent = STATE.newcomers.length + '명';
@@ -2313,6 +2352,7 @@
         welcomeBanner.style.display = 'none';
       }
 
+      // 이번 달 생일자 (일자순 정렬)
       const curMonth = String(new Date().getMonth() + 1).padStart(2, '0');
       const bdays = STATE.members
         .filter(m => m['생년월일'] && String(m['생년월일']).includes(`-${curMonth}-`))
@@ -2324,7 +2364,8 @@
       document.getElementById('homeBirthdays').innerHTML = bdays.length
         ? bdays.map(b => `<span class="badge b-amber">🎂 ${b['이름']} (${b['목장']} · ${b['생년월일'].slice(5)})</span>`).join('')
         : '<span style="color:var(--text-muted); font-size:13px;">이번 달 생일자가 없습니다.</span>';
-      
+
+      // 최신 주보 및 광고 한 줄 요약
       const latestBul = STATE.bulletins[0];
       const latestAd = STATE.ads[0];
       let previewHtml = '';
@@ -2333,6 +2374,7 @@
       document.getElementById('homeNewsPreview').innerHTML = previewHtml || '<span style="color:var(--text-muted); font-size:13px;">등록된 최신 소식이 없습니다.</span>';
     }
 
+    /* ==================== [JS 14. 명단 정렬 및 목장 필터 옵션 세팅] ==================== */
     function sortMembersByRoleAndName(list) {
       const roleOrder = { '담당목사': 0, '디렉터': 1, '목자': 2, '준목자': 3, '목원': 4, '새가족': 5 };
       return [...list].sort((a, b) => {
@@ -2371,8 +2413,8 @@
       populateGroupSelects();
       renderMembers();
     };
-
-    // 5 & 8. 명단 카드 렌더링 (2줄 고정, 직분 카드 배경색 구분, 2단계 이상일 때만 S1~S4 측면바 표시, 만 나이 표기)
+    
+    /* ==================== [JS 15. 목장 명단 카드 렌더링 (2줄 고정 · 직분별 색상 · 만 나이)] ==================== */
     window.renderMembers = function () {
       const q = document.getElementById('memberSearchInput').value.trim().toLowerCase();
       const canSeeStatus = STATE.auth.valid && STATE.auth.level >= 2;
@@ -2396,12 +2438,12 @@
         const age = calculateInternationalAge(m['생년월일']);
         const ageText = age !== null ? `(만 ${age}세)` : '';
 
-        // 카드 배경색 (목자 vs 준목자)
+        // 직분별 카드 배경색 (목자 vs 준목자)
         let roleCardClass = '';
         if (['목자', '담당목사', '디렉터'].includes(m['직분'])) roleCardClass = 'role-leader';
         else if (m['직분'] === '준목자') roleCardClass = 'role-subleader';
 
-        // 2단계 이상 권한일 때만 S1~S4 측면 컬러 바 표시 (1단계 일반 모드에서는 비표시)
+        // 2단계 이상 권한일 때만 S1~S4 측면 컬러 바 표시
         const statusBarClass = canSeeStatus && m['상태'] ? `status-bar-${m['상태']}` : '';
 
         // 2줄째 핵심 정보 구성
@@ -2429,6 +2471,7 @@
       }).join('') || '<div style="color:var(--text-muted); font-size:13px;">조건에 맞는 청년이 없습니다.</div>';
     };
 
+    /* ==================== [JS 16. 청년 정보 등록 · 수정 및 동명이인 A/B 자동 구분] ==================== */
     window.openMemberModal = function (m = null) {
       document.getElementById('editMemberId').value = m ? (m['_docId'] || m['ID']) : '';
       document.getElementById('memName').value = m ? m['이름'] : '';
@@ -2447,7 +2490,6 @@
       document.getElementById('s4ReasonWrap').style.display = document.getElementById('memStatus').value === 'S4' ? 'block' : 'none';
     };
 
-    // 7. 동명이인 자동 구분(이름A, 이름B, 이름C...) 부여 로직 포함 저장
     window.submitMemberSave = async function () {
       const existingId = document.getElementById('editMemberId').value;
       let inputName = document.getElementById('memName').value.trim();
@@ -2472,7 +2514,6 @@
           if (sameNameDocs.length > 0) {
             const plainDoc = sameNameDocs.find(m => String(m['이름']).trim() === baseName);
             if (plainDoc) {
-              // 기존 등록자에게 'A' 부여
               await updateDoc(doc(db, 'Members', plainDoc['_docId']), { 이름: `${baseName}A` });
             }
             const usedSuffixes = new Set(
@@ -2516,7 +2557,7 @@
       }
     };
 
-    // 주일 출결 체크 (S1~S3)
+    /* ==================== [JS 17. 주일 출결 체크 및 미등록 방문자 입력] ==================== */
     window.toggleAttendanceMode = function (forceState) {
       const checkView = document.getElementById('attendanceCheckView');
       const listView = document.getElementById('memberListView');
@@ -2540,7 +2581,7 @@
       }
     };
 
-    // 현재 화면에 임시 보관할 미등록 방문자 배열: [{ name: '홍길동', memo: '김철수 지인' }, ...]
+    // 임시 보관용 미등록 방문자 배열: [{ name: '홍길동', memo: '김철수 지인' }, ...]
     let CURRENT_GUEST_VISITORS = [];
 
     function formatGuestDisplayLabel(g) {
@@ -2669,7 +2710,7 @@
       }
     };
     
-    // 달력
+    /* ==================== [JS 18. 공동체 달력 렌더링 및 기간 일정 연결 바] ==================== */
     window.changeMonth = function (delta) {
       STATE.calMonth += delta;
       if (STATE.calMonth < 0) { STATE.calMonth = 11; STATE.calYear--; }
@@ -2696,7 +2737,7 @@
         }
       });
 
-      // 시작일 빠른 순 -> 기간 긴 순 정렬 (라인 높이가 날짜 칸마다 흔들리지 않고 일직선으로 유지됨)
+      // 시작일 빠른 순 -> 기간 긴 순 정렬 (라인 높이가 날짜 칸마다 흔들리지 않고 일직선 유지)
       spanSchedules.sort((a, b) =>
         a._startDate.localeCompare(b._startDate) ||
         b._endDate.localeCompare(a._endDate) ||
@@ -2741,14 +2782,13 @@
                   : isEnd
                     ? 'is-end'
                     : 'is-mid';
-              // 시작일 칸 또는 매주 일요일(줄바꿈 첫 칸)에만 제목 표시
               const showLabel = isStart || dayOfWeek === 0;
               return `<div class="cal-span-bar ${isL ? 'is-leader' : ''} ${posClass}" title="${ev['제목']} (${ev._startDate} ~ ${ev._endDate})">${showLabel ? `${isL ? '🔒' : ''}${ev['제목']}` : '&nbsp;'}</div>`;
             }).join('')}
           </div>
         ` : '';
 
-        // 1일 일정 / 생일 / 주보 -> 기존 칩 & 점 표시
+        // 1일 일정 / 생일 / 주보 -> 기존 칩 & 모바일 점 표시
         let chipsHtml = '', dotsHtml = '';
         bdays.forEach(b => { chipsHtml += `<div class="cal-chip chip-bday">🎂 ${b['이름']}</div>`; dotsHtml += `<span class="dot" style="background:#f59e0b;"></span>`; });
         singleSchedules.forEach(ev => {
@@ -2769,7 +2809,8 @@
       }
       document.getElementById('calendarGrid').innerHTML = html;
     }
-    
+
+    /* ==================== [JS 19. 달력 새 일정 등록] ==================== */
     window.openScheduleModal = function () {
       const dateEl = document.getElementById('schDate');
       if (dateEl) dateEl.value = STATE.selectedDate || todayFormatted();
@@ -2824,6 +2865,7 @@
       }
     };
 
+    /* ==================== [JS 20. 날짜 선택 상세 조회 및 D-day 카톡 공유 복사] ==================== */
     function calcDDayLabel(targetDateStr) {
       const [ty, tm, td] = normalizeYMD(targetDateStr).split('-').map(Number);
       const target = new Date(ty, tm - 1, td);
@@ -2961,8 +3003,8 @@
         prompt('아래 내용을 복사해서 공유해 주세요:', text);
       }
     };
-
-    // 새가족
+    
+    /* ==================== [JS 21. 새가족 현황 렌더링 및 정착 횟수 · 수료 관리] ==================== */
     function renderNewcomers() {
       const canManage = STATE.auth.valid && STATE.auth.level >= 2;
       document.getElementById('newcomersGrid').innerHTML = STATE.newcomers.map(n => {
@@ -3013,13 +3055,17 @@
       await loadAllData();
     };
 
-    // 소식 · 주보 · 광고(다회차 연동 & 문의처) · 업데이트 노트
+    /* ==================== [JS 22. 소식 · 주보(삭제 포함) · 자유 광고 · 업데이트 노트 렌더링] ==================== */
     function renderNews() {
+      const canManageBulletin = STATE.auth.valid && STATE.auth.isLeader;
+
       document.getElementById('bulletinsList').innerHTML = STATE.bulletins.slice(0, 4).map(b => {
         const urls = parseImageUrls(b['이미지URL']);
         const btnsHtml = urls.map((u, idx) =>
           `<a href="${u}" target="_blank" class="btn btn-outline btn-sm">${urls.length > 1 ? `${idx + 1}면 열기 ↗` : '주보 열기 ↗'}</a>`
         ).join(' ');
+        const docId = b['_docId'] || b['주보ID'];
+        const safeTitle = String(b['제목'] || '').replace(/'/g, "\\'");
 
         return `
           <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); gap:8px; flex-wrap:wrap;">
@@ -3027,11 +3073,14 @@
               <strong>${b['제목']}</strong>
               <div style="font-size:12px; color:var(--text-muted);">${b['예배날짜']} · 등록: ${b['등록자']}</div>
             </div>
-            <div style="display:flex; gap:4px; flex-wrap:wrap;">${btnsHtml}</div>
+            <div style="display:flex; gap:4px; flex-wrap:wrap; align-items:center;">
+              ${btnsHtml}
+              ${canManageBulletin ? `<button type="button" class="btn btn-danger btn-sm" onclick="deleteBulletin('${docId}', '${safeTitle}')">삭제</button>` : ''}
+            </div>
           </div>
         `;
       }).join('') || '<div style="color:var(--text-muted); font-size:13px;">등록된 주보가 없습니다.</div>';
-      
+
       document.getElementById('adsGrid').innerHTML = STATE.ads.map(a => {
         let schList = [];
         try { schList = JSON.parse(a['일정목록JSON'] || '[]'); } catch (e) {}
@@ -3084,30 +3133,7 @@
       document.getElementById('updatesContainer').innerHTML = updHtml;
     }
 
-    // 2. 광고 모달 열기 및 다회차 일정 행 관리
-    window.openAdModal = function () {
-      document.getElementById('adAuthor').value = localStorage.getItem('vv_pref_name') || '';
-      document.getElementById('adContactName').value = localStorage.getItem('vv_pref_name') || '';
-      document.getElementById('adContactPhone').value = '';
-      document.getElementById('adScheduleRows').innerHTML = '';
-      addAdScheduleRow();
-      openModal('adModal');
-    };
-
-    window.addAdScheduleRow = function () {
-      const container = document.getElementById('adScheduleRows');
-      const row = document.createElement('div');
-      row.className = 'ad-sch-row';
-      row.style.cssText = 'display:grid; grid-template-columns:1.2fr 1fr 1fr auto; gap:4px; margin-bottom:6px; align-items:center;';
-      row.innerHTML = `
-        <input type="date" class="ad-sch-date" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
-        <input type="text" class="ad-sch-time" placeholder="시간(예: 19시)" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
-        <input type="text" class="ad-sch-loc" placeholder="장소" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
-        <button type="button" class="icon-btn" style="padding:5px 8px;" onclick="this.parentElement.remove()">✕</button>
-      `;
-      container.appendChild(row);
-    };
-
+    /* ==================== [JS 23. 주간 주보 업로드 및 삭제] ==================== */
     window.submitBulletin = async function () {
       const date = document.getElementById('bulDate').value;
       const title = document.getElementById('bulTitle').value.trim();
@@ -3132,6 +3158,50 @@
       } finally {
         setLoading(false);
       }
+    };
+
+    // 리더십 권한 전용 주보 삭제 (포털 목록 및 달력 🔴 주보 표시 즉시 반영)
+    window.deleteBulletin = async function (docId, title) {
+      if (!(STATE.auth.valid && STATE.auth.isLeader)) {
+        return alert('리더십 권한이 필요합니다.');
+      }
+      if (!docId) return alert('삭제할 주보 ID를 찾을 수 없습니다.');
+      if (!confirm(`[${title}] 주보를 삭제할까요?\n삭제 후에는 복구할 수 없으며 달력의 주보 표시도 함께 사라집니다.`)) return;
+
+      setLoading(true);
+      try {
+        await deleteDoc(doc(db, 'Bulletins', docId));
+        alert('주보가 삭제되었습니다.');
+        await loadAllData();
+      } catch (e) {
+        alert('주보 삭제 중 오류가 발생했습니다: ' + e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    /* ==================== [JS 24. 청년부 자유 광고 · 다회차 일정 연동 · 업데이트 노트] ==================== */
+    window.openAdModal = function () {
+      document.getElementById('adAuthor').value = localStorage.getItem('vv_pref_name') || '';
+      document.getElementById('adContactName').value = localStorage.getItem('vv_pref_name') || '';
+      document.getElementById('adContactPhone').value = '';
+      document.getElementById('adScheduleRows').innerHTML = '';
+      addAdScheduleRow();
+      openModal('adModal');
+    };
+
+    window.addAdScheduleRow = function () {
+      const container = document.getElementById('adScheduleRows');
+      const row = document.createElement('div');
+      row.className = 'ad-sch-row';
+      row.style.cssText = 'display:grid; grid-template-columns:1.2fr 1fr 1fr auto; gap:4px; margin-bottom:6px; align-items:center;';
+      row.innerHTML = `
+        <input type="date" class="ad-sch-date" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
+        <input type="text" class="ad-sch-time" placeholder="시간(예: 19시)" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
+        <input type="text" class="ad-sch-loc" placeholder="장소" style="margin-bottom:0; padding:6px 8px; font-size:12px;" />
+        <button type="button" class="icon-btn" style="padding:5px 8px;" onclick="this.parentElement.remove()">✕</button>
+      `;
+      container.appendChild(row);
     };
 
     window.submitAd = async function () {
@@ -3169,7 +3239,7 @@
         const fileUrl = urls.length > 1 ? JSON.stringify(urls) : (urls[0] || '');
         const id = 'ADS_' + Date.now();
         const contactSummary = [contactName, contactPhone].filter(Boolean).join(' / ');
-        
+
         await setDoc(doc(db, 'Ads', id), {
           광고ID: id, 말머리: tag, 제목: title, 내용: content,
           일정목록JSON: JSON.stringify(scheduleItems),
@@ -3246,7 +3316,8 @@
       await loadAllData();
     };
 
-    // 11. 번개 모임 (날짜 경과 자동 판별, 완료 표시, 신청 방어 및 기신청 상태 표시)
+    /* ==================== [JS 25. 번개모임 · 중보기도 렌더링 및 개설 · 참여 · 초대 복사] ==================== */
+    // 번개모임 일시 경과 여부 판별
     function isFlashExpired(f) {
       if (f['마감여부'] === true || f['상태'] === '완료') return true;
       const dStr = normalizeYMD(f['모임날짜'] || '');
@@ -3412,7 +3483,7 @@
       await loadAllData();
     };
 
-    // 9. 🔗 바로가기 탭 (유튜브 빨간색 / 일반 초록색 / 확장 테마 맵)
+    /* ==================== [JS 26. 유용한 사이트 바로가기 렌더링 · 등록 · 삭제] ==================== */
     const LINK_COLOR_THEMES = {
       youtube: { className: 'link-theme-youtube', badgeClass: 'b-red', label: '▶️ 유튜브' },
       general: { className: 'link-theme-general', badgeClass: 'b-green', label: '🌐 사이트' },
@@ -3491,6 +3562,7 @@
       await loadAllData();
     };
 
+    /* ==================== [JS 27. 중보기도 등록 및 아멘 카운트] ==================== */
     window.openPrayerCreateModal = function () {
       document.getElementById('pryAuthor').value = localStorage.getItem('vv_pref_name') || '';
       openModal('prayerModal');
@@ -3511,7 +3583,7 @@
       await loadAllData();
     };
 
-    // 놀이터
+    /* ==================== [JS 28. 놀이터: 목장별 게임 (원판 룰렛 · 제비뽑기 · 발표순서)] ==================== */
     window.switchPlaygroundMode = function (mode) {
       document.getElementById('pg-group').style.display = mode === 'group' ? 'block' : 'none';
       document.getElementById('pg-all').style.display = mode === 'all' ? 'block' : 'none';
@@ -3589,6 +3661,7 @@
       `;
     };
 
+    /* ==================== [JS 29. 놀이터: 전체 미니게임 (청년 워들 · 블라인드 스톱워치 · 반응속도 · 시한폭탄)] ==================== */
     window.selectToyGame = function (toy, btn) {
       ['wordle', 'stopwatch', 'reaction', 'bomb'].forEach(t => {
         document.getElementById('toy-' + t).style.display = t === toy ? 'block' : 'none';
@@ -3728,8 +3801,8 @@
         document.getElementById('bombStatus').innerHTML = '<span style="color:var(--danger);">💥 펑!! 폭탄이 터졌습니다!</span>';
       } else { btn.classList.add('safe'); btn.textContent = '✅'; }
     };
-
-    // 리더십 전용 탭 & 3. 풀스크린 회의록 + 12. 일정 자동 추출·인라인 수정 등록
+    
+    /* ==================== [JS 30. 리더십 전용 탭 렌더링 · 출결 브리핑 · 목양 통계 · 심방 관리] ==================== */
     function renderLeadershipTab() {
       const recs = STATE.attendanceRecords || [];
       document.getElementById('attReportDateSelect').innerHTML = recs.map((r, i) => `<option value="${i}">${r['날짜']} (${r['총인원']}명)</option>`).join('');
@@ -3861,7 +3934,7 @@
       await loadAllData();
     };
 
-    // 3. 풀스크린 회의록 에디터 열기 · 임시저장 · 카톡 요약 복사
+    /* ==================== [JS 31. 풀스크린 회의록 에디터 · 자동 임시저장 · 카톡 요약 복사] ==================== */
     window.openFullscreenMeetingEditor = function () {
       const savedDraft = localStorage.getItem('vv_meeting_draft');
       if (savedDraft) {
@@ -3943,7 +4016,7 @@
       }
     };
 
-    // 12. 회의록 본문에서 날짜·시간·일정 후보 자동 추출 파서
+    /* ==================== [JS 32. 회의록 본문 내 일정 자동 추출 파서 및 달력 일괄 등록] ==================== */
     function extractSchedulesFromText(fullText) {
       const lines = fullText.split(/\n+/);
       const curYear = new Date().getFullYear();
@@ -3969,7 +4042,6 @@
             const m = Number(mdMatch[1]);
             const d = Number(mdMatch[2]);
             if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
-              // 현재 11~12월인데 1~2월 일정이 나오면 다음 해로 자동 추론
               const targetYear = (curMonth >= 11 && m <= 2) ? curYear + 1 : curYear;
               matchedDate = `${targetYear}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
               dateToken = mdMatch[0];
@@ -3978,11 +4050,9 @@
         }
 
         if (matchedDate) {
-          // 시간 추출 (오전/오후 N시, HH:MM)
           const timeMatch = line.match(/(오전|오후)?\s*\d{1,2}\s*시(\s*\d{1,2}\s*분)?|\d{1,2}:\d{2}/);
           const timeStr = timeMatch ? timeMatch[0].trim() : '';
 
-          // 날짜·요일·시간 토큰 제거 후 남은 문구를 제목 후보로 추출
           let cleanTitle = line
             .replace(dateToken, '')
             .replace(/\([월화수목금토일]\)/g, '')
@@ -3993,7 +4063,7 @@
           results.push({
             checked: true,
             date: matchedDate,
-            title: cleanTitle, // 비어있을 수 있음 -> 모달에서 직접 입력 유도
+            title: cleanTitle,
             time: timeStr,
             scope: '전체공개'
           });
@@ -4088,6 +4158,7 @@
       }
     };
 
+    /* ==================== [JS 33. 회의록 저장 및 목자 확인 체크] ==================== */
     window.submitLeaderNote = async function () {
       const title = document.getElementById('lnTitle').value.trim();
       const body = buildStructuredMeetingBody();
@@ -4133,8 +4204,7 @@
       await loadAllData();
     };
 
-    // 초기 실행
-    if (localStorage.getItem('vv_dark') === '1') document.body.classList.add('dark');
+    /* ==================== [JS 34. 앱 초기 설정 복원 및 최초 데이터 로드 · 딥링크 이동] ==================== */
     if (localStorage.getItem('vv_font_lg') === '1') document.body.classList.add('font-large');
     document.getElementById('prefName').value = localStorage.getItem('vv_pref_name') || '';
     document.getElementById('prefStartTab').value = localStorage.getItem('vv_pref_tab') || 'home';
@@ -4161,7 +4231,7 @@
       if (startTab && document.getElementById('tab-' + startTab)) switchTab(startTab);
     });
 
-    // ==================== 명단·목장 개편·생일 표 형태 일괄 수정 ====================
+    /* ==================== [JS 35. 리더십 전용: 명단 · 목장 개편 · 생일 표 형태 일괄 수정] ==================== */
     let BULK_EDITS = {}; // { docId: { 이름, 목장, 직분, 생년월일, 상태, 연락처 } }
 
     window.toggleBulkMemberEditor = function () {
@@ -4321,7 +4391,7 @@
       }
     };
 
-    // ==================== 익명건의함 시스템 (완전 구현판) ====================
+    /* ==================== [JS 36. 익명건의함 시스템 (카테고리 · 권한 필터 · 쌍방향 스레드)] ==================== */
     const SUGGESTION_TAGS = [
       {
         key: '⛪ 비전마을 공동체',
@@ -4347,7 +4417,7 @@
 
     let SELECTED_SUG_TAG = SUGGESTION_TAGS[0].key;
 
-    // 1. 기기 고유 익명 ID (개인식별 정보 미포함)
+    // 기기 고유 익명 ID (개인식별 정보 미포함)
     function getAnonymousDeviceId() {
       let devId = localStorage.getItem('vv_anon_device_id');
       if (!devId) {
@@ -4374,9 +4444,7 @@
       return true;
     }
 
-    // 개인별 미확인 알림 여부 판별:
-    // - 완료('반영됨', '미반영') 상태면 확인 여부와 무관하게 알림 자동 소멸
-    // - 미완료 상태에서는 '읽은사람목록JSON'에 현재 리더십 키가 없으면 알림 유지
+    // 개인별 미확인 알림 여부 판별
     function isSuggestionUnreadForCurrentLeader(sug) {
       if (!canCurrentLeaderViewSuggestion(sug)) return false;
       const status = String(sug['상태'] || '접수됨');
@@ -4389,7 +4457,7 @@
       return !readBy.includes(viewerKey);
     }
 
-    // 상단/하단 '🔒 리더십노트' 탭 버튼에 개인별 미확인 건의 빨간 점 알림 표시
+    // 상단 '🔒 리더십노트' 탭 버튼에 개인별 미확인 건의 빨간 점 알림 표시
     function updateLeaderTabAlertBadge() {
       const unreadCount = (STATE.suggestions || []).filter(isSuggestionUnreadForCurrentLeader).length;
       const leaderTabBtns = document.querySelectorAll('[data-tab="leader"], #tabBtn-leader');
@@ -4418,7 +4486,7 @@
       }
     }
 
-    // 2. 작성 및 수정 모달 열기
+    /* ==================== [JS 37. 익명건의함 작성 · 수정 · 삭제 및 홈 화면 조회] ==================== */
     window.openSuggestionModal = function (editId = '') {
       document.getElementById('editSugId').value = editId;
       if (editId) {
@@ -4453,7 +4521,6 @@
       renderSuggestionTagPills();
     };
 
-    // 3. 건의 등록 및 수정 저장
     window.submitSuggestion = async function () {
       const editId = document.getElementById('editSugId').value;
       const content = document.getElementById('sugContentInput').value.trim();
@@ -4492,7 +4559,6 @@
       }
     };
 
-    // 작성자 본인 건의 삭제 (모든 상태에서 삭제 가능)
     window.deleteMySuggestion = async function (docId) {
       if (!confirm('작성하신 익명 건의를 삭제할까요? (삭제 후 복구할 수 없습니다)')) return;
       setLoading(true);
@@ -4505,7 +4571,6 @@
       }
     };
 
-    // 4. 홈 화면: 내 기기 ID로 작성한 건의 목록 & 쌍방향 추가 댓글
     function renderMySuggestions() {
       const myDevId = getAnonymousDeviceId();
       const myList = (STATE.suggestions || []).filter(s => s['기기ID'] === myDevId);
@@ -4567,7 +4632,6 @@
       }).join('');
     }
 
-    // 작성자 추가 댓글 등록 -> 리더십 전체에게 알림 재활성화(읽은사람목록JSON 초기화)
     window.addAuthorFollowupComment = async function (docId) {
       const target = (STATE.suggestions || []).find(s => (s['_docId'] || s['건의ID']) === docId);
       if (!target) return;
@@ -4587,7 +4651,7 @@
       try {
         await updateDoc(doc(db, 'Suggestions', docId), {
           의견목록JSON: JSON.stringify(comments),
-          읽은사람목록JSON: '[]' // 작성자 새 댓글이 달리면 리더십들에게 다시 미확인 알림 표시
+          읽은사람목록JSON: '[]'
         });
         alert('추가 의견이 익명으로 등록되었습니다.');
         await loadAllData();
@@ -4596,7 +4660,7 @@
       }
     };
 
-    // 5. 리더십 탭: 권한별 필터링 + 개인별 독립 읽음 처리 + 목사님 전용 버튼 + 완료 자동 정리
+    /* ==================== [JS 38. 리더십 전용 익명건의함 처리 및 목사님 사역노트 연동] ==================== */
     window.renderLeaderSuggestions = function () {
       const listEl = document.getElementById('leaderSuggestionsList');
       const unreadBadge = document.getElementById('leaderSugUnreadBadge');
@@ -4634,7 +4698,6 @@
                 <span style="font-size:11.5px; color:var(--text-muted);">${s['등록일시']}</span>
               </div>
 
-              <!-- 리더십 액션 버튼 영역 -->
               <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;" onclick="event.stopPropagation()">
                 <button class="btn btn-outline btn-sm" style="padding:4px 8px; font-size:11.5px;" onclick="addLeaderSuggestionComment('${docId}')">💬 의견 (${comments.length})</button>
                 <button class="btn btn-success btn-sm" style="padding:4px 8px; font-size:12px;" title="반영됨으로 표시" onclick="setSuggestionDecision('${docId}', '반영됨')">✓</button>
@@ -4679,9 +4742,6 @@
       }).join('') || '<div style="color:var(--text-muted); font-size:13px;">열람 가능한 익명 건의가 없습니다.</div>';
     };
 
-    // 권한자가 카드를 클릭하면:
-    // 1) 본인 키만 읽은사람목록JSON에 추가 (다른 리더십 알림은 그대로 유지)
-    // 2) 상태가 '접수됨'이었다면 '확인 중'으로 전환
     window.markSuggestionOpenedByMe = async function (docId) {
       const target = (STATE.suggestions || []).find(s => (s['_docId'] || s['건의ID']) === docId);
       if (!target || !canCurrentLeaderViewSuggestion(target)) return;
@@ -4707,7 +4767,6 @@
       await loadAllData();
     };
 
-    // 리더십 추가 의견 달기 -> 상태 '검토중'으로 자동 전환 (이미 반영됨/미반영이면 유지)
     window.addLeaderSuggestionComment = async function (docId) {
       const target = (STATE.suggestions || []).find(s => (s['_docId'] || s['건의ID']) === docId);
       if (!target || !canCurrentLeaderViewSuggestion(target)) return;
@@ -4745,8 +4804,6 @@
       }
     };
 
-    // 완료 건의 5건 초과 시 과거순 자동 정리
-    // ('🙏 목사님께'는 자동 삭제에서 완전 제외, '🛠️ 사이트 개선'과 '일반 리더십용 3종' 각각 완료된 건의만 최신 5개 유지)
     async function cleanupCompletedSuggestions() {
       const allSugs = await fetchCol('Suggestions');
       const completedAll = allSugs
@@ -4769,7 +4826,6 @@
       }
     }
 
-    // 반영됨(✓) / 미반영(✕ + 사유 필수) 처리 -> 완료 즉시 미확인자 알림도 자동 소멸
     window.setSuggestionDecision = async function (docId, decision) {
       const target = (STATE.suggestions || []).find(s => (s['_docId'] || s['건의ID']) === docId);
       if (!target || !canCurrentLeaderViewSuggestion(target)) return;
@@ -4833,14 +4889,14 @@
       setLoading(true);
       try {
         const noteId = 'NOTE_' + Date.now();
-        await setDoc(doc(db, 'LeadershipNotes', noteId), {
+        await setDoc(doc(db, 'LeaderNotes', noteId), {
           노트ID: noteId,
-          날짜: todayYMD(),
-          카테고리: '사역·목회 메모',
-          제목: `[익명건의] 🙏 목사님께 전달된 건의 (${String(target['등록일시'] || todayYMD()).slice(0, 10)})`,
+          카테고리: '📢 목양 공지',
+          제목: `[익명건의] 🙏 목사님께 전달된 건의 (${String(target['등록일시'] || todayFormatted()).slice(0, 10)})`,
           내용: fullNoteBody,
           작성자: `${STATE.auth.name} (${STATE.auth.role})`,
-          작성일시: nowFormatted()
+          확인목자목록: JSON.stringify([STATE.auth.name]),
+          등록일시: nowFormatted()
         });
 
         await updateDoc(doc(db, 'Suggestions', docId), {
@@ -4854,7 +4910,6 @@
       }
     };
 
-    // 목사님 전용: '🙏 목사님께' 건의 수동 삭제
     window.deletePastorSuggestion = async function (docId) {
       const target = (STATE.suggestions || []).find(s => (s['_docId'] || s['건의ID']) === docId);
       if (!target || target['카테고리'] !== '🙏 목사님께' || STATE.auth?.role !== '담당목사') return;
