@@ -792,11 +792,28 @@
             <div style="font-weight:800; color:var(--primary); margin-bottom:4px;">📋 주일 예배 출결 체크 (S1 · S2 · S3 대상)</div>
             <div id="attDeadlineNotice" style="font-size:12.5px; color:var(--text-muted);"></div>
           </div>
-          <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
             <input type="date" id="attDateInput" style="margin-bottom:0; max-width:180px;" onchange="loadExistingAttendanceForDate()" />
             <span id="attCheckedCount" class="badge b-blue">선택: 0명</span>
           </div>
           <div id="attendanceChecklist" style="max-height:420px; overflow-y:auto; border:1px solid var(--border); border-radius:12px;"></div>
+
+          <!-- 미등록 방문자(지인 초청 · 일시 방문) 수기 입력 영역 -->
+          <div style="margin-top:12px; padding:12px; border-radius:12px; background:var(--surface-sub); border:1px solid var(--border);">
+            <div style="font-size:13px; font-weight:800; margin-bottom:4px;">🌱 미등록 방문자 수기 입력 (지인 초청 · 일시 방문)</div>
+            <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">
+              교회에 등록되지 않은 방문자를 입력하면 해당 주 출석 인원과 출결 보고서에 함께 합산됩니다.
+            </div>
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+              <input type="text" id="guestVisitorNameInput" placeholder="이름 (예: 홍길동)" style="flex:1; margin-bottom:0;"
+                     onkeydown="if(event.key==='Enter'){ event.preventDefault(); addGuestVisitor(); }" />
+              <input type="text" id="guestVisitorMemoInput" placeholder="비고/인도자 (선택)" style="flex:1.2; margin-bottom:0;"
+                     onkeydown="if(event.key==='Enter'){ event.preventDefault(); addGuestVisitor(); }" />
+              <button type="button" class="btn btn-outline btn-sm" style="white-space:nowrap;" onclick="addGuestVisitor()">+ 추가</button>
+            </div>
+            <div id="guestVisitorTagList" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+          </div>
+
           <div style="margin-top:12px; display:flex; gap:8px;">
             <button id="btnSaveAttendance" class="btn btn-primary" style="flex:1;" onclick="submitSundayAttendance()">💾 출결 저장하기</button>
             <button class="btn btn-outline" onclick="toggleAttendanceMode(false)">돌아가기</button>
@@ -2510,13 +2527,65 @@
       }
     };
 
+    // 현재 화면에 임시 보관할 미등록 방문자 배열: [{ name: '홍길동', memo: '김철수 지인' }, ...]
+    let CURRENT_GUEST_VISITORS = [];
+
+    function formatGuestDisplayLabel(g) {
+      return g.memo ? `${g.name} (방문/${g.memo})` : `${g.name} (방문)`;
+    }
+
+    window.renderGuestVisitorTags = function () {
+      const box = document.getElementById('guestVisitorTagList');
+      if (!box) return;
+      if (!CURRENT_GUEST_VISITORS.length) {
+        box.innerHTML = '<span style="font-size:12px; color:var(--text-muted);">추가된 미등록 방문자가 없습니다.</span>';
+      } else {
+        box.innerHTML = CURRENT_GUEST_VISITORS.map((g, idx) => `
+          <span class="badge b-amber" style="display:inline-flex; align-items:center; gap:5px; padding:5px 9px; font-size:12px;">
+            <span>🌱 ${formatGuestDisplayLabel(g)}</span>
+            <button type="button" onclick="removeGuestVisitor(${idx})"
+                    style="border:none; background:none; color:inherit; font-weight:900; cursor:pointer; padding:0 2px; line-height:1;">×</button>
+          </span>
+        `).join('');
+      }
+      updateAttCount();
+    };
+
+    window.addGuestVisitor = function () {
+      const nameEl = document.getElementById('guestVisitorNameInput');
+      const memoEl = document.getElementById('guestVisitorMemoInput');
+      const name = (nameEl?.value || '').trim();
+      const memo = (memoEl?.value || '').trim();
+      if (!name) return alert('방문자 이름을 입력해 주세요.');
+
+      const dup = CURRENT_GUEST_VISITORS.some(g => g.name === name && g.memo === memo);
+      if (dup) return alert('이미 방문자 목록에 추가된 이름입니다.');
+
+      CURRENT_GUEST_VISITORS.push({ name, memo });
+      if (nameEl) nameEl.value = '';
+      if (memoEl) memoEl.value = '';
+      renderGuestVisitorTags();
+    };
+
+    window.removeGuestVisitor = function (idx) {
+      CURRENT_GUEST_VISITORS.splice(idx, 1);
+      renderGuestVisitorTags();
+    };
+
     window.loadExistingAttendanceForDate = function () {
       const dateStr = normalizeYMD(document.getElementById('attDateInput').value);
       const found = (STATE.attendanceRecords || []).find(r => normalizeYMD(r['날짜']) === dateStr);
       let checkedNames = [];
+      CURRENT_GUEST_VISITORS = [];
+
       if (found) {
         try { checkedNames = JSON.parse(found['출석자명단JSON'] || '[]'); } catch (e) {}
+        try {
+          const savedGuests = JSON.parse(found['미등록방문자JSON'] || '[]');
+          if (Array.isArray(savedGuests)) CURRENT_GUEST_VISITORS = savedGuests;
+        } catch (e) {}
       }
+
       const candidates = sortMembersByRoleAndName(
         STATE.allMembersRaw.filter(m => ['S1', 'S2', 'S3'].includes(String(m['상태']).trim()))
       );
@@ -2531,40 +2600,55 @@
           <input type="checkbox" class="att-chk" value="${m['이름']}" ${checkedNames.includes(m['이름']) ? 'checked' : ''} onchange="updateAttCount()" />
         </label>
       `).join('');
-      updateAttCount();
+
+      renderGuestVisitorTags();
     };
 
     window.updateAttCount = function () {
-      document.getElementById('attCheckedCount').textContent = `선택: ${document.querySelectorAll('.att-chk:checked').length}명`;
+      const memberCnt = document.querySelectorAll('.att-chk:checked').length;
+      const guestCnt = CURRENT_GUEST_VISITORS.length;
+      const totalCnt = memberCnt + guestCnt;
+      const countEl = document.getElementById('attCheckedCount');
+      if (countEl) {
+        countEl.textContent = guestCnt > 0
+          ? `선택: 총 ${totalCnt}명 (재적 ${memberCnt}명 + 방문 ${guestCnt}명)`
+          : `선택: ${memberCnt}명`;
+      }
     };
 
     window.submitSundayAttendance = async function () {
       const dateStr = normalizeYMD(document.getElementById('attDateInput').value);
       if (!dateStr) return alert('날짜를 선택해 주세요.');
 
-      const attendedNames = Array.from(document.querySelectorAll('.att-chk:checked')).map(el => el.value);
+      const memberNames = Array.from(document.querySelectorAll('.att-chk:checked')).map(el => el.value);
+      const guestLabels = CURRENT_GUEST_VISITORS.map(g => formatGuestDisplayLabel(g));
+      const allAttendedNames = [...memberNames, ...guestLabels];
+
       const groupStats = {};
-      attendedNames.forEach(name => {
+      memberNames.forEach(name => {
         const m = STATE.allMembersRaw.find(item => item['이름'] === name);
-        const grp = m ? (m['목장'] || '기타') : '새가족/기타';
+        const grp = m ? (m['목장'] || '기타') : '기타';
         groupStats[grp] = (groupStats[grp] || 0) + 1;
       });
+      if (CURRENT_GUEST_VISITORS.length > 0) {
+        groupStats['미등록방문'] = CURRENT_GUEST_VISITORS.length;
+      }
 
       setLoading(true);
       try {
         await setDoc(doc(db, 'Attendance', dateStr), {
           날짜: dateStr,
-          출석자명단JSON: JSON.stringify(attendedNames),
-          총인원: attendedNames.length,
+          출석자명단JSON: JSON.stringify(allAttendedNames),
+          미등록방문자JSON: JSON.stringify(CURRENT_GUEST_VISITORS),
+          총인원: allAttendedNames.length,
           목장별통계JSON: JSON.stringify(groupStats),
           마감여부: '수정가능',
           최종수정일시: nowFormatted()
         });
 
         await loadAllData();
-        // 출결 보고서 렌더링 함수가 있다면 즉시 최신 데이터로 재렌더링
         if (typeof renderAttendanceReport === 'function') renderAttendanceReport();
-        alert(`✅ ${dateStr} 예배 출결(${attendedNames.length}명)이 저장되었으며, 출결 보고서에도 즉시 반영되었습니다.`);
+        alert(`✅ ${dateStr} 예배 출결(총 ${allAttendedNames.length}명: 재적 ${memberNames.length}명, 방문 ${CURRENT_GUEST_VISITORS.length}명)이 저장되었습니다.`);
       } catch (e) {
         alert('출결 저장 중 오류가 발생했습니다: ' + e.message);
       } finally {
