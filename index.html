@@ -739,7 +739,7 @@
       </div>
 
       <div class="card">
-        <div class="card-header"><div class="card-title">🎂 이번 달 생일 축하 지체</div></div>
+        <div class="card-header"><div class="card-title">🎂 이번 달 생일 축하 청년</div></div>
         <div id="homeBirthdays" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
       </div>
 
@@ -848,7 +848,7 @@
           <button id="btnAddNewcomer" class="btn btn-primary btn-sm" style="display:none;" onclick="openModal('newcomerModal')">+ 새가족 등록</button>
         </div>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
-          새가족 지체와 담당 MD, 정착 완료까지 남은 만남 횟수를 한눈에 확인하고 함께 축복해 주세요!
+          새가족 청년과 담당 MD, 정착 완료까지 남은 만남 횟수를 한눈에 확인하고 함께 축복해 주세요!
         </p>
         <div class="grid-2" id="newcomersGrid"></div>
       </div>
@@ -954,13 +954,13 @@
             <button class="btn btn-outline btn-sm" onclick="initYouthWordle()">🔄 새 문제</button>
           </div>
           <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">
-            청년부 지체 한 명을 추리해 보세요! <strong>목장 · 직분 · 생일 월 · 이름 초성</strong> 4칸 힌트가 열립니다.
+            청년부 청년 한 명을 추리해 보세요! <strong>목장 · 직분 · 생일 월 · 이름 초성</strong> 4칸 힌트가 열립니다.
           </p>
           <select id="wordleModeSelect" style="margin-bottom:10px;" onchange="initYouthWordle()">
             <option value="ALL">전체 청년부 대상</option>
           </select>
           <div style="display:flex; gap:6px; margin-bottom:12px;">
-            <input type="text" id="wordleGuessInput" list="wordleMemberDatalist" placeholder="지체 이름 입력..." style="margin-bottom:0;" />
+            <input type="text" id="wordleGuessInput" list="wordleMemberDatalist" placeholder="청년 이름 입력..." style="margin-bottom:0;" />
             <datalist id="wordleMemberDatalist"></datalist>
             <button class="btn btn-primary" onclick="submitWordleGuess()">추측</button>
           </div>
@@ -2276,11 +2276,11 @@
       let wHtml = '';
       if (STATE.newcomers.length) {
         const ncNames = STATE.newcomers.map(n => `<strong>${n['이름']}</strong>(담당MD: ${n['담당MD']})`).join(', ');
-        wHtml += `<div>🌱 <strong>새가족 청년:</strong> ${ncNames} 지체가 함께하고 있습니다!</div>`;
+        wHtml += `<div>🌱 <strong>새가족 청년:</strong> ${ncNames} 청년이 함께하고 있습니다!</div>`;
       }
       if (returnees.length) {
         const retNames = returnees.map(r => `<strong>${r['이름']}</strong>(${r['목장']})`).join(', ');
-        wHtml += `<div>💛 <strong>다시 돌아온 지체:</strong> ${retNames} 청년의 복귀를 진심으로 환영합니다!</div>`;
+        wHtml += `<div>💛 <strong>다시 돌아온 청년:</strong> ${retNames} 청년의 복귀를 진심으로 환영합니다!</div>`;
       }
       if (wHtml) {
         welcomeBanner.style.display = 'block';
@@ -3734,7 +3734,7 @@
         </div>
         <button class="btn btn-outline btn-sm" onclick="const b=document.getElementById('attReportNamesBox'); b.style.display=b.style.display==='none'?'block':'none';">더보기 (출석자 명단 확인) ▾</button>
       `;
-      namesBox.innerHTML = `<strong>출석 지체 명단 (${names.length}명):</strong><div style="margin-top:6px; font-size:13px; line-height:1.7;">${names.join(', ') || '없음'}</div>`;
+      namesBox.innerHTML = `<strong>출석 청년 명단 (${names.length}명):</strong><div style="margin-top:6px; font-size:13px; line-height:1.7;">${names.join(', ') || '없음'}</div>`;
     };
 
     window.toggleS3S4List = function () {
