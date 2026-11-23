@@ -1085,6 +1085,10 @@
         <div style="font-weight:800; margin-bottom:8px;">🔐 권한 인증 및 비밀번호 관리</div>
         <div id="authLoggedOutBox">
           <input type="password" id="loginPwInput" placeholder="권한 비밀번호 입력 (영문·숫자·기호)" />
+          <label style="display:flex; align-items:center; gap:7px; font-size:13px; color:var(--text-muted); margin:-4px 0 12px; cursor:pointer; user-select:none;">
+            <input type="checkbox" id="rememberLoginCheck" checked style="width:16px; height:16px; margin:0; accent-color:var(--primary);" />
+            <span>🔒 이 기기에 비밀번호 저장 (다음 접속 시 자동 로그인)</span>
+          </label>
           <button class="btn btn-primary" style="width:100%;" onclick="handleLogin()">권한 인증하기</button>
         </div>
         <div id="authLoggedInBox" style="display:none;">
@@ -1550,8 +1554,13 @@
     const db = getFirestore(app);
     const GAS_IMAGE_URL = 'https://script.google.com/macros/s/AKfycbwTxyn39zCE35hM2yaZpN8udZ3RrIiMXQXht66cMlsPRVbhOz8RyF5gGimCUR8YCZej/exec';
 
+    const initialSavedPw = sessionStorage.getItem('vv_pw') || getSavedLoginPasswordFromDevice() || '';
+    if (initialSavedPw) {
+      sessionStorage.setItem('vv_pw', initialSavedPw);
+    }
+
     let STATE = {
-      pw: sessionStorage.getItem('vv_pw') || '',
+      pw: initialSavedPw,
       auth: { valid: false },
       allMembersRaw: [],
       members: [],
@@ -1581,6 +1590,33 @@
 
     function setLoading(flag) {
       document.getElementById('loadingBar').classList.toggle('active', flag);
+    }
+
+    // ==================== 기기 비밀번호 저장(자동 로그인) 헬퍼 ====================
+    const SAVED_LOGIN_STORAGE_KEY = 'vv_saved_login_token_v1';
+
+    function saveLoginPasswordToDevice(password) {
+      if (!password) return;
+      try {
+        const encoded = btoa(encodeURIComponent(password));
+        localStorage.setItem(SAVED_LOGIN_STORAGE_KEY, encoded);
+      } catch (e) {}
+    }
+
+    function getSavedLoginPasswordFromDevice() {
+      try {
+        const encoded = localStorage.getItem(SAVED_LOGIN_STORAGE_KEY);
+        if (!encoded) return '';
+        return decodeURIComponent(atob(encoded));
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function clearSavedLoginPasswordFromDevice() {
+      try {
+        localStorage.removeItem(SAVED_LOGIN_STORAGE_KEY);
+      } catch (e) {}
     }
 
     function nowFormatted() {
@@ -1759,8 +1795,9 @@
         if (!auth.valid && STATE.pw) {
           STATE.pw = '';
           sessionStorage.removeItem('vv_pw');
+          clearSavedLoginPasswordFromDevice();
         }
-
+        
         STATE.allMembersRaw = allMembers;
         STATE.activeMemberCount = allMembers.filter(m => ['S1', 'S2', 'S3', '입대'].includes(String(m['상태']).trim())).length;
 
@@ -1966,8 +2003,18 @@
       const res = await checkAuth(pw);
       setLoading(false);
       if (!res.valid) return alert('인증에 실패했습니다. 비밀번호를 확인해 주세요.');
+
       STATE.pw = pw;
       sessionStorage.setItem('vv_pw', pw);
+
+      // 기기에 비밀번호 저장 체크 여부에 따라 localStorage 저장 또는 삭제
+      const rememberChecked = document.getElementById('rememberLoginCheck')?.checked;
+      if (rememberChecked) {
+        saveLoginPasswordToDevice(pw);
+      } else {
+        clearSavedLoginPasswordFromDevice();
+      }
+
       document.getElementById('loginPwInput').value = '';
       closeModal('settingsModal');
       await loadAllData();
@@ -1977,6 +2024,7 @@
     window.handleLogout = function () {
       STATE.pw = '';
       sessionStorage.removeItem('vv_pw');
+      clearSavedLoginPasswordFromDevice(); // 로그아웃 시 기기 저장 비밀번호도 즉시 삭제
       switchTab('home');
       loadAllData();
     };
