@@ -687,15 +687,13 @@
   <div id="loadingBar" class="loading-bar"></div>
 
   <header>
-    <div class="brand">
-      <h1>⛪ 비전마을</h1>
-      <span id="headerVersion" class="ver-badge">v2.1.0</span>
-      <span id="headerRoleBadge" class="role-chip" style="display:none;"></span>
+    <div class="brand" style="display:flex; align-items:center; gap:6px; min-width:0; flex:1;">
+      <h1 style="white-space:nowrap; margin:0;">⛪ 비전마을</h1>
+      <span id="headerVersion" class="ver-badge" style="white-space:nowrap; flex-shrink:0;">v2.2.0</span>
+      <span id="headerRoleBadge" class="role-chip" style="display:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:135px;"></span>
     </div>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="openAppInstallGuide()">📲 앱설치</button>
-      <button class="icon-btn" onclick="openModal('guideModal')">❓ 안내</button>
-      <button class="icon-btn" onclick="openModal('settingsModal')">⚙️ 설정</button>
+    <div class="header-actions" style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+      <button class="icon-btn" style="white-space:nowrap;" onclick="openModal('settingsModal')">⚙️ 설정</button>
     </div>
   </header>
 
@@ -1127,7 +1125,7 @@
   </main>
 
   <footer>
-    비전마을 청년부 통합 포털 · <span id="footerVersion">v2.1.0</span><br>
+    비전마을 청년부 통합 포털 · <span id="footerVersion">v2.2.0</span><br>
     함께 세워가는 믿음의 공동체
   </footer>
 
@@ -1264,7 +1262,7 @@
           <button class="btn btn-outline btn-sm" style="width:100%; border-color:var(--warning); color:#d97706;" onclick="runAdminCleanup()">🧹 기간 만료 데이터 일괄 정리 (출결 3개월·기도 7일·마감 광고)</button>
         </div>
         <div style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;">
-          현재 시스템 버전: <strong id="settingsVersionText">v2.1.0</strong>
+          현재 시스템 버전: <strong id="settingsVersionText">v2.2.0</strong>
         </div>
       </div>
     </div>
@@ -1964,7 +1962,7 @@
         String(b['등록일시'] || '').localeCompare(String(a['등록일시'] || ''))
         );
 
-        const ver = STATE.updates.length ? STATE.updates[0]['버전'] : 'v2.1.0';
+        const ver = STATE.updates.length ? STATE.updates[0]['버전'] : 'v2.2.0';
         document.getElementById('headerVersion').textContent = ver;
         document.getElementById('footerVersion').textContent = ver;
         document.getElementById('settingsVersionText').textContent = ver;
