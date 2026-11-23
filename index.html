@@ -1897,6 +1897,15 @@
     }
 
     window.loadAllData = async function () {
+      // 브라우저 재시작 등으로 sessionStorage가 비어 있으면 localStorage에 저장된 비밀번호 자동 복원
+      if (!STATE.pw) {
+        const restoredPw = sessionStorage.getItem('vv_pw') || getSavedLoginPasswordFromDevice();
+        if (restoredPw) {
+          STATE.pw = restoredPw;
+          sessionStorage.setItem('vv_pw', restoredPw);
+        }
+      }
+
       setLoading(true);
       try {
         const [auth, allMembers, schedules, newcomers, prayers, flashMeetings, bulletins, ads, links, updates, suggestions] = await Promise.all([
