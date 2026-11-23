@@ -50,6 +50,84 @@
       --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
 
+    /* ==================== 추가 감성 테마 3종 (묵상 세피아 / 포레스트 그린 / 선셋 코랄) ==================== */
+    body.theme-sepia {
+      --bg: #faf6ee;
+      --surface: #fffdf9;
+      --surface-sub: #f3ece0;
+      --text: #2c221e;
+      --text-muted: #78685c;
+      --border: #e5dccb;
+      --primary: #8c5a32;
+      --primary-soft: #f3e6d8;
+      --accent: #b45309;
+      --leader: #6d4c41;
+      --leader-soft: #efe6e1;
+    }
+
+    body.theme-forest {
+      --bg: #f2f7f4;
+      --surface: #ffffff;
+      --surface-sub: #e6f0ea;
+      --text: #1b3328;
+      --text-muted: #557265;
+      --border: #cfe0d6;
+      --primary: #1e6b52;
+      --primary-soft: #ddf1e8;
+      --accent: #2e8b57;
+      --leader: #2d5a4c;
+      --leader-soft: #e2eee9;
+    }
+
+    body.theme-sunset {
+      --bg: #fff7f4;
+      --surface: #ffffff;
+      --surface-sub: #fcebe5;
+      --text: #381e1a;
+      --text-muted: #845a53;
+      --border: #f3d5cc;
+      --primary: #dc5846;
+      --primary-soft: #fde7e2;
+      --accent: #e07a3f;
+      --leader: #9f3d58;
+      --leader-soft: #f9e3ea;
+    }
+
+    /* 설정창 5종 테마 선택 그리드 */
+    .theme-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .theme-choice-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 11px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .theme-choice-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    .theme-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 1.5px solid rgba(0, 0, 0, 0.15);
+    }
+
     /* 메인 화면 환영·축복 배너 (라이트/다크모드 대응) */
     .welcome-banner {
       background: linear-gradient(135deg, #eff6ff 0%, #f0fdfa 100%);
@@ -1129,12 +1207,39 @@
           <option value="playground">🎮 놀이터</option>
         </select>
 
+        <!-- 화면 테마 선택 (5종) -->
+        <div style="margin-top:8px; margin-bottom:10px;">
+          <div style="font-size:12.5px; font-weight:800; color:var(--text-muted); margin-bottom:6px;">🎨 화면 테마 선택</div>
+          <div class="theme-selector-grid" id="themeSelectorGrid">
+            <button type="button" class="theme-choice-btn" data-theme="light" onclick="setAppTheme('light')">
+              <span class="theme-swatch" style="background:linear-gradient(135deg, #f8fafc 50%, #2563eb 50%);"></span>
+              <span>☀️ 기본 라이트</span>
+            </button>
+            <button type="button" class="theme-choice-btn" data-theme="dark" onclick="setAppTheme('dark')">
+              <span class="theme-swatch" style="background:linear-gradient(135deg, #0f172a 50%, #3b82f6 50%);"></span>
+              <span>🌙 기본 다크</span>
+            </button>
+            <button type="button" class="theme-choice-btn" data-theme="sepia" onclick="setAppTheme('sepia')">
+              <span class="theme-swatch" style="background:linear-gradient(135deg, #faf6ee 50%, #8c5a32 50%);"></span>
+              <span>📜 묵상 세피아</span>
+            </button>
+            <button type="button" class="theme-choice-btn" data-theme="forest" onclick="setAppTheme('forest')">
+              <span class="theme-swatch" style="background:linear-gradient(135deg, #f2f7f4 50%, #1e6b52 50%);"></span>
+              <span>🌿 포레스트 그린</span>
+            </button>
+            <button type="button" class="theme-choice-btn" data-theme="sunset" onclick="setAppTheme('sunset')" style="grid-column:span 2;">
+              <span class="theme-swatch" style="background:linear-gradient(135deg, #fff7f4 50%, #dc5846 50%);"></span>
+              <span>🌅 선셋 코랄</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 글자 크기 전환 버튼 (기존 기능 유지) -->
         <div style="display:flex; gap:8px; margin-top:4px;">
-          <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleDarkMode()">🌓 다크모드 전환</button>
           <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleFontSize()">🔠 글자크기 전환</button>
         </div>
       </div>
-
+      
       <div>
         <div style="font-weight:800; margin-bottom:8px;">📖 도움말 및 시스템 정보</div>
         <button class="btn btn-outline btn-sm" style="width:100%; margin-bottom:8px;" onclick="closeModal('settingsModal'); openModal('guideModal');">❓ 사이트 이용 안내 & 권한 표 보기</button>
@@ -2077,10 +2182,44 @@
       renderMembers();
     };
 
-    window.toggleDarkMode = function () {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('vv_dark', document.body.classList.contains('dark') ? '1' : '0');
+    // ==================== 5종 테마 전환 및 기기 저장 ====================
+    const APP_THEMES = ['light', 'dark', 'sepia', 'forest', 'sunset'];
+
+    window.setAppTheme = function (themeName) {
+      const targetTheme = APP_THEMES.includes(themeName) ? themeName : 'light';
+      document.body.classList.remove('dark', 'theme-sepia', 'theme-forest', 'theme-sunset');
+
+      if (targetTheme === 'dark') {
+        document.body.classList.add('dark');
+      } else if (targetTheme !== 'light') {
+        document.body.classList.add(`theme-${targetTheme}`);
+      }
+
+      localStorage.setItem('vv_theme', targetTheme);
+      updateThemeSelectorUI(targetTheme);
     };
+
+    function updateThemeSelectorUI(activeTheme) {
+      document.querySelectorAll('#themeSelectorGrid .theme-choice-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === activeTheme);
+      });
+    }
+
+    // 상단 헤더 등에 기존 toggleDarkMode() 버튼이 남아 있어도 5종 테마가 순서대로 전환되도록 유지
+    window.toggleDarkMode = function () {
+      const current = localStorage.getItem('vv_theme') || (document.body.classList.contains('dark') ? 'dark' : 'light');
+      const nextIdx = (APP_THEMES.indexOf(current) + 1) % APP_THEMES.length;
+      setAppTheme(APP_THEMES[nextIdx]);
+    };
+
+    // 페이지 로드 시 저장된 테마 즉시 복원 (기존 vv_dark 기록도 자동 호환)
+    (function initSavedTheme() {
+      let savedTheme = localStorage.getItem('vv_theme');
+      if (!savedTheme && localStorage.getItem('vv_dark') === '1') {
+        savedTheme = 'dark';
+      }
+      setAppTheme(savedTheme || 'light');
+    })();
 
     window.toggleFontSize = function () {
       document.body.classList.toggle('font-large');
