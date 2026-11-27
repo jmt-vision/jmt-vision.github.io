@@ -97,6 +97,62 @@
       --leader-soft: #f9e3ea;
     }
 
+    /* ▼▼▼ [기능 추가: 세피아·포레스트·선셋 다크 테마 3종 (총 8종 테마)] 시작 ▼▼▼ */
+    /* 6. 묵상 세피아 다크 (따뜻한 딥 에스프레소 · 다크 양피지 톤) */
+    body.theme-sepia-dark {
+      --bg: #1c1814;
+      --surface: #26201a;
+      --surface-sub: #302820;
+      --text: #f3ece1;
+      --text-muted: #b8aa96;
+      --border: #3f352b;
+      --primary: #d99b52;
+      --primary-soft: rgba(217, 155, 82, 0.16);
+      --accent: #e5a93c;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --leader: #c084fc;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    /* 7. 포레스트 그린 다크 (깊은 밤 숲속 · 딥 에메랄드 톤) */
+    body.theme-forest-dark {
+      --bg: #101915;
+      --surface: #17241e;
+      --surface-sub: #1f3028;
+      --text: #e6f2ec;
+      --text-muted: #94b5a4;
+      --border: #2a4035;
+      --primary: #34d399;
+      --primary-soft: rgba(52, 211, 153, 0.15);
+      --accent: #6ee7b7;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --leader: #c084fc;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    /* 8. 선셋 코랄 다크 (차분한 밤노을 · 딥 로즈 코랄 톤) */
+    body.theme-sunset-dark {
+      --bg: #1d1517;
+      --surface: #281d20;
+      --surface-sub: #342529;
+      --text: #f9ecee;
+      --text-muted: #c4a3a9;
+      --border: #473238;
+      --primary: #fb7185;
+      --primary-soft: rgba(251, 113, 133, 0.16);
+      --accent: #fda4af;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --leader: #c084fc;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+    /* ▲▲▲ [기능 추가: 세피아·포레스트·선셋 다크 테마 3종 (총 8종 테마)] 끝 ▲▲▲ */
+
     /* 큰 글씨 모드 배율 */
     body.font-large { --font-scale: 1.14; }
 
@@ -1190,31 +1246,25 @@
         </select>
 
         <!-- 화면 테마 선택 (5종) -->
-        <div style="margin-top:8px; margin-bottom:10px;">
-          <div style="font-size:12.5px; font-weight:800; color:var(--text-muted); margin-bottom:6px;">🎨 화면 테마 선택</div>
-          <div class="theme-selector-grid" id="themeSelectorGrid">
-            <button type="button" class="theme-choice-btn" data-theme="light" onclick="setAppTheme('light')">
-              <span class="theme-swatch" style="background:linear-gradient(135deg, #f8fafc 50%, #2563eb 50%);"></span>
-              <span>☀️ 기본 라이트</span>
-            </button>
-            <button type="button" class="theme-choice-btn" data-theme="dark" onclick="setAppTheme('dark')">
-              <span class="theme-swatch" style="background:linear-gradient(135deg, #0f172a 50%, #3b82f6 50%);"></span>
-              <span>🌙 기본 다크</span>
-            </button>
-            <button type="button" class="theme-choice-btn" data-theme="sepia" onclick="setAppTheme('sepia')">
-              <span class="theme-swatch" style="background:linear-gradient(135deg, #faf6ee 50%, #8c5a32 50%);"></span>
-              <span>📜 묵상 세피아</span>
-            </button>
-            <button type="button" class="theme-choice-btn" data-theme="forest" onclick="setAppTheme('forest')">
-              <span class="theme-swatch" style="background:linear-gradient(135deg, #f2f7f4 50%, #1e6b52 50%);"></span>
-              <span>🌿 포레스트 그린</span>
-            </button>
-            <button type="button" class="theme-choice-btn" data-theme="sunset" onclick="setAppTheme('sunset')" style="grid-column:span 2;">
-              <span class="theme-swatch" style="background:linear-gradient(135deg, #fff7f4 50%, #dc5846 50%);"></span>
-              <span>🌅 선셋 코랄</span>
-            </button>
-          </div>
-        </div>
+        <div style="margin-bottom:14px;">
+  <label for="appThemeSelect" style="display:block; font-size:13px; font-weight:700; margin-bottom:6px;">
+    🎨 화면 테마 선택 (총 8종)
+  </label>
+  <select id="appThemeSelect" onchange="setAppTheme(this.value)" style="margin-bottom:0; font-weight:600;">
+    <optgroup label="☀️ 라이트 테마">
+      <option value="light">☀️ 기본 라이트</option>
+      <option value="sepia">📜 묵상 세피아</option>
+      <option value="forest">🌿 포레스트 그린</option>
+      <option value="sunset">🌅 선셋 코랄</option>
+    </optgroup>
+    <optgroup label="🌙 다크 테마">
+      <option value="dark">🌙 기본 다크</option>
+      <option value="sepia-dark">🪵 묵상 세피아 다크</option>
+      <option value="forest-dark">🌲 포레스트 그린 다크</option>
+      <option value="sunset-dark">🌆 선셋 코랄 다크</option>
+    </optgroup>
+  </select>
+</div>
 
         <!-- 글자 크기 전환 버튼 -->
         <div style="display:flex; gap:8px; margin-top:4px;">
@@ -2129,12 +2179,21 @@
       renderMembers();
     };
 
-    /* ==================== [JS 11. 5종 화면 테마 및 글자 크기 제어] ==================== */
-    const APP_THEMES = ['light', 'dark', 'sepia', 'forest', 'sunset'];
+    /* ==================== [JS 11. 8종 화면 테마 및 글자 크기 제어] ==================== */
+    /* ▼▼▼ [기능 추가: 8종 화면 테마 전환 및 드롭다운 UI 동기화] 시작 ▼▼▼ */
+    const APP_THEMES = [
+      'light', 'dark',
+      'sepia', 'forest', 'sunset',
+      'sepia-dark', 'forest-dark', 'sunset-dark'
+    ];
 
     window.setAppTheme = function (themeName) {
       const targetTheme = APP_THEMES.includes(themeName) ? themeName : 'light';
-      document.body.classList.remove('dark', 'theme-sepia', 'theme-forest', 'theme-sunset');
+      document.body.classList.remove(
+        'dark',
+        'theme-sepia', 'theme-forest', 'theme-sunset',
+        'theme-sepia-dark', 'theme-forest-dark', 'theme-sunset-dark'
+      );
 
       if (targetTheme === 'dark') {
         document.body.classList.add('dark');
@@ -2147,9 +2206,10 @@
     };
 
     function updateThemeSelectorUI(activeTheme) {
-      document.querySelectorAll('#themeSelectorGrid .theme-choice-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.theme === activeTheme);
-      });
+      const selectEl = document.getElementById('themeSelectorDropdown');
+      if (selectEl && selectEl.value !== activeTheme) {
+        selectEl.value = activeTheme;
+      }
     }
 
     // 페이지 로드 시 저장된 테마 즉시 복원 (기존 vv_dark 기록도 자동 호환)
@@ -2160,6 +2220,7 @@
       }
       setAppTheme(savedTheme || 'light');
     })();
+    /* ▲▲▲ [기능 추가: 8종 화면 테마 전환 및 드롭다운 UI 동기화] 끝 ▲▲▲ */
 
     window.toggleFontSize = function () {
       document.body.classList.toggle('font-large');
